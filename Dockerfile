@@ -16,5 +16,4 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
   apt-get install -y nodejs
 
 
-CMD php artisan serve --host=0.0.0.0 --port=5000
-EXPOSE 5000
+CMD php artisan serve --host=0.0.0.0 --port=$PORT

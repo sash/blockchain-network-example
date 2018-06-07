@@ -1,5 +1,35 @@
 This repo contains Alexander Alexie's homework from lecture
 
+# Project structure
+Docker will be used to launch all the different components of the project - nodes, wallets, workers and so on.
+
+The Node will be implemented in PHP using Laravel. It will be REST API that the other components can use. It will communicate with the other nodes
+
+The Miner will be implemented in nodejs using express and it will communicate with a node's REST API to get work and register results
+
+The Wallet will be impoemented in PHP using Laravel. For simplicity the same laravel project will be used (as the other PHP implementations). Different instancess will be launched and different endpoints will be used. The private key will be passed via format similar to mypasswallet.
+
+The Faucet will be implemented in nodejs using express and will communicate with a node.
+
+The Blockchain explorer will be implemented in PHP using Laravel. For simplicity the same laravel project will be used (as the other PHP implementations). It will run on separate endpoints and will.
+
+
+# Node
+## Data Structure
+* Transaction
+* Block
+
+## Validators
+* ValidateTransaction
+* ValidateBlock
+* ValidateBlockChain
+
+
+
+## REST
+
+
+
 ## Instructions
 
 

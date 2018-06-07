@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  mariadb:
+  node1db:
     image: 'bitnami/mariadb:latest'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -9,19 +9,50 @@ services:
       - MARIADB_DATABASE=my_database
       - MARIADB_PASSWORD=my_password
 
-  app:
+  node1:
     tty: true
     build: .
     labels:
       kompose.service.type: nodeport
     environment:
-      - DB_HOST=mariadb
+      - DB_HOST=node1db
       - DB_USERNAME=my_user
       - DB_DATABASE=my_database
       - DB_PASSWORD=my_password
+      - PORT=5000
     depends_on:
-      - mariadb
+      - node1db
     ports:
       - 5000:5000
+    expose:
+      - 5000
+    volumes:
+      - ./:/app
+
+  node2db:
+    image: 'bitnami/mariadb:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=my_user
+      - MARIADB_DATABASE=my_database
+      - MARIADB_PASSWORD=my_password
+
+  node2:
+    tty: true
+    build: .
+    labels:
+      kompose.service.type: nodeport
+    environment:
+      - DB_HOST=node2db
+      - DB_USERNAME=my_user
+      - DB_DATABASE=my_database
+      - DB_PASSWORD=my_password
+      - PORT=5001
+    depends_on:
+      - node2db
+    ports:
+      - 5001:5001
+    expose:
+      - 5001
     volumes:
       - ./:/app
