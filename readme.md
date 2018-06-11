@@ -47,7 +47,7 @@ blockchain
   blockchain:scrypt     Exercises: Blockchain Cryptography. 3) Derive Key by Password using SCrypt
   blockchain:symmetric  Exercises: Blockchain Cryptography. 4) Symmetric Encryption / Decryption (AES + SCrypt + HMAC)
 ```
-* run `docker-compose exec app npm install` to see setup PHP dependencies
+* run `docker-compose exec app yarn install` to setup node dependencies
 * Exercises: Blockchain Cryptography 8. Bitcoin Address Generator (C# Edition) is in c#/BitcoinAddressGenerator.cs
 * Exercises: Blockchain Cryptography 9. Bitcoin Address Generator (JS Edition) is in `docker-compose exec app node node/bitcoin-address-generator.js`
 * Exercises: Blockchain Cryptography 10. Private Key to Bitcoin Address is in `docker-compose exec app node node/private-key-to-bitcoin-address.js`

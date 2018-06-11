@@ -37,7 +37,7 @@ class NodeTransaction extends Model
     public function scopeWithConfirmations($query, $confirmations, $topBlockIndex)
     {
         return $query
-                ->where('minedInBlockIndex', '<=', $topBlockIndex - $confirmations)
+                ->where('minedInBlockIndex', '<=', $topBlockIndex - $confirmations + 1)
                 ->whereNotNull('minedInBlockIndex');
     }
     

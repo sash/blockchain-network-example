@@ -59,6 +59,15 @@ class NodeController extends Controller
         ];
     }
     
+    function getTransaction(string $hash)
+    {
+        return [
+                'success' => true,
+                "message" => "Your transaction is accepted",
+                "hash"    => $hash
+        ];
+    }
+    
     /**
      * @param $transactionInput
      * @return NodeTransaction

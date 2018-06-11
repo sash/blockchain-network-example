@@ -15,3 +15,4 @@ use Illuminate\Http\Request;
 
 Route::middleware('api')->get('/node/blocks', 'NodeController@getBlocks');
 Route::middleware('api')->put('/node/transaction', 'NodeController@putTransaction');
+Route::middleware('api')->get('/node/transaction/{hash}', 'NodeController@getTransaction');

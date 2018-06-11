@@ -79,7 +79,7 @@ class TransactionValidator
      */
     private function assertBalance(NodeTransaction $transaction): void
     {
-        if ($this->transactionRepository->balanceForAddress($transaction->senderAddress, null) < $transaction->value + $transaction->fee) {
+        if ($this->transactionRepository->balanceForAddress($transaction->senderAddress, 1) < $transaction->value + $transaction->fee) {
             throw new InvalidTransaction('Not enough funds to complete the transaction');
         }
     }
