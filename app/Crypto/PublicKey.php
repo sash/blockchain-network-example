@@ -45,8 +45,11 @@ class PublicKey
         if ($recid != ($recid & 1)) {
             throw new \Exception('Invalid recovery ID:' . $recid);
         }
+        /**
+         * @var \Elliptic\Curve\ShortCurve\Point $pubkey
+         */
         $pubkey = $ec->recoverPubKey($hash, $sign, $recid);
-    
+        
         return new self($pubkey);
     }
     

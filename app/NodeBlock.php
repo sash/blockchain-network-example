@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
  * Class NodeBlock
  * @package App
  *
- * @property
+ * @property int $index
+ * @property string $hash
+ * @method static \Illuminate\Database\Eloquent\Builder mined()
  */
 class NodeBlock extends Model
 {
@@ -21,5 +23,9 @@ class NodeBlock extends Model
     public function scopeMined($query)
     {
         return $query->whereNotNull('hash');
+    }
+    
+    public static function getGenesisBlock(): NodeBlock{
+    
     }
 }

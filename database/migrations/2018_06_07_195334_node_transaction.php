@@ -21,7 +21,6 @@ class NodeTransaction extends Migration
             $table->bigInteger('value');
             $table->bigInteger('fee');
             $table->text('data');
-            $table->string('senderPublicKey', 65);
             $table->string('hash', 40)->unique();
             $table->string('signature', 130);
             $table->bigInteger('minedInBlockIndex')->nullable();

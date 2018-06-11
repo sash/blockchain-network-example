@@ -5,33 +5,89 @@ namespace App\Validators;
 use App\Crypto\PublicKey;
 use App\Crypto\TransactionHasher;
 use App\Exceptions\InvalidTransaction;
+use App\Node\Balance;
 use App\NodeTransaction;
+use App\Repository\TransactionRepository;
 
 class TransactionValidator
 {
+    const MINIMUM_FEE = 10;
     /**
      * @var TransactionHasher
      */
     private $hashTransaction;
     
     /**
-     * ValidateTransaction constructor.
-     * @param NodeTransaction $transaction
+     * @var TransactionRepository
      */
-    function __construct(TransactionHasher $hashTransaction)
+    private $transactionRepository;
+    
+    /**
+     * ValidateTransaction constructor.
+     * @param TransactionHasher $hashTransaction
+     * @param TransactionRepository $transactionRepository
+     */
+    function __construct(TransactionHasher $hashTransaction, TransactionRepository $transactionRepository)
     {
         $this->hashTransaction = $hashTransaction;
+        $this->transactionRepository = $transactionRepository;
     }
     
     public function isValid(NodeTransaction $transaction){
-        $expectedHash = $this->hashTransaction->getHash($transaction);
-        if ($expectedHash != $transaction->hash){
-            throw new InvalidTransaction('Expected hash: '. $transaction->hash.', got '. $expectedHash);
-        }
-        $senderPublicKey = PublicKey::fromSignature($transaction);
-        if ($senderPublicKey->getAddress() != $transaction->senderAddress){
-            throw new InvalidTransaction('Expected sender address: ' . $senderPublicKey->getAddress() . ', got ' . $transaction->senderAddress);
-        }
+        $this->assertHash($transaction);
         
+        $this->assertSignature($transaction);
+    
+        $this->assertMinimumFee($transaction);
+        
+        $this->assertBalance($transaction);
+    
+        return true;
+    }
+    
+    /**
+     * @param NodeTransaction $transaction
+     * @throws InvalidTransaction
+     */
+    private function assertHash(NodeTransaction $transaction): void
+    {
+        
+        $expectedHash = $this->hashTransaction->getHash($transaction);
+        if (!$transaction->hash){
+            $transaction->hash = $expectedHash;
+        }
+        if ($expectedHash != $transaction->hash) {
+            throw new InvalidTransaction('Expected hash: ' . $transaction->hash . ', got ' . $expectedHash);
+        }
+    }
+    
+    /**
+     * @param NodeTransaction $transaction
+     * @throws InvalidTransaction
+     */
+    private function assertSignature(NodeTransaction $transaction): void
+    {
+        $senderPublicKey = PublicKey::fromSignature($transaction);
+        if ($senderPublicKey->getAddress() != $transaction->senderAddress) {
+            throw new InvalidTransaction('Expected sender address: ' . $transaction->senderAddress . ', got ' . $senderPublicKey->getAddress());
+        }
+    }
+    
+    /**
+     * @param NodeTransaction $transaction
+     * @throws InvalidTransaction
+     */
+    private function assertBalance(NodeTransaction $transaction): void
+    {
+        if ($this->transactionRepository->balanceForAddress($transaction->senderAddress, null) < $transaction->value + $transaction->fee) {
+            throw new InvalidTransaction('Not enough funds to complete the transaction');
+        }
+    }
+    
+    private function assertMinimumFee(NodeTransaction $transaction)
+    {
+        if ($transaction->fee < self::MINIMUM_FEE){
+            throw new InvalidTransaction('Transaction fee below minimum: '.self::MINIMUM_FEE);
+        }
     }
 }
