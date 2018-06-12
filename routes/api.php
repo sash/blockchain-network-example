@@ -13,6 +13,31 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('api')->get('/node/blocks', 'NodeController@getBlocks');
-Route::middleware('api')->put('/node/transaction', 'NodeController@putTransaction');
-Route::middleware('api')->get('/node/transaction/{hash}', 'NodeController@getTransaction');
+// Node -> Node (P2P)
+
+
+Route::middleware('api')->get('/broadcast/peers', 'BroadcastController@getPeers'); // Peer[]
+Route::middleware('api')->post('/broadcast/peer', 'BroadcastController@postPeer');// body: ['peer': Peer]
+
+Route::middleware('api')->get('/blocks/last', 'BlockController@getLastBlock'); // Block
+Route::middleware('api')->get('/blocks', 'BlockController@getBlocks'); // Block[]
+Route::middleware('api')->get('/transactions/{hash}', 'TransactionController@getTransaction'); // Transaction
+
+Route::middleware('api')->post('/broadcast/transaction', 'BroadcastController@postTransaction'); // body: ['hash': TxHash]
+Route::middleware('api')->post('/broadcast/block', 'BroadcastController@postBlock');// body: ['hash': BlockHash]
+
+// Miner
+
+Route::middleware('api')->get('/miner/job/{miner_address}', 'MinerController@getJob'); // Block, without nonce and timestamp
+Route::middleware('api')->post('/miner/job', 'MinerController@postJob'); // body: ['block': Block, with nonce and timestamp]
+Route::middleware('api')->get('/miner/last-block-hash', 'MinerController@getLastBlockHash'); // ['hash': Last block's hash]
+
+// Wallet & Faucet
+
+Route::middleware('api')->get('/balance/{address}', 'BalanceController@getBalance'); // [confirmed: int, unconfirmed: int]
+Route::middleware('api')->post('/transaction', 'TransactionController@postTransaction'); // Body: ['transaction': Transaction]
+
+// Explorer
+
+Route::middleware('api')->get('/blocks/last/{limit}', 'BlockController@getBlocks'); // Block[]
+Route::middleware('api')->get('/blocks/{hash}', 'BlockController@getBlocks'); // Block + Transactions

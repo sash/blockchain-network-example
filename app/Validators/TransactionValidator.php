@@ -73,21 +73,23 @@ class TransactionValidator
         }
     }
     
+    private function assertMinimumFee(NodeTransaction $transaction)
+    {
+        if ($transaction->fee < self::MINIMUM_FEE) {
+            throw new InvalidTransaction('Transaction fee below minimum: ' . self::MINIMUM_FEE);
+        }
+    }
+    
     /**
      * @param NodeTransaction $transaction
      * @throws InvalidTransaction
+     * @deprecated The balance check needs to be refactored to support transaction validation for transactions already in a block
      */
     private function assertBalance(NodeTransaction $transaction): void
     {
-        if ($this->transactionRepository->balanceForAddress($transaction->senderAddress, 1) < $transaction->value + $transaction->fee) {
+        if ($this->transactionRepository->balanceForAddress($transaction->senderAddress, null) < $transaction->value + $transaction->fee) {
             throw new InvalidTransaction('Not enough funds to complete the transaction');
         }
     }
     
-    private function assertMinimumFee(NodeTransaction $transaction)
-    {
-        if ($transaction->fee < self::MINIMUM_FEE){
-            throw new InvalidTransaction('Transaction fee below minimum: '.self::MINIMUM_FEE);
-        }
-    }
 }

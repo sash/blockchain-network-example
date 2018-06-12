@@ -35,9 +35,10 @@ class JsonError implements \JsonSerializable
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
      * @since 5.4.0
+     * @deprecated We agreed to use REST response calls
      */
     public function jsonSerialize()
     {
-        return ['success' => false, "error" => ['message'=>$this->message, 'code' => $this->code, 'data' => $this->data]];
+        return ['success' => false, 'message'=>$this->message, 'code' => $this->code, 'data' => $this->data];
     }
 }

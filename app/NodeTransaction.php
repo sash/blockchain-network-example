@@ -19,8 +19,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $senderPublicKey
  * @property string $signature
  * @property boolean|null $transferSuccessful
- * @property int|null $minedInBlockIndex
+ * @property int|null $block_id
  * @property Carbon $created_at
+ * @property int $senderSequence
+ * @property int $sequence
+ * @property NodeBlock|null $block
  *
  * @method static \Illuminate\Database\Eloquent\Builder withConfirmations(int $confirmations, int $topBlockIndex)
  */
@@ -52,5 +55,9 @@ class NodeTransaction extends Model
         return $query
                 ->whereNotNull('transferSuccessful')
                 ->orWhere('transferSuccessful', '=', 1);
+    }
+    
+    public function block(){
+        return $this->belongsTo(NodeBlock::class, 'block_id');
     }
 }
