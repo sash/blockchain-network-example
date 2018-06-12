@@ -35,7 +35,7 @@ The Blockchain explorer will be implemented in PHP using Laravel. For simplicity
 
 Docker + Docker compose are required in order to build the dev enviroment. To install docker go to https://www.docker.com/get-docker
 
-* run `docker-compose run app composer install` to setup PHP dependencies
+* run `docker-compose run node1 composer install` to setup PHP dependencies
 * run `docker-compose up -d` to bring the conteiners online
 * run `docker-compose exec app php artisan` to see available solutions (they are in the blockchain namespace). Run the examples using `docker-compose exec app php artisan blockchain:[example-name]`
 ```
