@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $hash
  * @property string $senderPublicKey
  * @property string $signature
- * @property boolean|null $transferSuccessful
  * @property int|null $block_id
  * @property Carbon $created_at
  * @property int $senderSequence
