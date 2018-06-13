@@ -25,8 +25,6 @@ services:
   node1:
     tty: true
     build: .
-    labels:
-      kompose.service.type: nodeport
     environment:
       - DB_HOST=node1db
       - DB_USERNAME=dev
@@ -50,8 +48,6 @@ services:
   node2:
     tty: true
     build: .
-    labels:
-      kompose.service.type: nodeport
     environment:
       - DB_HOST=node2db
       - DB_USERNAME=dev
@@ -61,5 +57,61 @@ services:
       - node2db
     ports:
       - 5002:5000
+    volumes:
+      - ./:/app
+
+
+  miner1.1:
+    #restart: always
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    environment:
+      - NODE_HOST=node1
+    command: node node/miner.js
+    depends_on:
+      - node1
+    volumes:
+      - ./:/app
+
+  miner1.2:
+    #restart: always
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    environment:
+      - NODE_HOST=node1
+    command: node node/miner.js
+    depends_on:
+      - node1
+    volumes:
+      - ./:/app
+
+
+  miner2.1:
+    #restart: always
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    environment:
+      - NODE_HOST=node2
+    command: node node/miner.js
+    depends_on:
+      - node2
+    volumes:
+      - ./:/app
+
+  miner2.2:
+    #restart: always
+    tty: true
+    build: .
+    environment:
+      - NODE_HOST=node2
+    command: node node/miner.js
+    depends_on:
+      - node2
     volumes:
       - ./:/app
