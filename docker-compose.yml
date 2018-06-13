@@ -30,6 +30,7 @@ services:
       - DB_USERNAME=dev
       - DB_DATABASE=database
       - DB_PASSWORD=password
+      - APPLICATION=node
     depends_on:
       - node1db
     ports:
@@ -53,10 +54,22 @@ services:
       - DB_USERNAME=dev
       - DB_DATABASE=database
       - DB_PASSWORD=password
+      - APPLICATION=node
     depends_on:
       - node2db
     ports:
       - 5002:5000
+    volumes:
+      - ./:/app
+
+
+  wallet:
+    tty: true
+    build: .
+    environment:
+      - APPLICATION=wallet
+    ports:
+      - 5003:5000
     volumes:
       - ./:/app
 
