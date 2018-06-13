@@ -24,5 +24,5 @@ RUN  apt-get update &&  apt-get install yarn
 
 RUN docker-php-ext-install pdo_mysql
 
-CMD php artisan serve --host=0.0.0.0 --port=5000
-EXPOSE 5000
+CMD php artisan serve --host=0.0.0.0 --port=80
+EXPOSE 80

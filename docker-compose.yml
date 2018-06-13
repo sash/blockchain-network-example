@@ -34,7 +34,7 @@ services:
     depends_on:
       - node1db
     ports:
-      - 5001:5000
+      - 5001:80
     volumes:
       - ./:/app
 
@@ -58,7 +58,7 @@ services:
     depends_on:
       - node2db
     ports:
-      - 5002:5000
+      - 5002:80
     volumes:
       - ./:/app
 
@@ -68,8 +68,21 @@ services:
     build: .
     environment:
       - APPLICATION=wallet
+      - NODE_HOSTS=node1,node2
     ports:
-      - 5003:5000
+      - 5003:80
+    volumes:
+      - ./:/app
+
+
+  explorer:
+    tty: true
+    build: .
+    environment:
+      - APPLICATION=explorer
+      - NODE_HOSTS=node1,node2
+    ports:
+      - 5004:80
     volumes:
       - ./:/app
 
@@ -77,9 +90,7 @@ services:
   miner1.1:
     #restart: always
     tty: true
-    build:
-      context: .
-      dockerfile: Dockerfile.node
+    build: .
     environment:
       - NODE_HOST=node1
     command: node node/miner.js
@@ -91,9 +102,7 @@ services:
   miner1.2:
     #restart: always
     tty: true
-    build:
-      context: .
-      dockerfile: Dockerfile.node
+    build: .
     environment:
       - NODE_HOST=node1
     command: node node/miner.js
@@ -106,9 +115,7 @@ services:
   miner2.1:
     #restart: always
     tty: true
-    build:
-      context: .
-      dockerfile: Dockerfile.node
+    build: .
     environment:
       - NODE_HOST=node2
     command: node node/miner.js
