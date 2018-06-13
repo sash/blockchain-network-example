@@ -15,7 +15,7 @@ class CreateNodeTransaction extends Migration
     {
         Schema::create('node_transactions', function (Blueprint $table) {
             $table->increments('id');
-    
+
             $table->string('senderAddress', 40)->index();
             $table->string('receiverAddress', 40)->index();
             $table->unsignedInteger('senderSequence'); // prevents replay attacks
@@ -26,11 +26,10 @@ class CreateNodeTransaction extends Migration
             $table->string('hash', 64)->unique();
             $table->string('signature', 130);
 //            $table->bigInteger('minedInBlockIndex')->nullable();
-            $table->unsignedInteger('block_id')->nullanble();
+            $table->unsignedInteger('block_id')->nullable();
             $table->boolean('transferSuccessful')->nullable();
             $table->timestamps();
-            $table->create();
-            
+//
             $table->foreign('block_id')->references('id')->on('node_blocks')->onDelete('set null');
         });
     }
