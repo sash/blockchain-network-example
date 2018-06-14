@@ -45,7 +45,7 @@ class NodeController extends Controller
             
             $validator->isValid($transaction);
         } catch (\Throwable $e){
-            return JsonError::fromException($e);
+            return JsonError::fromException($e)->response();
         }
         
         $transaction->save();

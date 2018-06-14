@@ -41,4 +41,8 @@ class JsonError implements \JsonSerializable
     {
         return ['success' => false, 'message'=>$this->message, 'code' => $this->code, 'data' => $this->data];
     }
+    
+    public function response($status=500){
+        return response(json_encode($this), $status);
+    }
 }

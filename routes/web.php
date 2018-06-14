@@ -14,3 +14,12 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+if ($_ENV['APPLICATION'] == 'wallet') {
+    // Wallet endpoints
+}
+
+if ($_ENV['APPLICATION'] == 'explorer') {
+    // Explorer endpoints
+}
