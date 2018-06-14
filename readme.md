@@ -1,4 +1,4 @@
-This repo contains Alexander Alexie's homework from lecture
+[![Build Status](https://travis-ci.org/sash/blockchain-network-example.svg?branch=develop)](https://travis-ci.org/sash/blockchain-network-example)
 
 # Project structure
 Docker will be used to launch all the different components of the project - nodes, wallets, workers and so on.
