@@ -27,7 +27,6 @@ class CreateNodeTransaction extends Migration
             $table->string('signature', 130);
 //            $table->bigInteger('minedInBlockIndex')->nullable();
             $table->unsignedInteger('block_id')->nullable();
-            $table->boolean('transferSuccessful')->nullable();
             $table->timestamps();
 //
             $table->foreign('block_id')->references('id')->on('node_blocks')->onDelete('set null');

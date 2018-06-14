@@ -40,21 +40,9 @@ class NodeTransaction extends Model
     public function scopeWithConfirmations($query, $confirmations, $topBlockIndex)
     {
         return $query
-                ->where('minedInBlockIndex', '<=', $topBlockIndex - $confirmations + 1)
-                ->whereNotNull('minedInBlockIndex');
-    }
-    
-    /**
-     * Scope a query to only include active users.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeValid($query)
-    {
-        return $query
-                ->whereNotNull('transferSuccessful')
-                ->orWhere('transferSuccessful', '=', 1);
+                ->leftJoin('node_blocks', 'node_transactions.block_id', '=', 'node_blocks.id')
+                ->where('node_blocks.index','<=', $topBlockIndex - $confirmations + 1)
+                ->whereNotNull('block_id');
     }
     
     public function block(){

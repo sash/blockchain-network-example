@@ -5,12 +5,13 @@ use Faker\Generator as Faker;
 $factory->define(App\NodeTransaction::class, function (Faker $faker) {
     return [
         'senderAddress' => 'sender-address',
+        'receiverAddress' => 'receiver-address',
         'senderSequence' => 1,
         'sequence' => 1,
         'value' => 3,
-        'fee' => 1,
+        'fee' => 10,
         'data' => 'example data',
-        'hash' => 'example-hash',
+        'hash' => 'example-hash'.random_int(1,1000),
         'signature' => 'example-signature',
     ];
 });

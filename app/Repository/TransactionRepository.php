@@ -19,17 +19,23 @@ class TransactionRepository
     {
         $this->blockRepository = $blockRepository;
     }
-    
-    public function balanceForAddress($address, $confirmations){
-        $query = NodeTransaction::valid()
-                ->where('senderAddress', '=', $address)
+
+    /**
+     * @param      $address
+     * @param null $confirmations
+     *
+     * @return int
+     */
+    public function balanceForAddress($address, $confirmations = null){
+        $query = NodeTransaction::where('senderAddress', '=', $address)
                 ->orWhere('receiverAddress', '=', $address)
-                ->selectRaw('IF(senderAddress == "'.$address.'", -1*(value+fee), value) as balance');
+                ->selectRaw('CASE WHEN senderAddress = "'.$address.'" THEN -1*(value+fee) ELSE value END as value');
         
         if ($confirmations !== null){
             $topBlockIndex = $this->blockRepository->getTopBlock()->index;
             $query->withConfirmations($confirmations, $topBlockIndex);
         }
-        return $query->sum('balance');
+
+        return intval($query->sum('value'));
     }
 }
