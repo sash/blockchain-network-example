@@ -13,7 +13,7 @@ class BlockRepository
      */
     public function getTopBlock()
     {
-        return NodeBlock::mined()->orderBy('index', 'desc')->firstOrFail();
+        return NodeBlock::orderBy('index', 'desc')->firstOrFail();
     }
     
     /**
@@ -21,6 +21,6 @@ class BlockRepository
      */
     public function getAllBlocks()
     {
-        return NodeBlock::mined()->sortBy('index', 'asc')->get();
+        return NodeBlock::orderBy('index', 'asc')->get();
     }
 }

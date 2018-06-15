@@ -27,18 +27,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class NodeBlock extends Model
 {
-    /**
-     * Scope a query to only include active users.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     * @deprecated remove me
-     */
-    public function scopeMined($query)
-    {
-        return $query->whereNotNull('hash');
-    }
-    
     public function transactions(){
         return $this->hasMany(NodeTransaction::class, 'block_id')->orderBy('sequence');
     }
