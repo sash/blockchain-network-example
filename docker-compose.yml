@@ -27,9 +27,6 @@ services:
     build: .
     environment:
       - DB_HOST=node1db
-      - DB_USERNAME=dev
-      - DB_DATABASE=database
-      - DB_PASSWORD=password
       - APPLICATION=node
     depends_on:
       - node1db
@@ -51,9 +48,6 @@ services:
     build: .
     environment:
       - DB_HOST=node2db
-      - DB_USERNAME=dev
-      - DB_DATABASE=database
-      - DB_PASSWORD=password
       - APPLICATION=node
     depends_on:
       - node2db
