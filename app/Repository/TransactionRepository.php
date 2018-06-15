@@ -30,12 +30,13 @@ class TransactionRepository
         $query = NodeTransaction::where('senderAddress', '=', $address)
                 ->orWhere('receiverAddress', '=', $address)
                 ->selectRaw('CASE WHEN senderAddress = "'.$address.'" THEN -1*(value+fee) ELSE value END as value');
-        
+
+
         if ($confirmations !== null){
             $topBlockIndex = $this->blockRepository->getTopBlock()->index;
             $query->withConfirmations($confirmations, $topBlockIndex);
         }
 
-        return intval($query->sum('value'));
+        return intval($query->get()->sum('value'));
     }
 }

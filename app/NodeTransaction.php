@@ -41,7 +41,7 @@ class NodeTransaction extends Model
         return $query
                 ->leftJoin('node_blocks', 'node_transactions.block_id', '=', 'node_blocks.id')
                 ->where('node_blocks.index','<=', $topBlockIndex - $confirmations + 1)
-                ->whereNotNull('block_id');
+                ->whereNotNull('node_transactions.block_id');
     }
     
     public function block(){
