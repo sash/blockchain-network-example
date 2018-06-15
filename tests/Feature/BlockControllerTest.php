@@ -13,7 +13,7 @@ class BlockControllerTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * A basic test example.
+     *
      * @test
      * @return void
      */
@@ -29,5 +29,21 @@ class BlockControllerTest extends TestCase
                  'block_hash' => 'hash-for-block-3',
              ]);
     }
-
+    
+    /**
+     *
+     * @test
+     * @return void
+     */
+    public function it_can_all_blocks()
+    {
+        $this->createSequenceOfBlocks(3, function ($attributes) {
+            return $attributes + ["block_hash" => "hash-for-block-" . $attributes['index']];
+        });
+        
+        $this->get("/api/blocks")
+                ->assertStatus(200)
+                ->assertJsonCount(3);
+    }
+    
 }
