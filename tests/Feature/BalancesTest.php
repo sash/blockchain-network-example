@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Crypto\PublicKey;
 use App\Crypto\PublicPrivateKeyPair;
 use App\NodeBlock;
 use App\NodeTransaction;
@@ -81,6 +80,44 @@ class BalancesTest extends TestCase
             ->assertExactJson([
                 'confirmed' => 150,
                 'unconfirmed' => 250
+            ]);
+    }
+
+    /** @test */
+    public function it_returns_empty_balance_when_there_are_no_transactions_for_this_address()
+    {
+        $otherAddress = PublicPrivateKeyPair::generate()->getAddress();
+        $myAddress = PublicPrivateKeyPair::generate()->getAddress();
+
+        $block = factory(NodeBlock::class)->create();
+
+        //not mined transaction
+        factory(NodeTransaction::class)->create([
+            'receiverAddress' => $otherAddress,
+            'value' => 100,
+            'block_id' => null
+        ]);
+
+        //receiving transaction for 500
+        factory(NodeTransaction::class)->create([
+            'receiverAddress' => $otherAddress,
+            'value' => 500,
+            'block_id' => $block->id
+        ]);
+
+        //spending transaction for 350
+        factory(NodeTransaction::class)->create([
+            'senderAddress' => $otherAddress,
+            'value' => 300,
+            'fee' => 50,
+            'block_id' => $block->id
+        ]);
+
+        $this->get("/api/balance/{$myAddress}")
+            ->assertStatus(200)
+            ->assertExactJson([
+                'confirmed' => 0,
+                'unconfirmed' => 0
             ]);
     }
 
