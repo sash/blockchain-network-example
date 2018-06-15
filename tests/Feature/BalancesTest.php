@@ -120,16 +120,4 @@ class BalancesTest extends TestCase
                 'unconfirmed' => 0
             ]);
     }
-
-    private function createSequenceOfBlocks($amount)
-    {
-        $blocks = [];
-
-        for($i=0;$i<$amount;$i++)
-        {
-            $blocks[] = factory(NodeBlock::class)->create(['index' => $i]);
-        }
-
-        return $blocks;
-    }
 }
