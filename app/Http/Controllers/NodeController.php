@@ -20,6 +20,7 @@ use Carbon\Carbon;
  *  - PUT /node/transaction {from: string, to: string, value: int, fee: int, datetime: int, data: string, signature: string}
  *  -
  *  0
+ * @deprecated See routes/api.php for updated structure
  */
 class NodeController extends Controller
 {

@@ -23,7 +23,9 @@ class BlockRepositoryTest extends TestCase
     /** @test */
     public function it_can_return_all_blocks_ordered_by_their_index_ascending()
     {
-        $this->createSequenceOfBlocks(4);
+        $this->createSequenceOfBlocks(4, function ($attributes){
+            return ['index' => (($attributes['index'] + 1) % 4)+1];
+        });
 
         $actualBlocks = (new BlockRepository())->getAllBlocks();
 

@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 */
 
 // Node -> Node (P2P)
-
 if ($_ENV['APPLICATION'] == 'node'){
     
     Route::middleware('api')->get('/broadcast/peers', 'BroadcastController@getPeers'); // Peer[]

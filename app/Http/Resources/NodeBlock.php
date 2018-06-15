@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Repository\BlockRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class NodeBlock extends JsonResource
@@ -14,7 +15,6 @@ class NodeBlock extends JsonResource
      */
     public function toArray($request)
     {
-        
         return [
                 'index' => $this->index,
                 'difficulty' => $this->difficulty,
@@ -25,7 +25,7 @@ class NodeBlock extends JsonResource
                 'timestamp' => $this->timestamp,
                 'block_hash' => $this->block_hash,
                 'transactions' => $this->transactions->map(function($transaction){return $transaction->hash;}),
-                'chain_id' => \App\NodeBlock::getGenesisBlock()->block_hash,
+                'chain_id' => (new BlockRepository())->getGenesisBlock()->block_hash,
         ];
     }
 }

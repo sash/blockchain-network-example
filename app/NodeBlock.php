@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Crypto\BlockHasher;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,11 +28,19 @@ use Illuminate\Database\Eloquent\Model;
  */
 class NodeBlock extends Model
 {
+    
+    protected $fillable = [
+            'index',
+            'difficulty',
+            'mined_by_address',
+            'previous_block_hash',
+            'data_hash',
+            'nonce',
+            'timestamp',
+            'block_hash',
+    ];
     public function transactions(){
         return $this->hasMany(NodeTransaction::class, 'block_id')->orderBy('sequence');
     }
     
-    public static function getGenesisBlock(): NodeBlock{
-    
-    }
 }
