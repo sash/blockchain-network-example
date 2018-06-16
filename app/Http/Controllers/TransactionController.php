@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateTransaction;
 use App\Http\Resources\NodeTransactionResource;
+use App\JsonError;
+use App\Node\BalanceFactory;
+use App\Node\Broadcast;
 use App\NodeTransaction;
 use App\Validators\TransactionValidator;
 use Illuminate\Http\Request;
@@ -32,18 +35,23 @@ class TransactionController extends Controller
      *
      * @return \App\Http\Resources\NodeTransactionResource|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function postTransaction(CreateTransaction $request)
+    public function postTransaction(CreateTransaction $request, Broadcast $broadcast, BalanceFactory $balanceFactory)
     {
         try {
             $transaction = NodeTransactionResource::fromRequest($request);
 
-            if ($this->transactionValidator->assertValid($transaction)) {
-                $transaction->save();
+            $this->transactionValidator->assertValid($transaction);
+            
+            $balanceFactory->forCurrentPending()->addTransaction($transaction); // assets funds
+            
+            $transaction->save();
+            
+            $broadcast->newTransaction($transaction);
 
-                return new NodeTransactionResource($transaction);
-            };
+            return new NodeTransactionResource($transaction);
+            
         } catch (InvalidTransaction $ex){
-            return response(['errors'=> $ex->getMessage()], 422);
+            return JsonError::fromException($ex)->response(422);
         }
     }
 }

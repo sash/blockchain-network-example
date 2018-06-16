@@ -40,6 +40,6 @@ if ($_ENV['APPLICATION'] == 'node'){
     
     Route::middleware('api')->get('/blocks/last/{limit}', 'BlockController@getBlocks'); // Block[]
     Route::middleware('api')->get('/blocks/{hash}', 'BlockController@getBlocks'); // Block + Transactions
-    Route::middleware('api')->get('/transactions/{hash}', 'TransactionController@getTransaction'); // Transaction
+    Route::middleware('api')->get('/transactions/{hash}', 'TransactionController@getTransaction'); // Transaction ?
 
 }
