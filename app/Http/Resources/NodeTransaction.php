@@ -2,10 +2,21 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Class NodeTransaction
+ * @package App\Http\Resources
+ * @todo rename to NodeTransactionResource to avoid name collisions
+ */
 class NodeTransaction extends JsonResource
 {
+    public static function fromArray($transaction)
+    {
+        // TODO: Implement
+    }
+    
     /**
      * Transform the resource into an array.
      *
@@ -29,7 +40,7 @@ class NodeTransaction extends JsonResource
          * @property Carbon $created_at
          * @property int $senderSequence
          * @property int $sequence
-         * @property NodeBlock|null $block
+         * @property NodeBlockResource|null $block
          */
         /**
          * $transactionRepresentation['from'] = $transaction->senderAddress;

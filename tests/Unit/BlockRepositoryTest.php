@@ -14,8 +14,8 @@ class BlockRepositoryTest extends TestCase
     public function it_can_return_the_top_block()
     {
         $blocks = $this->createSequenceOfBlocks(4);
-
-        $topBlock = (new BlockRepository())->getTopBlock();
+        
+        $topBlock = $this->app->make(BlockRepository::class)->getTopBlock();
 
         $this->assertTrue($blocks->last()->is($topBlock));
     }
@@ -27,7 +27,7 @@ class BlockRepositoryTest extends TestCase
             return ['index' => (($attributes['index'] + 1) % 4)+1];
         });
 
-        $actualBlocks = (new BlockRepository())->getAllBlocks();
+        $actualBlocks = $this->app->make(BlockRepository::class)->getAllBlocks();
 
         $this->assertEquals(
             [1,2,3,4],

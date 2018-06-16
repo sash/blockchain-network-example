@@ -23,10 +23,10 @@ class BlockControllerTest extends TestCase
             return $attributes + ["block_hash" => "hash-for-block-".$attributes['index']];
         });
        
-        $this->get("/api/blocks/last")
+        $this->get("/api/blocks/last-hash")
              ->assertStatus(200)
-             ->assertJsonFragment([
-                 'block_hash' => 'hash-for-block-3',
+             ->assertExactJson([
+                 'hash' => 'hash-for-block-3',
              ]);
     }
     
@@ -35,7 +35,7 @@ class BlockControllerTest extends TestCase
      * @test
      * @return void
      */
-    public function it_can_all_blocks()
+    public function it_can_get_all_blocks()
     {
         $this->createSequenceOfBlocks(3, function ($attributes) {
             return $attributes + ["block_hash" => "hash-for-block-" . $attributes['index']];

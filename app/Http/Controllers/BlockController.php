@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\NodeBlock;
+use App\Http\Resources\NodeBlockResource;
 use App\Repository\BlockRepository;
 use Illuminate\Http\Request;
 
 class BlockController extends Controller
 {
-    public function getLastBlock(BlockRepository $repository)
+    public function getLastBlockHash(BlockRepository $repository)
     {
         
         $lastBlock = $repository->getTopBlock();
         
-        return new NodeBlock($lastBlock);
+        return ['hash' => $lastBlock->block_hash];
     }
     
     public function getBlocks(BlockRepository $repository)
     {
         $blocks = $repository->getAllBlocks();
-        return NodeBlock::collection($blocks);
+        return NodeBlockResource::collection($blocks);
     }
 }

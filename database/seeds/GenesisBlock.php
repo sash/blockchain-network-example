@@ -13,15 +13,13 @@ class GenesisBlock extends Seeder
     public function run()
     {
         
-        $repo = new BlockRepository();
+        $repo = $this->container->make(BlockRepository::class);
         $genesis = $repo->getGenesisBlock();
         
-        try{
-            $repo->getBlockWithHash($genesis->block_hash);
-        } catch (Exception $e){
-            // missing from the repository
+        if (!$repo->getBlockWithHash($genesis->block_hash)){
             $genesis->save();
         }
+        
         
     }
 }

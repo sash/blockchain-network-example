@@ -28,6 +28,8 @@ services:
     environment:
       - DB_HOST=node1db
       - APPLICATION=node
+      - NODE_HOST=node1
+
       - XDEBUG_CONFIG="idekey=PHPSTORM"
     depends_on:
       - node1db
@@ -50,7 +52,10 @@ services:
     environment:
       - DB_HOST=node2db
       - APPLICATION=node
+      - NODE_HOST=node1
+
       - XDEBUG_CONFIG="idekey=PHPSTORM"
+
     depends_on:
       - node2db
     ports:

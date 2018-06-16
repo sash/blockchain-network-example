@@ -16,10 +16,10 @@ use Illuminate\Http\Request;
 // Node -> Node (P2P)
 if ($_ENV['APPLICATION'] == 'node'){
     
-    Route::middleware('api')->get('/broadcast/peers', 'BroadcastController@getPeers'); // Peer[]
+    Route::middleware('api')->get('/broadcast/peers', 'BroadcastController@getPeers'); // [host1, ...]
     Route::middleware('api')->post('/broadcast/peer', 'BroadcastController@postPeer');// body: ['peer': Peer]
     
-    Route::middleware('api')->get('/blocks/last', 'BlockController@getLastBlock'); // Block
+    Route::middleware('api')->get('/blocks/last-hash', 'BlockController@getLastBlockHash'); // ['hash': Last block's hash]
     Route::middleware('api')->get('/blocks', 'BlockController@getBlocks'); // Block[]
     Route::middleware('api')->get('/transactions/{hash}', 'TransactionController@getTransaction'); // Transaction
     

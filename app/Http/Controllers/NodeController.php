@@ -44,7 +44,7 @@ class NodeController extends Controller
             
             $transaction = $this->constructTransactionFromInput($transactionInput);
             
-            $validator->isValid($transaction);
+            $validator->assertValid($transaction);
         } catch (\Throwable $e){
             return JsonError::fromException($e)->response();
         }

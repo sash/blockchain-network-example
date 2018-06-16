@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $index
  * @property int $difficulty
+ * @property int $cumulativeDifficulty
  * @property string $mined_by_address
  * @property string $previous_block_hash hash of the data above + the hashes of the transactions in sequence
  * @property string $data_hash
@@ -28,6 +29,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class NodeBlock extends Model
 {
+    
+    public $transactionHashes; // When the transactions are only referenced by hash (taken from another node, or miner)
     
     protected $fillable = [
             'index',

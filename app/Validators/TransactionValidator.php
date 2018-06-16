@@ -33,7 +33,7 @@ class TransactionValidator
         $this->transactionRepository = $transactionRepository;
     }
     
-    public function isValid(NodeTransaction $transaction){
+    public function assertValid(NodeTransaction $transaction){
         $this->assertHash($transaction);
         
         $this->assertSignature($transaction);

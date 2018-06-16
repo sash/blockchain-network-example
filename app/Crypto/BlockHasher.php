@@ -4,6 +4,7 @@ namespace App\Crypto;
 
 use App\NodeBlock;
 use App\NodeTransaction;
+use PhpParser\Node;
 
 class BlockHasher
 {
@@ -26,6 +27,12 @@ class BlockHasher
         }
         
         return hash('sha256', $block->data_hash.$block->timestamp.$block->nonce);
+    }
+    
+    public function updateHashes(NodeBlock $block)
+    {
+        $block->data_hash = $this->getDataHash($block);
+        $block->block_hash = $this->getBlockHash($block);
     }
     
     private function serializedBlock(NodeBlock $block)
