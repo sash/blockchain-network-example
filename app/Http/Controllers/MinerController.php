@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\NodeBlockResource;
 use App\JsonError;
+use App\Node\BalanceFactory;
 use App\Node\BlockFactory;
 use App\Repository\BlockRepository;
 use App\Validators\BlockValidator;
@@ -30,15 +31,21 @@ class MinerController extends Controller
      * @param BlockRepository $blockRepository
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function postJob(Request $request, BlockValidator $blockValidator, BlockRepository $blockRepository){
+    public function postJob(Request $request, BlockValidator $blockValidator, BlockRepository $blockRepository, BalanceFactory $balanceFactory){
         try{
             $json = $request->json()->all();
             
             $block = NodeBlockResource::fromArray($json['block']);
-            $blockValidator->assertValidBlock($block, $blockRepository->getTopBlock());
-        
-            DB::transaction(function() use($blockRepository, $block) {
+            $parent = $blockRepository->getTopBlock();
+            $blockValidator->assertValidBlock($block, $parent);
+            
+            $balance = $balanceFactory->forCurrentBlock($parent);
+            
+            $balance->addBlock($block); // assets valid balances in transactions
+            
+            DB::transaction(function() use($blockRepository, $block, $balance) {
                 $block->save();
+                $balance->saveForBlock($block);
                 $blockRepository->linkTransactions($block);
             });
             return  response('', 201);
@@ -48,6 +55,10 @@ class MinerController extends Controller
     }
     
     public function getLastBlockHash(BlockRepository $blockRepository){
-        return ['hash' => $blockRepository->getTopBlock()->block_hash];
+        try {
+            return ['hash' => $blockRepository->getTopBlock()->block_hash];
+        } catch (\Exception $exception){
+            return JsonError::fromException($exception)->response(403);
+        }
     }
 }

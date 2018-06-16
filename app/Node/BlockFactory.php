@@ -52,6 +52,7 @@ class BlockFactory
     function buildMostProfitableFromPending($miner_address): NodeBlock
     {
         $parent = $this->blockRepository->getTopBlock();
+        
         $res = new NodeBlock();
         $res->difficulty = Difficulty::CURRENT_MIN_DIFFICULTY;
         $res->previous_block_hash = $parent->block_hash;

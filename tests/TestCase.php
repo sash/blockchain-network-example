@@ -68,7 +68,7 @@ abstract class TestCase extends BaseTestCase
             'value'    => $subject->value,
             'fee'      => $subject->fee,
             'data'     => $subject->data,
-            'datetime' => $subject->timestamp,
+            'timestamp' => $subject->timestamp,
         ];
 
         $hash = hash('sha256', json_encode($signatureFor));

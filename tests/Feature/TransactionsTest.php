@@ -45,7 +45,7 @@ class TransactionsTest extends TestCase
                          ->assertStatus(201);
 
 
-        $this->assertCount(1,NodeTransaction::all());
+        $this->assertCount(1, NodeTransaction::all());
 
         tap(NodeTransaction::first(), function($tx) use ($transaction){
             $this->assertEquals($transaction['from'], $tx->senderAddress);

@@ -37,14 +37,15 @@ class TransactionController extends Controller
      *
      * @todo: Use json in body instead of a form
      */
-    public function postTransaction(CreateTransaction $request, Broadcast $broadcast, BalanceFactory $balanceFactory)
+    public function postTransaction(CreateTransaction $request, Broadcast $broadcast)
     {
         try {
             $transaction = NodeTransactionResource::fromRequest($request);
 
             $this->transactionValidator->assertValid($transaction);
             
-            $balanceFactory->forCurrentPending()->addTransaction($transaction); // assets funds
+            // The balance can always be OK based on another parallel chain that we yet don't know about
+//            $balanceFactory->forCurrentPending()->addTransaction($transaction); // assets funds
             
             $transaction->save();
             

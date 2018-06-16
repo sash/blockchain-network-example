@@ -25,10 +25,16 @@ class NodeTransactionResource extends JsonResource
             'data' => empty($request->get('data')) ? "" : $request->get('data'),
             'hash' => $request->get('hash'),
             'signature' => $request->get('signature'),
-            'timestamp' => $request->get('datetime')
+            'timestamp' => $request->get('timestamp')
         ]);
     }
-
+    
+    
+    /**
+     * @param $transaction
+     * @return NodeTransaction
+     * @deprecated Use fromRequest
+     */
     public static function fromArray($transaction){
         $res = new NodeTransaction();
         $res->senderAddress = $transaction['from'];

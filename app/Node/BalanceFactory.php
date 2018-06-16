@@ -31,14 +31,8 @@ class BalanceFactory
     }
     
     /**
-     * Empty balance constructor for use to validate an alternative chain
-     */
-    public function buildEmpty(){
-        return new Balance([], $this->repository);
-    }
-    
-    /**
      * Balance constructor that include all accepted valid pending transactions (saved in the database)
+     * @deprecated All incoming transactions must be declared valid based on balance so this is not used
      */
     public function forCurrentPending(){
         $balance = $this->repository->getBalanceForPending();

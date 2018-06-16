@@ -131,14 +131,17 @@ class BlockRepository
         $sequence = 0;
 // Link up all transactions based on the hashes to the current block! $update->transactions
         foreach ($block->transactions as $transaction) {
-            $existingTransaction = NodeTransaction::where('hash', '=', $transaction->hash)->first();
+            $existingTransaction = NodeTransaction::where('hash', '=', $transaction->hash)->whereNull('block_id')->first();
             if ($existingTransaction) {
+               
                 $existingTransaction->sequence = $sequence++;
                 $existingTransaction->block_id = $block->id;
+                $existingTransaction->save();
             } else {
                 $newTransaction = $transaction;
                 $newTransaction->sequence = $sequence++;
                 $newTransaction->block_id = $block->id;
+                $newTransaction->save();
             }
         }
     }

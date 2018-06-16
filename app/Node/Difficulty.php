@@ -20,7 +20,7 @@ class Difficulty
     
     public function difficultyOfBlock(NodeBlock $block)
     {
-        $difficulty = $this->difficultyOfHash($block->block_hash);
+        $difficulty = $this->zeroesInHash($block->block_hash);
         return pow(16, $difficulty);
     }
     
@@ -34,7 +34,7 @@ class Difficulty
         });
     }
     
-    public function difficultyOfHash($block_hash)
+    public function zeroesInHash($block_hash)
     {
         if (preg_match('/^0+/', $block_hash, $matched)){
             return strlen($matched[0]);

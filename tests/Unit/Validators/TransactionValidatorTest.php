@@ -82,7 +82,7 @@ class TransactionValidatorTest extends TestCase
          * @var $validator TransactionValidator
          */
         
-        $this->assertTrue($this->validator->assertValid($this->subject));
+        $this->assertNull($this->validator->assertValid($this->subject));
     }
     
     /**

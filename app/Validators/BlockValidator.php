@@ -104,7 +104,7 @@ class BlockValidator
     private function assertProofOfWorkMatchesTheRequirement(NodeBlock $block)
     {
         $this->blockHasher->updateHashes($block);
-        $diff = $this->difficulty->difficultyOfHash($block->block_hash);
+        $diff = $this->difficulty->zeroesInHash($block->block_hash);
         if ($diff < Difficulty::CURRENT_MIN_DIFFICULTY){
             throw new \InvalidArgumentException('The block with index ' . $block->index . ' has proof of work with difficulty setting of '.$diff.' with minimum '.Difficulty::CURRENT_MIN_DIFFICULTY.' required');
         }

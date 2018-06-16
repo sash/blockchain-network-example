@@ -88,18 +88,12 @@ class SyncChain implements ShouldQueue
     private function chainIsMoreDifficult($candidateChain)
     {
         $tobBlock = $this->blockRepository->getTopBlock();
-        $candidateDifficulty = $this->difficulty->difficultyOfChain($candidateChain);
-        $currentDifficulty = $tobBlock->cumulativeDifficulty;
-        if ($candidateDifficulty > $currentDifficulty) {
-            return true;
-        } else {
-            if ($candidateDifficulty < $currentDifficulty) {
-                return false;
-            } else {
-                // Compare the hashes of the top blocks
-                return last($candidateChain)->block_hash > $tobBlock->block_hash;
-            }
-        }
+        $topBlockInCandidate = last($candidateChain);
+    
+        // We dont believe the chain provided and want to compute the cumulative difficulty ourselves
+        $topBlockInCandidate->cumulativeDifficulty = $this->difficulty->difficultyOfChain($candidateChain);
+        
+        return $this->difficulty->AIsMoreDifficultThenB($topBlockInCandidate, $tobBlock);
     }
     
     private function clearSequenceOfPendingTransactions()

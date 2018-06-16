@@ -5,6 +5,11 @@ namespace App\Crypto;
 use App\NodeTransaction;
 use Elliptic\EC;
 
+/**
+ * Class TransactionSigner
+ * @package App\Crypto
+ * @deprecated Should be only used by the wallet and implemented in JS
+ */
 class TransactionSigner
 {
     /**

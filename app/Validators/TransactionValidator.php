@@ -35,10 +35,10 @@ class TransactionValidator
     
     /**
      * @param NodeTransaction $transaction
-     * @return bool
+     * @return void
      * @throws InvalidTransaction
      */
-    public function assertValid(NodeTransaction $transaction){
+    public function assertValid(NodeTransaction $transaction): void{
         
         $this->assertHash($transaction);
         
@@ -52,8 +52,6 @@ class TransactionValidator
     
         }
         
-    
-        return true;
     }
     
     /**
