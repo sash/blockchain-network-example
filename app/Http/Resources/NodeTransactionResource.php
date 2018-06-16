@@ -2,10 +2,7 @@
 
 namespace App\Http\Resources;
 
-<<<<<<< 7d79ad3f2976f9a54387850f1d77ba093aa2da4e
-=======
 use App\Crypto\TransactionHasher;
->>>>>>> implemented broadcast methods
 use App\NodeTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,8 +30,6 @@ class NodeTransactionResource extends JsonResource
     }
 
     public static function fromArray($transaction){
-        //TODO implement
-
         $res = new NodeTransaction();
         $res->senderAddress = $transaction['from'];
         $res->senderSequence = $transaction['from_id'];
