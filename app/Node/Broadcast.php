@@ -23,13 +23,18 @@ class Broadcast
     }
     
     public function newTransaction(NodeTransaction $transaction){
-        // TODO: Implement
-        
+        $this->each(function (NodePeer $knownPeer) use ($transaction) {
+            echo "Announcing new block $transaction->hash to $knownPeer->host\n";
+            $knownPeer->client->broadcastTransaction($transaction->hash);
+        });
     }
     
     public function newBlock($block_hash)
     {
-        // TODO: Implement
+        $this->each(function (NodePeer $knownPeer) use ($block_hash) {
+            echo "Announcing new block $block_hash to $knownPeer->host\n";
+            $knownPeer->client->broadcastBlock($block_hash);
+        });
     }
     
     public function newPeer(NodePeer $peer)
@@ -41,6 +46,10 @@ class Broadcast
     }
     
     private function each($callback){
-        $this->peerRepository->allPeers()->each($callback);
+        $current = $this->peerRepository->currentPeer();
+        
+        $this->peerRepository->allPeers()->reject(function($peer) use ($current){
+            return $peer->host == $current->host;
+        })->each($callback);
     }
 }

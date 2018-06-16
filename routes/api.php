@@ -22,8 +22,8 @@ if ($_ENV['APPLICATION'] == 'node'){
     Route::middleware('api')->get('/blocks/last', 'BlockController@getLastBlock'); // Block
     Route::middleware('api')->get('/blocks', 'BlockController@getBlocks'); // Block[] + Transactions[]
     
-    Route::middleware('api')->post('/broadcast/transaction', 'BroadcastController@postTransaction'); // body: ['hash': TxHash]
-    Route::middleware('api')->post('/broadcast/block', 'BroadcastController@postBlock');// body: ['hash': BlockHash]
+    Route::middleware('api')->post('/broadcast/transaction', 'BroadcastController@postTransaction'); // body: ['transaction': TxHash, 'peer' => 'source host']
+    Route::middleware('api')->post('/broadcast/block', 'BroadcastController@postBlock');// body: ['block': BlockHash, 'peer' => 'source host']
     
     // Miner
     

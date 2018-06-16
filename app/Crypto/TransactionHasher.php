@@ -28,7 +28,7 @@ class TransactionHasher
         $transactionRepresentation['value'] = $transaction->value;
         $transactionRepresentation['fee'] = $transaction->fee;
         $transactionRepresentation['data'] = $transaction->data;
-        $transactionRepresentation['datetime'] = $transaction->timestamp;
+        $transactionRepresentation['timestamp'] = $transaction->timestamp;
         return json_encode($transactionRepresentation);
     }
     

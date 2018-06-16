@@ -65,7 +65,6 @@ class BroadcastController extends Controller
             Broadcast $rebroadcast
     ) {
         try{
-            // TODO: The post block only contains the hash! Request the full block from the peer if the block is new!
             $this->blockRepository = $blockRepository;
             $this->transactionRepository = $transactionRepository;
             $this->transactionValidator = $transactionValidator;
@@ -106,7 +105,6 @@ class BroadcastController extends Controller
             PeerRepository $peerRepository,
             BalanceFactory $balanceFactory
     ) {
-        // TODO: The post transaction only contains the hash! Request the full transaction from the peer if the transaction is new!
         try{
             $bodyArray = $request->json()->all();
             if (!isset($bodyArray['transaction'])) {
@@ -117,14 +115,15 @@ class BroadcastController extends Controller
                 return (new JsonError('Missing peer'))->response(403);
             }
             
-            $existingTransaction = NodeTransactionResource::where('hash', '=', $bodyArray['transaction']['hash'])->first();
+            $existingTransaction = NodeTransactionResource::where('hash', '=', $bodyArray['transaction'])->first();
             if ($existingTransaction){
                 return response('',201);
             }
             
-            $peerRepository->getPeer($bodyArray['peer'])->wasActive();
+            $peer = $peerRepository->getPeer($bodyArray['peer'])->wasActive();
             
-            $transaction = NodeTransactionResource::fromArray($bodyArray['transaction']);
+            $transaction = $peer->client->getTransaction($bodyArray['transaction']);
+            
             $transactionValidator->assertValid($transaction);
             
             $balance = $balanceFactory->forCurrentPending();

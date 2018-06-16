@@ -2,6 +2,10 @@
 
 namespace App\Http\Resources;
 
+<<<<<<< 7d79ad3f2976f9a54387850f1d77ba093aa2da4e
+=======
+use App\Crypto\TransactionHasher;
+>>>>>>> implemented broadcast methods
 use App\NodeTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,6 +34,18 @@ class NodeTransactionResource extends JsonResource
 
     public static function fromArray($transaction){
         //TODO implement
+
+        $res = new NodeTransaction();
+        $res->senderAddress = $transaction['from'];
+        $res->senderSequence = $transaction['from_id'];
+        $res->receiverAddress = $transaction['to'];
+        $res->value = $transaction['value'];
+        $res->fee = $transaction['fee'];
+        $res->data = $transaction['data'];
+        $res->timestamp = $transaction['timestamp'];
+        $res->hash = app(TransactionHasher::class)->getHash($res);
+        $res->signature = $transaction['signature'];
+        return $res;
     }
     
     /**
@@ -48,10 +64,10 @@ class NodeTransactionResource extends JsonResource
             'value' => $this->value,
             'fee' => $this->fee,
             'data' => $this->data,
+            'timestamp' => $this->timestamp,
             'mined_in_block_index' => $this->block_id ? $this->block->index : null,
             'hash' => $this->hash,
             'signature' => $this->signature,
-            'timestamp' => $this->timestamp,
         ];
     }
 }
