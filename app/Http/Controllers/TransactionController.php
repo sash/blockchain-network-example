@@ -50,7 +50,7 @@ class TransactionController extends Controller
 
             return new NodeTransactionResource($transaction);
             
-        } catch (InvalidTransaction $ex){
+        } catch (\Exception $ex){
             return JsonError::fromException($ex)->response(422);
         }
     }
