@@ -34,6 +34,8 @@ class TransactionController extends Controller
      * @param \App\Http\Requests\CreateTransaction $request
      *
      * @return \App\Http\Resources\NodeTransactionResource|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     *
+     * @todo: Use json in body instead of a form
      */
     public function postTransaction(CreateTransaction $request, Broadcast $broadcast, BalanceFactory $balanceFactory)
     {
