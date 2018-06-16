@@ -51,7 +51,7 @@ class TransactionValidatorTest extends TestCase
                 'value'    => $subject->value,
                 'fee'      => $subject->fee,
                 'data'     => $subject->data,
-                'datetime' => $subject->timestamp,
+                'timestamp' => $subject->timestamp,
         ];
     
         $signatureFor = json_encode($signatureFor);
