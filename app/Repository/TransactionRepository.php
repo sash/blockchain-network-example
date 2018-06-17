@@ -54,7 +54,7 @@ class TransactionRepository
      */
     public function pendingTransactions()
     {
-        return NodeTransaction::whereIsNull('block_id')->orderBy('id');
+        return NodeTransaction::whereNull('block_id');
     }
     
     /**

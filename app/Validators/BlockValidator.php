@@ -5,10 +5,15 @@ namespace App\Validators;
 use App\Crypto\BlockHasher;
 use App\Node\Difficulty;
 use App\NodeBlock;
+use App\NodeTransaction;
 use App\Repository\BlockRepository;
 
 class BlockValidator
 {
+    const COINBASE_MINING_FEE = 10000000;
+    
+    const TRANSACTIONS_LIMIT = 10;
+    
     /**
      * @var BlockHasher
      */
@@ -59,6 +64,7 @@ class BlockValidator
      * @param NodeBlock $block
      * @param NodeBlock $parent
      *
+     * @throws \App\Exceptions\InvalidTransaction
      */
     public function assertValidBlock(NodeBlock $block, NodeBlock $parent)
     {
@@ -66,6 +72,7 @@ class BlockValidator
         $this->assertBlockIndexIsSequential($block, $parent);
         $this->assertProofOfWorkMatchesTheRequirement($block);
         $this->assertTransactionsAreValid($block);
+        $this->assertCoinbaseIsValid($block);
     }
     
     /**
@@ -98,15 +105,38 @@ class BlockValidator
     {
         $this->blockHasher->updateHashes($block);
         $diff = $this->difficulty->difficultyOfHash($block->block_hash);
-        if ($diff < Difficulty::CURRENT_DIFFICULTY){
-            throw new \InvalidArgumentException('The block with index ' . $block->index . ' has proof of work with difficulty setting of '.$diff.' with minimum '.Difficulty::CURRENT_DIFFICULTY.' required');
+        if ($diff < Difficulty::CURRENT_MIN_DIFFICULTY){
+            throw new \InvalidArgumentException('The block with index ' . $block->index . ' has proof of work with difficulty setting of '.$diff.' with minimum '.Difficulty::CURRENT_MIN_DIFFICULTY.' required');
         }
     }
     
+    /**
+     * @param $block
+     * @throws \App\Exceptions\InvalidTransaction
+     */
     private function assertTransactionsAreValid($block)
     {
         foreach ($block->transactions as $transaction){
             $this->transactionValidator->assertValid($transaction);
+        }
+    }
+    
+    private function assertCoinbaseIsValid(NodeBlock $block)
+    {
+        $coinbaseExpected = self::COINBASE_MINING_FEE;
+        $coinbaseActual = 0;
+        foreach ($block->transactions as $transaction) {
+            if ($transaction->isCoinbase) {
+                $coinbaseActual += $transaction->value;
+            } else {
+                $coinbaseExpected += $transaction->fee;
+            }
+        }
+            
+        if ($coinbaseActual != $coinbaseExpected) {
+            throw new \InvalidArgumentException('Block is not valid. The coinbase transaction(s) do not match the expected value: ' . json_encode(['actual'   => $coinbaseActual,
+                                                                                                                                            'expected' => $coinbaseExpected
+                    ]));
         }
     }
 }

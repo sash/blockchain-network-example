@@ -44,14 +44,21 @@ class NodeBlockResource extends JsonResource
                 'nonce',
                 'timestamp',
                 'transactions',
+                'chain_id',
                 ], array_keys($block_array))){
             throw new \InvalidArgumentException("Missing block fields: ".json_encode($missing));
         }
-        
-        $block = new \App\NodeBlock($block_array);
-        if (!is_array($block_array['transactions'])){
+    
+        if (!is_array($block_array['transactions'])) {
             throw new \InvalidArgumentException("Transactions in block are not array: " . json_encode($block_array));
         }
+        
+        $attributes = $block_array;
+        unset($attributes['transactions'], $attributes['chain_id']);
+        $block = new \App\NodeBlock($attributes);
+        
+        $block->chain_id = $block_array['chain_id'];
+        
         $block->transaction = array_map(
                 function($transactionArray){
                     return NodeTransactionResource::fromArray($transactionArray);

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Node\PeerClient;
 use App\Node\PeerCommunicationTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -12,12 +13,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property string $host
  * @property Carbon $last_activity
+ * @property PeerClient $client
  */
 class NodePeer extends Model
 {
-    use PeerCommunicationTrait;
     
     public $is_new = false; // Check of the peer was recently added to the database
+    
+    protected $dates = ['last_activity'];
     
     protected $fillable = ['host', 'last_activity'];
     
@@ -27,6 +30,10 @@ class NodePeer extends Model
         $this->last_activity = Carbon::now();
         $this->save();
         return $this;
+    }
+    
+    public function getClientAttribute(){
+        return new PeerClient($this);
     }
     
 }

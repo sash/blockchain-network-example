@@ -33,7 +33,7 @@ class Balance
     {
         
         
-        if ($this->balance[$transaction->senderAddress] < $transaction->value + $transaction->fee && !$this->isCoinbase($transaction)) {
+        if ($this->balance[$transaction->senderAddress] < $transaction->value + $transaction->fee && !$transaction->isCoinbase) {
             throw new InvalidTransaction('Not enough funds to carry out the transaction');
         }
     
@@ -49,19 +49,8 @@ class Balance
      */
     public function addBlock(NodeBlock $block): void
     {
-        $coinbaseExpected = NodeTransaction::COINBASE_MINING_FEE;
-        $coinbaseActual = 0;
         foreach ($block->transactions as $transaction){
-            if ($this->isCoinbase($transaction)){
-                $coinbaseActual += $transaction->value;
-            } else {
-                $coinbaseExpected += $transaction->fee;
-            }
             $this->addTransaction($transaction);
-            
-        }
-        if ($coinbaseActual != $coinbaseExpected){
-            throw new InvalidTransaction('Block is not valid. The coinbase transaction(s) do not match the expected value: '.json_encode(['actual' => $coinbaseActual , 'expected' => $coinbaseExpected]));
         }
     }
     
@@ -90,8 +79,4 @@ class Balance
         $this->repository->saveBalancesForPending($this->balance);
     }
     
-    private function isCoinbase(NodeTransaction $transaction)
-    {
-        return NodeTransaction::COINBASE_ADDRESS == $transaction->senderAddress;
-    }
 }

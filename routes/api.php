@@ -19,9 +19,8 @@ if ($_ENV['APPLICATION'] == 'node'){
     Route::middleware('api')->get('/broadcast/peers', 'BroadcastController@getPeers'); // [host1, ...]
     Route::middleware('api')->post('/broadcast/peer', 'BroadcastController@postPeer');// body: ['peer': Peer]
     
-    Route::middleware('api')->get('/blocks/last-hash', 'BlockController@getLastBlockHash'); // ['hash': Last block's hash]
+    Route::middleware('api')->get('/blocks/last', 'BlockController@getLastBlock'); // Block
     Route::middleware('api')->get('/blocks', 'BlockController@getBlocks'); // Block[] + Transactions[]
-    Route::middleware('api')->get('/transactions/{hash}', 'TransactionController@getTransaction'); // Transaction
     
     Route::middleware('api')->post('/broadcast/transaction', 'BroadcastController@postTransaction'); // body: ['hash': TxHash]
     Route::middleware('api')->post('/broadcast/block', 'BroadcastController@postBlock');// body: ['hash': BlockHash]
@@ -41,5 +40,6 @@ if ($_ENV['APPLICATION'] == 'node'){
     
     Route::middleware('api')->get('/blocks/last/{limit}', 'BlockController@getBlocks'); // Block[]
     Route::middleware('api')->get('/blocks/{hash}', 'BlockController@getBlocks'); // Block + Transactions
+    Route::middleware('api')->get('/transactions/{hash}', 'TransactionController@getTransaction'); // Transaction
 
 }

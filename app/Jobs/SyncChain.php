@@ -73,7 +73,7 @@ class SyncChain implements ShouldQueue
      */
     public function handle()
     {
-        $candidateChain = $this->peer->getBlocks();
+        $candidateChain = $this->peer->client->getBlocks();
     
         $this->blockValidator->assertValidChain($candidateChain);
     

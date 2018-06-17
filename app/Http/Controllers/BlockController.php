@@ -8,12 +8,10 @@ use Illuminate\Http\Request;
 
 class BlockController extends Controller
 {
-    public function getLastBlockHash(BlockRepository $repository)
+    public function getLastBlock(BlockRepository $repository)
     {
-        
         $lastBlock = $repository->getTopBlock();
-        
-        return ['hash' => $lastBlock->block_hash];
+        return new NodeBlockResource($lastBlock);
     }
     
     public function getBlocks(BlockRepository $repository)

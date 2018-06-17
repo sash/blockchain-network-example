@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $senderSequence
  * @property int|null $sequence
  * @property NodeBlock|null $block
+ * @property bool $isCoinbase
  *
  * @method \Illuminate\Database\Eloquent\Builder withConfirmations(int $confirmations, int $topBlockIndex)
  * @method \Illuminate\Database\Eloquent\Builder coinbase()
@@ -30,7 +31,7 @@ class NodeTransaction extends Model
 {
     public $timestamps = false;
     const COINBASE_ADDRESS = '0000000000000000000000000000000000000000';
-    const COINBASE_MINING_FEE = 10000000;
+    
     /**
      * Scope a query to only include active users.
      *
@@ -53,5 +54,9 @@ class NodeTransaction extends Model
     
     public function block(){
         return $this->belongsTo(NodeBlock::class, 'block_id');
+    }
+    
+    public function attributeIsCoinbase(){
+        return $this->senderAddress == self::COINBASE_ADDRESS;
     }
 }

@@ -34,12 +34,13 @@ class Broadcast
     
     public function newPeer(NodePeer $peer)
     {
-        $this->forEach(function (NodePeer $knownPeer) use ($peer) {
-            $knownPeer->broadcastPeer($peer);
+        $this->each(function (NodePeer $knownPeer) use ($peer) {
+            echo "Announcing $peer->host to $knownPeer->host\n";
+            $knownPeer->client->broadcastPeer($peer);
         });
     }
     
-    private function forEach($callback){
-        $this->peerRepository->allPeers()->forEach($callback);
+    private function each($callback){
+        $this->peerRepository->allPeers()->each($callback);
     }
 }

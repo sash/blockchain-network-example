@@ -19,6 +19,7 @@ use App\Validators\TransactionValidator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Psy\Util\Json;
 
 class BroadcastController extends Controller
 {
@@ -68,15 +69,15 @@ class BroadcastController extends Controller
             $this->blockRepository = $blockRepository;
             $this->transactionRepository = $transactionRepository;
             $this->transactionValidator = $transactionValidator;
-            $bodyArray = $request->json();
+            $bodyArray = $request->json()->all();
             if (!isset($bodyArray['block'])){
-                return (new JsonError('Missing block'))->response(401);
+                return (new JsonError('Missing block'))->response(403);
             }
             
             $blockHash = $bodyArray['block'];
             
             if (!isset($bodyArray['peer'])){
-                return (new JsonError('Missing peer'))->response(401);
+                return (new JsonError('Missing peer'))->response(403);
             }
             $peer = $peerRepository->getPeer($bodyArray['peer']);
             
@@ -94,7 +95,7 @@ class BroadcastController extends Controller
             $rebroadcast->newBlock($blockHash);
             return response();
         } catch (\Exception $exception){
-            return JsonError::fromException($exception)->response(401);
+            return JsonError::fromException($exception)->response(403);
         }
     }
     
@@ -107,13 +108,13 @@ class BroadcastController extends Controller
     ) {
         // TODO: The post transaction only contains the hash! Request the full transaction from the peer if the transaction is new!
         try{
-            $bodyArray = $request->json();
+            $bodyArray = $request->json()->all();
             if (!isset($bodyArray['transaction'])) {
-                return (new JsonError('Missing transaction'))->response(401);
+                return (new JsonError('Missing transaction'))->response(403);
             }
         
             if (!isset($bodyArray['peer'])) {
-                return (new JsonError('Missing peer'))->response(401);
+                return (new JsonError('Missing peer'))->response(403);
             }
             
             $existingTransaction = NodeTransactionResource::where('hash', '=', $bodyArray['transaction']['hash'])->first();
@@ -137,30 +138,41 @@ class BroadcastController extends Controller
             $rebroadcast->newTransaction($transaction);
             return response();
         } catch (\Exception $exception) {
-            return JsonError::fromException($exception)->response(401);
+            return JsonError::fromException($exception)->response(403);
         }
     }
     
     public function getPeers(PeerRepository $peerRepository){
-        return array_map( function($peer){return $peer->host;}, $peerRepository->allPeers());
+        try{
+            $peers = $peerRepository->allPeers()->all();
+            return array_map( function($peer){
+                return $peer->host;
+                }, $peers);
+        }catch (\Throwable $e){
+            return JsonError::fromException($e)->response(500);
+        }
     }
     
     public function postPeer(Request $request, PeerRepository $peerRepository, Broadcast $broadcast){
-        $json = $request->json();
-        
-        $peer = $peerRepository->getPeer($json['peer']);
-        
-        if ($peer->host == $peerRepository->currentPeer()->host){
-            return response('', 201);
+        try {
+            $json = $request->json()->all();
+    
+            $peer = $peerRepository->getPeer($json['peer']);
+    
+            if ($peer->host == $peerRepository->currentPeer()->host) {
+                return response('', 201);
+            }
+    
+            if ($peer->is_new) {
+                $broadcast->newPeer($peer);
+            }
+    
+            $peer->wasActive();
+    
+            return response();
+        } catch (\Throwable $e) {
+            return JsonError::fromException($e)->response(500);
         }
-        
-        if ($peer->is_new){
-            $broadcast->newPeer($peer);
-        }
-        
-        $peer->wasActive();
-        
-        return response();
     }
     
     

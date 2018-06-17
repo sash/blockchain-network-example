@@ -38,7 +38,7 @@ class BlockRepository
      */
     public function getTopBlock(): NodeBlock
     {
-        return NodeBlock::orderBy('index', 'desc')->firstOrFail();
+        return NodeBlock::query()->orderBy('index', 'desc')->firstOrFail();
     }
     
     /**
@@ -46,7 +46,7 @@ class BlockRepository
      */
     public function getAllBlocks()
     {
-        return NodeBlock::orderBy('index', 'asc')->get();
+        return NodeBlock::query()->orderBy('index', 'asc')->get();
     }
     
     /**
@@ -141,11 +141,6 @@ class BlockRepository
                 $newTransaction->block_id = $block->id;
             }
         }
-    }
-    
-    public function blockCanBeAppendedTo(NodeBlock $block, NodeBlock $top)
-    {
-        return $block->previous_block_hash == $top->block_hash;
     }
     
     /**

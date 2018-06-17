@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\NodePeer;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class PeerRepository
 {
@@ -18,11 +20,11 @@ class PeerRepository
     }
     
     /**
-     * @return NodePeer[]
+     * @return NodePeer[]|Collection
      */
     public function allPeers()
     {
-        return NodePeer::all()->get();
+        return NodePeer::all();
     }
     
     public function currentPeer(): NodePeer{
@@ -36,14 +38,14 @@ class PeerRepository
      */
     public function knownPeers()
     {
-        if (!@$_ENV['NODE_HOST']){
+        if (!@$_ENV['NODE_PEERS']){
             return [];
         }
-        return array_map(function($host){return new NodePeer(['host' => $host]);}, explode(',', @$_ENV['NODE_HOST']));
+        return array_map(function($host){return new NodePeer(['host' => $host]);}, explode(',', @$_ENV['NODE_PEERS']));
     }
     
     public function clearPeers()
     {
-        NodePeer::all()->delete();
+        NodePeer::truncate();
     }
 }

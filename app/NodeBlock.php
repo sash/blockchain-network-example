@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Crypto\BlockHasher;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,12 +24,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $block_hash hash(data_hash+nonce+timestamp)
  * @property Collection|NodeTransaction[] $transactions
  *
- * @method static \Illuminate\Database\Eloquent\Builder mined()
  */
 class NodeBlock extends Model
 {
     
-    public $transactionHashes; // When the transactions are only referenced by hash (taken from another node, or miner)
+    public $chain_id;
     
     protected $fillable = [
             'index',

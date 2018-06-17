@@ -6,7 +6,17 @@ use App\NodeBlock;
 
 class Difficulty
 {
-    const CURRENT_DIFFICULTY = 4;
+    const CURRENT_MIN_DIFFICULTY = 4;
+    
+    public function AIsMoreDifficultThenB(NodeBlock $A, NodeBlock $B){
+        if ($A->cumulativeDifficulty > $B->cumulativeDifficulty){
+            return true;
+        } elseif ($A->cumulativeDifficulty == $B->cumulativeDifficulty){
+            return $A->block_hash > $B->block_hash;
+        } else {
+            return false;
+        }
+    }
     
     public function difficultyOfBlock(NodeBlock $block)
     {

@@ -52,12 +52,14 @@ services:
     environment:
       - DB_HOST=node2db
       - APPLICATION=node
-      - NODE_HOST=node1
+      - NODE_HOST=node2
+      - NODE_PEERS=node1
 
       - XDEBUG_CONFIG="idekey=PHPSTORM"
 
     depends_on:
       - node2db
+      - node1
     ports:
       - 5002:80
     volumes:

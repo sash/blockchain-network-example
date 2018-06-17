@@ -42,17 +42,16 @@ class TransactionValidator
         
         $this->assertHash($transaction);
         
-        if ($this->isCoinbase($transaction)){
-            $this->assertConbaseValue($transaction);
-        } else {
+        if (!$transaction->isCoinbase) {
     
             $this->assertSignature($transaction);
     
             $this->assertMinimumFee($transaction);
+            
+            $this->assertSenderSequence($transaction);
     
         }
         
-        $this->assertSenderSequence($transaction);
     
         return true;
     }
@@ -129,15 +128,5 @@ class TransactionValidator
         
     }
     
-    private function isCoinbase($transaction)
-    {
-        // TODO: Implement
-        return false;
-    }
-    
-    private function assertConbaseValue($transaction)
-    {
-        // TODO: Implement
-    }
     
 }
