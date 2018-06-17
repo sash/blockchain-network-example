@@ -23,11 +23,8 @@ class TransactionSigner
     
     public function sign($privateKeyAsHex, NodeTransaction $transaction){
         $hash = $transaction->hash ?: $this->transactionHasher->getHash($transaction);
-        $crypto = new EC('secp256k1');
-        $key = $crypto->keyFromPrivate($privateKeyAsHex, 'hex');
         
-        $signature = $key->sign($hash, 'hex', ['canonical' => true]);
-    
-        return $signature->r->toString('hex'). $signature->s->toString('hex'). str_pad(dechex($signature->recoveryParam),2,'0', STR_PAD_LEFT);
+        $keyPair = PublicPrivateKeyPair::fromPrivateKey($privateKeyAsHex);
+        return $keyPair->sign($hash);
     }
 }

@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Node;
+
+use App\Exceptions\InvalidTransaction;
+use App\NodeBlock;
+use App\NodeTransaction;
+use App\Repository\BalanceRepository;
+
+class Balance
+{
+    /**
+     * @var array
+     */
+    private $balance;
+    /**
+     * @var BalanceRepository
+     */
+    private $repository;
+    
+    /**
+     * Balance constructor.
+     * @param array $balance
+     */
+    public function __construct($balance, BalanceRepository $repository)
+    {
+    
+        $this->balance = $balance;
+        $this->repository = $repository;
+    }
+    
+    public function addTransaction(NodeTransaction $transaction): bool
+    {
+        
+        
+        if ($this->balance[$transaction->senderAddress] < $transaction->value + $transaction->fee && !$this->isCoinbase($transaction)) {
+            throw new InvalidTransaction('Not enough funds to carry out the transaction');
+        }
+    
+        $this->balance[$transaction->senderAddress] -= $transaction->value + $transaction->fee;
+        $this->balance[$transaction->receiverAddress] += $transaction->value;
+        // Fee is left for the miner's coinbase
+        return true;
+    }
+    
+    /**
+     * @param NodeBlock $block
+     * @throws InvalidTransaction
+     */
+    public function addBlock(NodeBlock $block): void
+    {
+        $coinbaseExpected = NodeTransaction::COINBASE_MINING_FEE;
+        $coinbaseActual = 0;
+        foreach ($block->transactions as $transaction){
+            if ($this->isCoinbase($transaction)){
+                $coinbaseActual += $transaction->value;
+            } else {
+                $coinbaseExpected += $transaction->fee;
+            }
+            $this->addTransaction($transaction);
+            
+        }
+        if ($coinbaseActual != $coinbaseExpected){
+            throw new InvalidTransaction('Block is not valid. The coinbase transaction(s) do not match the expected value: '.json_encode(['actual' => $coinbaseActual , 'expected' => $coinbaseExpected]));
+        }
+    }
+    
+    public function saveForBlock(NodeBlock $block): void
+    {
+        if (!$block->id){
+            throw new \Exception('The block needs to be persisted in the database');
+        }
+        
+        $this->repository->saveBalancesForBlock($block, $this->balance);
+        
+    }
+    
+    /**
+     * @param NodeBlock $block
+     * @throws InvalidTransaction
+     * @throws \Exception
+     */
+    public function updateForBlock(NodeBlock $block){
+        $this->addBlock($block);
+        $this->saveForBlock($block);
+    }
+    
+    public function savePending(): void
+    {
+        $this->repository->saveBalancesForPending($this->balance);
+    }
+    
+    private function isCoinbase(NodeTransaction $transaction)
+    {
+        return NodeTransaction::COINBASE_ADDRESS == $transaction->senderAddress;
+    }
+}

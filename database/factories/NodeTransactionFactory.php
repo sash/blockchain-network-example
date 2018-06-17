@@ -13,6 +13,7 @@ $factory->define(App\NodeTransaction::class, function (Faker $faker) {
         'data' => 'example data',
         'hash' => 'transaction-hash-'.$faker->unique()->randomNumber(),
         'signature' => 'example-signature',
+        'timestamp' => time(),
     ];
 });
 

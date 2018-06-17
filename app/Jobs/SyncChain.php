@@ -6,6 +6,7 @@ use App\Node\Difficulty;
 use App\NodeBlock;
 use App\NodePeer;
 use App\Repository\BlockRepository;
+use App\Repository\TransactionRepository;
 use App\Validators\BlockValidator;
 use App\Validators\TransactionValidator;
 use Illuminate\Bus\Queueable;
@@ -13,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\DB;
 
 class SyncChain implements ShouldQueue
 {
@@ -37,6 +39,10 @@ class SyncChain implements ShouldQueue
      * @var TransactionValidator
      */
     private $transactionValidator;
+    /**
+     * @var TransactionRepository
+     */
+    private $transactionRepository;
     
     /**
      * Create a new job instance.
@@ -44,8 +50,11 @@ class SyncChain implements ShouldQueue
      * @param NodePeer $peer
      * @param BlockValidator $blockValidator
      * @param BlockRepository $blockRepository
+     * @param Difficulty $difficulty
+     * @param TransactionValidator $transactionValidator
+     * @param TransactionRepository $transactionRepository
      */
-    public function __construct(NodePeer $peer, BlockValidator $blockValidator, BlockRepository $blockRepository, Difficulty $difficulty, TransactionValidator $transactionValidator)
+    public function __construct(NodePeer $peer, BlockValidator $blockValidator, BlockRepository $blockRepository, Difficulty $difficulty, TransactionValidator $transactionValidator, TransactionRepository $transactionRepository)
     {
         //
         $this->peer = $peer;
@@ -53,6 +62,7 @@ class SyncChain implements ShouldQueue
         $this->blockRepository = $blockRepository;
         $this->difficulty = $difficulty;
         $this->transactionValidator = $transactionValidator;
+        $this->transactionRepository = $transactionRepository;
     }
     
     /**
@@ -68,20 +78,11 @@ class SyncChain implements ShouldQueue
         $this->blockValidator->assertValidChain($candidateChain);
     
         if ($this->chainIsMoreDifficult($candidateChain)) {
-            $this->blockRepository->updateWithChain(
-                    $candidateChain,
-                    function ($transactionHash, $sequence, $block) {
-                        $this->loadTransactionFromPeer(
-                                $this->peer,
-                                $transactionHash,
-                                $sequence,
-                                $block
-                        );
-                    }
-            );
+            $this->blockRepository->updateWithChain($candidateChain);
         }
     
-        $this->revalidateAndResequencePendingTransactions();
+        $this->destroyPendingCoinbaseTransactions();
+        $this->clearSequenceOfPendingTransactions();
     }
     
     private function chainIsMoreDifficult($candidateChain)
@@ -101,26 +102,20 @@ class SyncChain implements ShouldQueue
         }
     }
     
-    /**
-     * @param NodePeer $peer
-     * @param $transactionHash
-     * @param $sequence
-     * @param NodeBlock $block
-     * @throws \Exception
-     */
-    private function loadTransactionFromPeer(NodePeer $peer, $transactionHash, $sequence, NodeBlock $block)
+    private function clearSequenceOfPendingTransactions()
     {
-        $transaction = $peer->getTransaction($transactionHash);
-        $this->transactionValidator->assertValid($transaction);
+        DB::transaction(function(){
+            foreach ($this->transactionRepository->pendingTransactions() as $transaction){
+                $transaction->sequence = null;
+                $transaction->save();
+            }
+        });
         
-        $transaction->sequence = $sequence;
-        $transaction->block_id = $block->id;
-        
-        $transaction->save();
     }
     
-    private function revalidateAndResequencePendingTransactions()
+    
+    private function destroyPendingCoinbaseTransactions()
     {
-        // TODO: Implement
+        $this->transactionRepository->pendingTransactions()->coinbase()->delete();
     }
 }

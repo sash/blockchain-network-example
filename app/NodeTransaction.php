@@ -16,18 +16,21 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $fee
  * @property string $data
  * @property string $hash
- * @property string $senderPublicKey
  * @property string $signature
  * @property int|null $block_id
- * @property Carbon $created_at
+ * @property int $timestamp
  * @property int $senderSequence
- * @property int $sequence
+ * @property int|null $sequence
  * @property NodeBlock|null $block
  *
- * @method static \Illuminate\Database\Eloquent\Builder withConfirmations(int $confirmations, int $topBlockIndex)
+ * @method \Illuminate\Database\Eloquent\Builder withConfirmations(int $confirmations, int $topBlockIndex)
+ * @method \Illuminate\Database\Eloquent\Builder coinbase()
  */
 class NodeTransaction extends Model
 {
+    public $timestamps = false;
+    const COINBASE_ADDRESS = '0000000000000000000000000000000000000000';
+    const COINBASE_MINING_FEE = 10000000;
     /**
      * Scope a query to only include active users.
      *
@@ -42,6 +45,10 @@ class NodeTransaction extends Model
                 ->leftJoin('node_blocks', 'node_transactions.block_id', '=', 'node_blocks.id')
                 ->where('node_blocks.index','<=', $topBlockIndex - $confirmations + 1)
                 ->whereNotNull('node_transactions.block_id');
+    }
+    
+    public function scopeCoinbase($query){
+        return $query->where('senderAddress', '=', self::COINBASE_ADDRESS);
     }
     
     public function block(){

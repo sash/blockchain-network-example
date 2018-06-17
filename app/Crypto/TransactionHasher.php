@@ -23,11 +23,12 @@ class TransactionHasher
     {
         $transactionRepresentation = [];
         $transactionRepresentation['from'] = $transaction->senderAddress;
+        $transactionRepresentation['from_id'] = $transaction->senderSequence;
         $transactionRepresentation['to'] = $transaction->receiverAddress;
         $transactionRepresentation['value'] = $transaction->value;
         $transactionRepresentation['fee'] = $transaction->fee;
-        $transactionRepresentation['datetime'] = $transaction->created_at->getTimestamp();
-        $transactionRepresentation['public_key'] = $transaction->senderPublicKey;
+        $transactionRepresentation['data'] = $transaction->data;
+        $transactionRepresentation['datetime'] = $transaction->timestamp;
         return json_encode($transactionRepresentation);
     }
     

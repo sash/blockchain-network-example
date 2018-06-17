@@ -59,7 +59,7 @@ class NodeBootstrap extends Command
         foreach ($peerRepository->allPeers() as $peer){
     
             if ($blockRepository->getBlockWithHash($peer->getLastBlockHash())) {
-                continue;
+                continue; // Already have the chain
             }
     
             $sync = new SyncChain($peer, $blockValidator, $blockRepository, $difficulty, $transactionValidator);

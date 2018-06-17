@@ -61,4 +61,10 @@ class PublicPrivateKeyPair
   public function getAddress(){
     return hash('ripemd160', $this->getCompressedPublicKey());
   }
+  
+  public function sign($hash){
+      $signature = $this->private->sign($hash, 'hex', ['canonical' => true]);
+      return $signature->r->toString('hex') . $signature->s->toString('hex') . str_pad(dechex($signature->recoveryParam),
+                      2, '0', STR_PAD_LEFT);
+  }
 }

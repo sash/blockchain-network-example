@@ -33,14 +33,26 @@ class TransactionValidator
         $this->transactionRepository = $transactionRepository;
     }
     
+    /**
+     * @param NodeTransaction $transaction
+     * @return bool
+     * @throws InvalidTransaction
+     */
     public function assertValid(NodeTransaction $transaction){
+        
         $this->assertHash($transaction);
         
-        $this->assertSignature($transaction);
+        if ($this->isCoinbase($transaction)){
+            $this->assertConbaseValue($transaction);
+        } else {
     
-        $this->assertMinimumFee($transaction);
+            $this->assertSignature($transaction);
+    
+            $this->assertMinimumFee($transaction);
+    
+        }
         
-        $this->assertBalance($transaction);
+        $this->assertSenderSequence($transaction);
     
         return true;
     }
@@ -64,32 +76,68 @@ class TransactionValidator
     /**
      * @param NodeTransaction $transaction
      * @throws InvalidTransaction
+     * @throws \Exception
      */
     private function assertSignature(NodeTransaction $transaction): void
     {
+        
         $senderPublicKey = PublicKey::fromSignature($transaction);
         if ($senderPublicKey->getAddress() != $transaction->senderAddress) {
-            throw new InvalidTransaction('Expected sender address: ' . $transaction->senderAddress . ', got ' . $senderPublicKey->getAddress());
+            throw new InvalidTransaction('Invalid signature! Expected sender address: ' . $transaction->senderAddress . ', got ' . $senderPublicKey->getAddress());
         }
+        
     }
     
+    /**
+     * @param NodeTransaction $transaction
+     * @throws InvalidTransaction
+     */
     private function assertMinimumFee(NodeTransaction $transaction)
     {
         if ($transaction->fee < self::MINIMUM_FEE) {
             throw new InvalidTransaction('Transaction fee below minimum: ' . self::MINIMUM_FEE);
         }
     }
+//
+//    /**
+//     * @param NodeTransaction $transaction
+//     * @throws InvalidTransaction
+//     */
+//    private function assertBalance(NodeTransaction $transaction): void
+//    {
+//        if ($this->transactionRepository->balanceForAddress($transaction->senderAddress, null, $transaction) < $transaction->value + $transaction->fee) {
+//            throw new InvalidTransaction('Not enough funds to complete the transaction');
+//        }
+//    }
     
     /**
      * @param NodeTransaction $transaction
+     * @return bool
      * @throws InvalidTransaction
-     * @deprecated The balance check needs to be refactored to support transaction validation for transactions already in a block
      */
-    private function assertBalance(NodeTransaction $transaction): void
+    private function assertSenderSequence(NodeTransaction $transaction)
     {
-        if ($this->transactionRepository->balanceForAddress($transaction->senderAddress, null) < $transaction->value + $transaction->fee) {
-            throw new InvalidTransaction('Not enough funds to complete the transaction');
+        $existing = $this->transactionRepository->transactionBySenderAndSequence($transaction->senderAddress, $transaction->senderSequence);
+        if (!$existing) {
+            return true;
         }
+        if ($existing->id == $transaction->id){
+            return true;
+        }
+        
+        throw new InvalidTransaction('A transaction with the same sender sequence is alredy registered');
+        
+    }
+    
+    private function isCoinbase($transaction)
+    {
+        // TODO: Implement
+        return false;
+    }
+    
+    private function assertConbaseValue($transaction)
+    {
+        // TODO: Implement
     }
     
 }

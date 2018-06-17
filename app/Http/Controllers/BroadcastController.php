@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\NodeBlockResource;
-use App\Http\Resources\NodeTransaction;
+use App\Http\Resources\NodeTransactionResource;
 use App\Jobs\SyncChain;
 use App\JsonError;
+use App\Node\BalanceFactory;
 use App\Node\Broadcast;
 use App\Node\Difficulty;
 use App\NodeBlock;
@@ -87,7 +88,7 @@ class BroadcastController extends Controller
                 return response('', 201);
             }
             
-            $sync = new SyncChain($peer, $validator, $blockRepository,$this->difficulty, $transactionValidator);
+            $sync = new SyncChain($peer, $validator, $blockRepository, $this->difficulty, $transactionValidator, $transactionRepository);
             dispatch_now($sync);
     
             $rebroadcast->newBlock($blockHash);
@@ -101,7 +102,8 @@ class BroadcastController extends Controller
             Request $request,
             TransactionValidator $transactionValidator,
             Broadcast $rebroadcast,
-            PeerRepository $peerRepository
+            PeerRepository $peerRepository,
+            BalanceFactory $balanceFactory
     ) {
         // TODO: The post transaction only contains the hash! Request the full transaction from the peer if the transaction is new!
         try{
@@ -114,16 +116,24 @@ class BroadcastController extends Controller
                 return (new JsonError('Missing peer'))->response(401);
             }
             
-            $existingTransaction = NodeTransaction::where('hash', '=', $bodyArray['transaction']['hash'])->first();
+            $existingTransaction = NodeTransactionResource::where('hash', '=', $bodyArray['transaction']['hash'])->first();
             if ($existingTransaction){
                 return response('',201);
             }
             
             $peerRepository->getPeer($bodyArray['peer'])->wasActive();
             
-            $transaction = NodeTransaction::fromArray($bodyArray['transaction']);
+            $transaction = NodeTransactionResource::fromArray($bodyArray['transaction']);
             $transactionValidator->assertValid($transaction);
+            
+            $balance = $balanceFactory->forCurrentPending();
+            
+            $balance->addTransaction($transaction);
+            
+            
             $transaction->save();
+            $balance->savePending();
+            
             $rebroadcast->newTransaction($transaction);
             return response();
         } catch (\Exception $exception) {

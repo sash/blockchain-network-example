@@ -42,8 +42,16 @@ class NodeBlock extends Model
             'timestamp',
             'block_hash',
     ];
+    
     public function transactions(){
         return $this->hasMany(NodeTransaction::class, 'block_id')->orderBy('sequence');
     }
     
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function balances()
+    {
+        return $this->hasMany(NodeBalance::class, 'block_id');
+    }
 }

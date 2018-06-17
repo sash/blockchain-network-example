@@ -28,6 +28,11 @@ trait PeerCommunicationTrait
         return collect($json)->map(function($block){return NodeBlockResource::fromArray($block);})->toArray();
     }
     
+    /**
+     * @param $transactionHash
+     * @return NodeTransaction
+     * @throws \Exception
+     */
     public function getTransaction($transactionHash)
     {
         // TODO: Implement
@@ -49,7 +54,7 @@ trait PeerCommunicationTrait
      */
     public function getPeers(){
         $hosts = $this->call('/api/broadcast/peers');
-        return array_map(function($host){return new NodePeer(['host' => $host])}, $hosts);
+        return array_map(function($host){return new NodePeer(['host' => $host]);}, $hosts);
     }
     
     public function getLastBlockHash()

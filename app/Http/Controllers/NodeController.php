@@ -80,7 +80,7 @@ class NodeController extends Controller
         $transaction->receiverAddress = $transactionInput['to'];
         $transaction->value = intval($transactionInput['value']);
         $transaction->fee = intval($transactionInput['fee']);
-        $transaction->created_at = Carbon::createFromTimestamp($transactionInput['datetime']);
+        $transaction->timestamp = $transactionInput['datetime'];
         $transaction->data = isset($transactionInput['data']) ?: null;
         $transaction->signature = $transactionInput['signature'];
         return $transaction;

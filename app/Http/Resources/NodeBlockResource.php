@@ -26,7 +26,9 @@ class NodeBlockResource extends JsonResource
                 'nonce' => $this->nonce,
                 'timestamp' => $this->timestamp,
                 'block_hash' => $this->block_hash,
-                'transactions' => $this->transactions->map(function($transaction){return $transaction->hash;}),
+                'transactions' => $this->transactions->map(function($transaction) use($request){
+                    return (new NodeTransactionResource($transaction))->toArray($request);
+                }),
                 'chain_id' => app(BlockRepository::class)->getGenesisBlock()->block_hash,
         ];
     }
@@ -50,7 +52,12 @@ class NodeBlockResource extends JsonResource
         if (!is_array($block_array['transactions'])){
             throw new \InvalidArgumentException("Transactions in block are not array: " . json_encode($block_array));
         }
-        $block->transactionHashes = $block_array['transactions'];
+        $block->transaction = array_map(
+                function($transactionArray){
+                    return NodeTransactionResource::fromArray($transactionArray);
+                },
+                $block_array['transactions']
+        );
         $hasher = new BlockHasher();
         $hasher->updateHashes($block);
         return $block;

@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Crypto\BlockHasher;
+use App\Node\Balance;
+use App\Node\BalanceFactory;
 use App\Node\Difficulty;
 use App\NodeBlock;
 use App\NodeTransaction;
@@ -15,14 +17,20 @@ class BlockRepository
      * @var Difficulty
      */
     private $difficulty;
+    /**
+     * @var BalanceFactory
+     */
+    private $balanceFactory;
     
     /**
      * BlockRepository constructor.
      * @param Difficulty $difficulty
+     * @param BalanceFactory $balanceFactory
      */
-    public function __construct(Difficulty $difficulty)
+    public function __construct(Difficulty $difficulty, BalanceFactory $balanceFactory)
     {
         $this->difficulty = $difficulty;
+        $this->balanceFactory = $balanceFactory;
     }
     
     /**
@@ -71,28 +79,40 @@ class BlockRepository
         return NodeBlock::where('block_hash', '=', $block_hash)->first();
     }
     
-    public function updateWithChain($chain, $handleMissingTransactions=null)
+    public function updateWithChain($chain)
     {
-        DB::transaction(function() use ($chain, $handleMissingTransactions){
+        DB::transaction(function() use ($chain){
             $updatedChain = $this->difference($chain);
             $base = $updatedChain[0];
             // Delete all blocks after the base's parent hash, making all transactions after that pending (temporarily)
             NodeBlock::where('index', '>=', $base->index)->delete();
-            
     
-            foreach ($updatedChain as $i => $update) {
+            /**
+             * @var Balance $balance;
+             */
+            $balance = null;
+            foreach ($updatedChain as $i => $updatedBlock) {
                 if ($i == 0){
-                    $parent = $this->getBlockWithHash($update->previous_block_hash);
+                    $parent = $this->getBlockWithHash($updatedBlock->previous_block_hash);
                     if (!$parent){
                         throw new \Exception('Could not find parent of the update chain');
                     }
+                    $balance = $this->balanceFactory->forCurrentBlock($parent);
                 } else {
                     $parent = $updatedChain[$i-1];
                 }
-                $update->cumulativeDifficulty = $parent->cumulativeDifficulty + $this->difficulty->difficultyOfBlock($update);
+                
+                // Update the difficulty
+                $updatedBlock->cumulativeDifficulty = $parent->cumulativeDifficulty + $this->difficulty->difficultyOfBlock($updatedBlock);
+                
+                
         
-                $update->save();
-                $this->linkTransactions($update, $handleMissingTransactions);
+                $updatedBlock->save();
+                
+                $balance->updateForBlock($updatedBlock); // throws
+                
+                
+                $this->linkTransactions($updatedBlock);
         
             }
         });
@@ -101,25 +121,24 @@ class BlockRepository
     }
     
     /**
-     * @param $block
+     * @param NodeBlock $block
      * @param $sequence
      * @param $handleMissingTransactions
      */
     public function linkTransactions(
-            $block,
-            $handleMissingTransactions
+            $block
     ): void {
         $sequence = 0;
 // Link up all transactions based on the hashes to the current block! $update->transactions
-        foreach ($block->transactionHashes as $transactionHash) {
-            $existingTransaction = NodeTransaction::where('hash', '=', $transactionHash)->first();
+        foreach ($block->transactions as $transaction) {
+            $existingTransaction = NodeTransaction::where('hash', '=', $transaction->hash)->first();
             if ($existingTransaction) {
                 $existingTransaction->sequence = $sequence++;
                 $existingTransaction->block_id = $block->id;
             } else {
-                if ($handleMissingTransactions) {
-                    call_user_func($handleMissingTransactions, $transactionHash, $sequence, $block);
-                }
+                $newTransaction = $transaction;
+                $newTransaction->sequence = $sequence++;
+                $newTransaction->block_id = $block->id;
             }
         }
     }

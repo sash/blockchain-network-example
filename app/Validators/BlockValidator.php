@@ -21,18 +21,24 @@ class BlockValidator
      * @var Difficulty
      */
     private $difficulty;
+    /**
+     * @var TransactionValidator
+     */
+    private $transactionValidator;
     
     /**
      * BlockValidator constructor.
      * @param BlockHasher $blockHasher
      * @param BlockRepository $blockRepository
      * @param Difficulty $difficulty
+     * @param TransactionValidator $transactionValidator
      */
-    public function __construct(BlockHasher $blockHasher, BlockRepository $blockRepository, Difficulty $difficulty)
+    public function __construct(BlockHasher $blockHasher, BlockRepository $blockRepository, Difficulty $difficulty, TransactionValidator $transactionValidator)
     {
         $this->blockHasher = $blockHasher;
         $this->blockRepository = $blockRepository;
         $this->difficulty = $difficulty;
+        $this->transactionValidator = $transactionValidator;
     }
     
     /**
@@ -59,6 +65,7 @@ class BlockValidator
         $this->assertBlockIsBasedOnParentHash($block, $parent);
         $this->assertBlockIndexIsSequential($block, $parent);
         $this->assertProofOfWorkMatchesTheRequirement($block);
+        $this->assertTransactionsAreValid($block);
     }
     
     /**
@@ -93,6 +100,13 @@ class BlockValidator
         $diff = $this->difficulty->difficultyOfHash($block->block_hash);
         if ($diff < Difficulty::CURRENT_DIFFICULTY){
             throw new \InvalidArgumentException('The block with index ' . $block->index . ' has proof of work with difficulty setting of '.$diff.' with minimum '.Difficulty::CURRENT_DIFFICULTY.' required');
+        }
+    }
+    
+    private function assertTransactionsAreValid($block)
+    {
+        foreach ($block->transactions as $transaction){
+            $this->transactionValidator->assertValid($transaction);
         }
     }
 }

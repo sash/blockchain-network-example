@@ -19,6 +19,16 @@ class PublicKey
         $this->publicKey = $publicKey;
     }
     
+    /**
+     * @param $publicKeyHex
+     * @return PublicKey
+     */
+    static function fromHex($publicKeyHex){
+        $ec = new EC('secp256k1');
+    
+        return new self($ec->keyFromPublic($publicKeyHex, 'hex'));
+    }
+    
     static function fromPrivateKey($privateKey)
     {
         $ec = new EC('secp256k1');
@@ -55,6 +65,11 @@ class PublicKey
     
     public function getAddress()
     {
-        return hash('ripemd160', hex2bin($this->publicKey->encode("hex")));
+        return hash('ripemd160', $this->getCompressedPublicKey());
+    }
+    
+    public function getCompressedPublicKey()
+    {
+        return $this->publicKey->getX()->toString('hex') . ($this->publicKey->getY()->isEven() ? '0' : '1');
     }
 }

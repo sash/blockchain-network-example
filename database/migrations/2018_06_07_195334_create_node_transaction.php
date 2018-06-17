@@ -19,7 +19,8 @@ class CreateNodeTransaction extends Migration
             $table->string('senderAddress', 40)->index();
             $table->string('receiverAddress', 40)->index();
             $table->unsignedInteger('senderSequence'); // prevents replay attacks
-            $table->unsignedInteger('sequence'); // The order of the transactions in a block
+            $table->unsignedInteger('sequence')->nullable(); // The order of the transactions in a block
+            $table->unsignedInteger('timestamp');
             $table->bigInteger('value');
             $table->bigInteger('fee');
             $table->text('data');
@@ -27,7 +28,7 @@ class CreateNodeTransaction extends Migration
             $table->string('signature', 130);
 //            $table->bigInteger('minedInBlockIndex')->nullable();
             $table->unsignedInteger('block_id')->nullable();
-            $table->timestamps();
+           
 //
             $table->foreign('block_id')->references('id')->on('node_blocks')->onDelete('set null');
         });
