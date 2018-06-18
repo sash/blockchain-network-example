@@ -31,7 +31,20 @@ class NodeTransaction extends Model
 {
     public $timestamps = false;
     const COINBASE_ADDRESS = '0000000000000000000000000000000000000000';
-    
+
+    protected $fillable = [
+        'senderAddress',
+        'senderSequence',
+        'receiverAddress',
+        'sequence',
+        'value',
+        'fee',
+        'data',
+        'hash',
+        'signature',
+        'timestamp'
+    ];
+
     /**
      * Scope a query to only include active users.
      *
@@ -60,3 +73,4 @@ class NodeTransaction extends Model
         return $this->senderAddress == self::COINBASE_ADDRESS;
     }
 }
+

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\NodeTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -11,9 +12,24 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class NodeTransactionResource extends JsonResource
 {
-    public static function fromArray($transaction)
+    public static function fromRequest($request)
     {
-        // TODO: Implement
+        return new NodeTransaction([
+            'senderAddress' => $request->get('from'),
+            'senderSequence' => $request->get('from_id'),
+            'receiverAddress' => $request->get('to'),
+            'sequence' => 0,
+            'value' => $request->get('value'),
+            'fee' => $request->get('fee'),
+            'data' => empty($request->get('data')) ? "" : $request->get('data'),
+            'hash' => $request->get('hash'),
+            'signature' => $request->get('signature'),
+            'timestamp' => $request->get('datetime')
+        ]);
+    }
+
+    public static function fromArray($transaction){
+        //TODO implement
     }
     
     /**
