@@ -10,14 +10,17 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
+if ($_ENV['APPLICATION'] == 'node'){
+    Route::get('/', function () {
+        return view('welcome');
+    });
+}
 
 
 if ($_ENV['APPLICATION'] == 'wallet') {
-    // Wallet endpoints
+    Route::get('/', function () {
+        return view('wallet');
+    });
 }
 
 if ($_ENV['APPLICATION'] == 'explorer') {
