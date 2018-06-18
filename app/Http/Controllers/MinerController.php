@@ -16,11 +16,36 @@ class MinerController extends Controller
     /**
      * Construct a candidate block and pass it off to the miner
      * @param string $miner_address
-     * @return NodeBlockResource The block to mine
+//     * @return NodeBlockResource The block to mine
      */
     public function getJob($miner_address, BlockFactory $blockFactory){
-        $block = $blockFactory->buildMostProfitableFromPending($miner_address);
-        return new NodeBlockResource($block);
+        return [
+            'index' => 0,
+            'difficulty' => 4,
+            'cumulativeDifficulty' => 0,
+            'mined_by_address' => $miner_address,
+            'previous_block_hash' => 'previous-block-hash',
+            'data_hash' => 'data-hash',
+            'block_hash' => 'example-block-hash',
+            'transactions' => [
+                [
+                    'senderAddress' => 'sender-address',
+                    'senderSequence' => 0,
+                    'receiverAddress' => 'receiver-address',
+                    'sequence' => 0,
+                    'value' => 100,
+                    'fee' => 10,
+                    'data' => 'example-data',
+                    'hash' => 'example-hash',
+                    'signature' => 'example-signature',
+                    'timestamp' => 'example-timestamp'
+                ]
+            ],
+            'chain_id' => 'example-chain-id',
+        ];
+
+//        $block = $blockFactory->buildMostProfitableFromPending($miner_address);
+//        return new NodeBlockResource($block);
     }
     
     

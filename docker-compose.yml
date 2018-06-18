@@ -20,6 +20,8 @@ services:
       - MYSQL_USER=dev
       - MYSQL_DATABASE=database
       - MYSQL_PASSWORD=password
+    ports:
+      - 6000:3306
 
 
   node1:
@@ -45,6 +47,8 @@ services:
       - MYSQL_USER=dev
       - MYSQL_DATABASE=database
       - MYSQL_PASSWORD=password
+    ports:
+      - 6001:3306
 
   node2:
     tty: true
@@ -96,7 +100,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node1
-    command: node node/miner.js
+    command: node nodejs/miner.js
     depends_on:
       - node1
     volumes:
@@ -108,7 +112,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node1
-    command: node node/miner.js
+    command: node nodejs/miner.js
     depends_on:
       - node1
     volumes:
@@ -121,7 +125,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node2
-    command: node node/miner.js
+    command: node nodejs/miner.js
     depends_on:
       - node2
     volumes:
@@ -133,7 +137,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node2
-    command: node node/miner.js
+    command: node nodejs/miner.js
     depends_on:
       - node2
     volumes:
