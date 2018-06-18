@@ -43,12 +43,11 @@ class TransactionController extends Controller
             $transaction = NodeTransactionResource::fromRequest($request);
 
             $this->transactionValidator->assertValid($transaction);
-            
+
             // The balance can always be OK based on another parallel chain that we yet don't know about
-//            $balanceFactory->forCurrentPending()->addTransaction($transaction); // assets funds
+            // $balanceFactory->forCurrentPending()->addTransaction($transaction); // assets funds
             
             $transaction->save();
-            
             $broadcast->newTransaction($transaction);
 
             return new NodeTransactionResource($transaction);

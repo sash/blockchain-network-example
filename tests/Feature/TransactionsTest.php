@@ -38,13 +38,11 @@ class TransactionsTest extends TestCase
     /** @test */
     public function transaction_can_be_posted()
     {
-        $this->withoutExceptionHandling();
         $transaction = $this->buildTransaction();
 
-        $response = $this->post('/api/transaction',$transaction)
-                         ->assertStatus(201);
+        $response = $this->post('/api/transaction',$transaction);
 
-
+        $response->assertStatus(201);
         $this->assertCount(1, NodeTransaction::all());
 
         tap(NodeTransaction::first(), function($tx) use ($transaction){
