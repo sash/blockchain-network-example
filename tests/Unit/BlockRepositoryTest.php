@@ -30,7 +30,7 @@ class BlockRepositoryTest extends TestCase
         $actualBlocks = $this->app->make(BlockRepository::class)->getAllBlocks();
 
         $this->assertEquals(
-            [1,2,3,4],
+            [0, 1,2,3,4],
             $actualBlocks->pluck('index')->toArray()
         );
     }

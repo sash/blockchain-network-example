@@ -39,7 +39,7 @@ class MinerController extends Controller
             $parent = $blockRepository->getTopBlock();
             $blockValidator->assertValidBlock($block, $parent);
             
-            $balance = $balanceFactory->forCurrentBlock($parent);
+            $balance = $balanceFactory->forBlock($parent);
             
             $balance->addBlock($block); // assets valid balances in transactions
             

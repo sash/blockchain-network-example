@@ -33,12 +33,12 @@ class Balance
     {
         
         
-        if ($this->balance[$transaction->senderAddress] < $transaction->value + $transaction->fee && !$transaction->isCoinbase) {
+        if (@$this->balance[$transaction->senderAddress] < $transaction->value + $transaction->fee && !$transaction->isCoinbase) {
             throw new InvalidTransaction('Not enough funds to carry out the transaction');
         }
     
-        $this->balance[$transaction->senderAddress] -= $transaction->value + $transaction->fee;
-        $this->balance[$transaction->receiverAddress] += $transaction->value;
+        @$this->balance[$transaction->senderAddress] -= $transaction->value + $transaction->fee;
+        @$this->balance[$transaction->receiverAddress] += $transaction->value;
         // Fee is left for the miner's coinbase
         return true;
     }
@@ -77,6 +77,10 @@ class Balance
     public function savePending(): void
     {
         $this->repository->saveBalancesForPending($this->balance);
+    }
+    
+    public function getForAddress($address){
+        return @$this->balance[$address] ?: 0;
     }
     
 }

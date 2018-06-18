@@ -25,7 +25,7 @@ class BalanceFactory
      * Balance based on a confirmed block (saved in the database)
      * @param NodeBlock $block
      */
-    public function forCurrentBlock(NodeBlock $block){
+    public function forBlock(NodeBlock $block){
         $balance = $this->repository->getBalanceForBlock($block);
         return new Balance($balance, $this->repository);
     }

@@ -43,7 +43,6 @@ class BlockHasher
         $blockRepresentation['mined_by_address'] = $block->mined_by_address;
         $blockRepresentation['difficulty'] = $block->difficulty;
         $blockRepresentation['transactions'] = $block->transactions->map(function($tr){return $tr->hash;});
-        
         return json_encode($blockRepresentation);
     }
     

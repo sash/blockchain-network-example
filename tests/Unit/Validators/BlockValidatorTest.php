@@ -91,6 +91,7 @@ class BlockValidatorTest extends TestCase
     
     public function testAssertValidBlock_ValidEmptyBlock()
     {
+        $this->seed(\GenesisBlock::class);
         $parent = $this->repository->getGenesisBlock();
         $test = $this->getValidBlock($parent);
         
@@ -99,6 +100,8 @@ class BlockValidatorTest extends TestCase
     
     public function testAssertValidBlock_InvalidCoinbase()
     {
+    
+        $this->seed(\GenesisBlock::class);
         $parent = $this->repository->getGenesisBlock();
         $test = $this->getValidBlock($parent);
     
@@ -112,6 +115,8 @@ class BlockValidatorTest extends TestCase
     
     public function testAssertValidBlock_WrongIndex()
     {
+    
+        $this->seed(\GenesisBlock::class);
         $parent = $this->repository->getGenesisBlock();
         $test = $this->getValidBlock($parent);
         
@@ -125,6 +130,8 @@ class BlockValidatorTest extends TestCase
     
     public function testAssertValidBlock_WrongParent()
     {
+    
+        $this->seed(\GenesisBlock::class);
         $parent = $this->repository->getGenesisBlock();
         $test = $this->getValidBlock($parent);
         
@@ -138,6 +145,8 @@ class BlockValidatorTest extends TestCase
     
     public function testAssertValidBlock_InvalidTransaction()
     {
+    
+        $this->seed(\GenesisBlock::class);
         $parent = $this->repository->getGenesisBlock();
         $test = $this->getValidBlock($parent);
         
@@ -160,6 +169,8 @@ class BlockValidatorTest extends TestCase
     
     public function testAssertValidBlock_InvalidDifficulty()
     {
+    
+        $this->seed(\GenesisBlock::class);
         $parent = $this->repository->getGenesisBlock();
         $test = $this->getValidBlock($parent, 0);
         
@@ -170,14 +181,17 @@ class BlockValidatorTest extends TestCase
     
     public function testAssertValidChain_Valid()
     {
+    
+        $this->seed(\GenesisBlock::class);
         $test = $this->getValidChain(0);
         $this->assertNull($this->validator->assertValidChain($test));
     }
     
     public function testAssertValidChain_DifferentGenesis()
     {
+        $this->seed(\GenesisBlock::class);
         $test = [];
-        $test[] = $this->repository->getGenesisBlock(Carbon::now()->timestamp); // Alternative genesis
+        $test[] = $this->repository->newGenesisBlock([], Carbon::now()->timestamp); // Alternative genesis
         $test[] = $this->getValidBlock($test[0]);
         
         $this->expectException(\Exception::class);

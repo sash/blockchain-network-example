@@ -19,10 +19,11 @@ class BlockControllerTest extends TestCase
      */
     public function it_can_get_the_last_block()
     {
+        
         $this->createSequenceOfBlocks(3, function($attributes){
             return $attributes + ["block_hash" => "hash-for-block-".$attributes['index']];
         });
-       
+    
         $this->get("/api/blocks/last")
              ->assertStatus(200)
              ->assertJsonFragment([
@@ -43,7 +44,7 @@ class BlockControllerTest extends TestCase
         
         $this->get("/api/blocks")
                 ->assertStatus(200)
-                ->assertJsonCount(3);
+                ->assertJsonCount(4);
     }
     
 }

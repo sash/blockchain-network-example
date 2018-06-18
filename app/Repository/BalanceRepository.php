@@ -58,7 +58,7 @@ class BalanceRepository
     
     public function getBalanceForBlock(NodeBlock $block): array
     {
-        return $block->balances->pluck('balance', 'address');
+        return $block->balances->pluck('balance', 'address')->toArray();
     }
     
     public function getBalanceForPending(): array

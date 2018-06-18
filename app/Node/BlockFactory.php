@@ -59,7 +59,7 @@ class BlockFactory
         $res->index = $parent->index + 1;
         $res->mined_by_address = $miner_address;
         
-        $balance = $this->balanceFactory->forCurrentBlock($parent);
+        $balance = $this->balanceFactory->forBlock($parent);
         
         foreach ($this->transactionRepository->pendingTransactions()->orderBy('fee', 'desc') as $transaction){
             try{

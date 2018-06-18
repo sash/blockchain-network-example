@@ -24,6 +24,8 @@ abstract class TestCase extends BaseTestCase
 
     protected function createSequenceOfBlocks($amount, callable $attributesDecorator = null)
     {
+        $this->seed(\GenesisBlock::class);
+    
         $blocks = [];
 
         for($i=1;$i<=$amount;$i++)

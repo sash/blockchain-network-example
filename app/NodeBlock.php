@@ -33,6 +33,7 @@ class NodeBlock extends Model
     protected $fillable = [
             'index',
             'difficulty',
+            'cumulativeDifficulty',
             'mined_by_address',
             'previous_block_hash',
             'data_hash',

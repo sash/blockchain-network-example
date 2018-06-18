@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Crypto\BlockHasher;
+use App\Crypto\TransactionHasher;
 use App\Node\Balance;
 use App\Node\BalanceFactory;
 use App\Node\Difficulty;
+use App\NodeBalance;
 use App\NodeBlock;
 use App\NodeTransaction;
 use Illuminate\Database\Eloquent\Collection;
@@ -49,21 +51,32 @@ class BlockRepository
         return NodeBlock::query()->orderBy('index', 'asc')->get();
     }
     
-    /**
-     * @return NodeBlock
-     * @throws \Exception
-     */
-    public function getGenesisBlock($timestamp = 1529067174): NodeBlock
+    public function newGenesisBlock($initial_funds = [], $timestamp = 1529067174): NodeBlock
     {
         $genesis = new NodeBlock([
-                'index'               => 0,
-                'difficulty'          => 0,
-                'cumulativeDifficulty'=> 0,
-                'nonce'               => 0,
-                'mined_by_address'    => str_repeat('0', 40),
-                'previous_block_hash' => str_repeat('0', 64),
-                'timestamp'           => $timestamp,
+                'index'                => "0",
+                'difficulty'           => "0",
+                'cumulativeDifficulty' => "0",
+                'nonce'                => "0",
+                'mined_by_address'     => str_repeat('0', 40),
+                'previous_block_hash'  => str_repeat('0', 64),
+                'timestamp'            => $timestamp,
         ]);
+    
+        $transactionHasher = new TransactionHasher();
+        foreach ($initial_funds as $address => $value) {
+            $transaction = new NodeTransaction();
+            $transaction->timestamp = $timestamp;
+            $transaction->fee = "0";
+            $transaction->value = $value;
+            $transaction->senderAddress = str_repeat('0', 40);
+            $transaction->senderSequence = "0";
+            $transaction->data = '';
+            $transaction->receiverAddress = $address;
+            $transaction->hash = $transactionHasher->getHash($transaction);
+            $transaction->signature = str_repeat(0, 130);
+            $genesis->transactions[] = $transaction;
+        }
     
         $hasher = new BlockHasher();
     
@@ -72,6 +85,16 @@ class BlockRepository
         $genesis->block_hash = $hasher->getBlockHash($genesis);
     
         return $genesis;
+    }
+    /**
+     * @param array $initial_funds [address => value]
+     * @param int $timestamp
+     * @return NodeBlock
+     * @throws \Exception
+     */
+    public function getGenesisBlock(): NodeBlock
+    {
+        return NodeBlock::where('index', '=', 0)->firstOrFail();
     }
     
     public function getBlockWithHash($block_hash)
@@ -97,7 +120,7 @@ class BlockRepository
                     if (!$parent){
                         throw new \Exception('Could not find parent of the update chain');
                     }
-                    $balance = $this->balanceFactory->forCurrentBlock($parent);
+                    $balance = $this->balanceFactory->forBlock($parent);
                 } else {
                     $parent = $updatedChain[$i-1];
                 }
