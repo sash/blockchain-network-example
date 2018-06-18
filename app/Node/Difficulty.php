@@ -42,4 +42,8 @@ class Difficulty
             return 0;
         }
     }
+    
+    public function minZeroesInHash(){
+        return self::CURRENT_MIN_DIFFICULTY;
+    }
 }

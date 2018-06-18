@@ -53,7 +53,7 @@ class BlockRepository
      * @return NodeBlock
      * @throws \Exception
      */
-    public function getGenesisBlock(): NodeBlock
+    public function getGenesisBlock($timestamp = 1529067174): NodeBlock
     {
         $genesis = new NodeBlock([
                 'index'               => 0,
@@ -62,7 +62,7 @@ class BlockRepository
                 'nonce'               => 0,
                 'mined_by_address'    => str_repeat('0', 40),
                 'previous_block_hash' => str_repeat('0', 64),
-                'timestamp'           => '1529067174',
+                'timestamp'           => $timestamp,
         ]);
     
         $hasher = new BlockHasher();

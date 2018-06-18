@@ -69,7 +69,7 @@ class NodeTransaction extends Model
         return $this->belongsTo(NodeBlock::class, 'block_id');
     }
     
-    public function attributeIsCoinbase(){
+    public function getIsCoinbaseAttribute(){
         return $this->senderAddress == self::COINBASE_ADDRESS;
     }
 }

@@ -105,8 +105,8 @@ class BlockValidator
     {
         $this->blockHasher->updateHashes($block);
         $diff = $this->difficulty->zeroesInHash($block->block_hash);
-        if ($diff < Difficulty::CURRENT_MIN_DIFFICULTY){
-            throw new \InvalidArgumentException('The block with index ' . $block->index . ' has proof of work with difficulty setting of '.$diff.' with minimum '.Difficulty::CURRENT_MIN_DIFFICULTY.' required');
+        if ($diff < $this->difficulty->minZeroesInHash()){
+            throw new \InvalidArgumentException('The block with index ' . $block->index . ' has proof of work with difficulty setting of '.$diff.' with minimum '. $this->difficulty->minZeroesInHash().' required');
         }
     }
     
