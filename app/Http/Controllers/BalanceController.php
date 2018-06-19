@@ -30,7 +30,8 @@ class BalanceController extends Controller
 
         return [
             'confirmed'=> $confirmed,
-            'unconfirmed'=> $unconfirmed
+            'unconfirmed'=> $unconfirmed,
+            'txs' => $this->transactionRepository->transactionsBySender($address)->count(),
         ];
     }
 }

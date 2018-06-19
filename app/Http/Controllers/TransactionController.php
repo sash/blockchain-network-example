@@ -37,10 +37,10 @@ class TransactionController extends Controller
      *
      * @todo: Use json in body instead of a form
      */
-    public function postTransaction(CreateTransaction $request, Broadcast $broadcast)
+    public function postTransaction(Request $request, Broadcast $broadcast)
     {
         try {
-            $transaction = NodeTransactionResource::fromRequest($request);
+            $transaction = NodeTransactionResource::fromArray(json_decode($request->getContent(), true)['transaction']);
 
             $this->transactionValidator->assertValid($transaction);
 

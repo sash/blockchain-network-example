@@ -19,7 +19,7 @@ class TransactionHasher
         return hash('sha256', $this->serializedTransaction($transaction));
     }
     
-    private function serializedTransaction(NodeTransaction $transaction)
+    public function serializedTransaction(NodeTransaction $transaction)
     {
         $transactionRepresentation = [];
         $transactionRepresentation['from'] = $transaction->senderAddress;

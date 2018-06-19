@@ -33,8 +33,8 @@ if ($_ENV['APPLICATION'] == 'node'){
     
     // Wallet & Faucet
     
-    Route::middleware('api')->get('/balance/{address}', 'BalanceController@getBalance'); // [confirmed: int, unconfirmed: int]
-    Route::middleware('api')->post('/transaction', 'TransactionController@postTransaction'); // Body: ['transaction': Transaction]
+    Route::middleware(['api'])->get('/balance/{address}', 'BalanceController@getBalance'); // [confirmed: int, unconfirmed: int]
+    Route::middleware(['api'])->post('/transaction', 'TransactionController@postTransaction'); // Body: ['transaction': Transaction]
     
     // Explorer
     

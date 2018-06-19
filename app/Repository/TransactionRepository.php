@@ -64,6 +64,11 @@ class TransactionRepository
      */
     public function transactionBySenderAndSequence($senderAddress, $senderSequence)
     {
-        return NodeTransaction::where('senderAddress','=',$senderAddress)->where('senderSequence', '=', $senderSequence)->first();
+        return NodeTransaction::where('senderAddress','=',$senderAddress)->where('senderSequence', '=',
+                $senderSequence)->first();
+    }
+    
+    public function transactionsBySender($senderAddress){
+        return  NodeTransaction::where('senderAddress', '=', $senderAddress);
     }
 }
