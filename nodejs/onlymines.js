@@ -1,11 +1,8 @@
 var CryptoJS = require("crypto-js");
 
-console.log('in the script only mines')
 process.on('message', async (message) => {
-    console.log('received msg ', message)
     let {nonce, timestamp, blockHash} = mineBlock(message.data_hash, message.difficulty, message.startFrom, message.increment);
 
-    console.log('nonce is ', nonce)
     process.send({nonce:nonce, timestamp:timestamp, blockHash:blockHash, startFrom: message.startFrom});
 });
 

@@ -57,6 +57,7 @@ class MinerController extends Controller
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
     public function postJob(Request $request, BlockValidator $blockValidator, BlockRepository $blockRepository, BalanceFactory $balanceFactory){
+        return $request->json()->all();
         try{
             $json = $request->json()->all();
             
@@ -81,6 +82,7 @@ class MinerController extends Controller
     
     public function getLastBlockHash(BlockRepository $blockRepository){
         try {
+            return ['hash' => 'previous-block-hash'];
             return ['hash' => $blockRepository->getTopBlock()->block_hash];
         } catch (\Exception $exception){
             return JsonError::fromException($exception)->response(403);
