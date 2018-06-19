@@ -13,6 +13,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class NodeTransactionResource extends JsonResource
 {
+    /**
+     * @param $request
+     * @return NodeTransaction
+     * @deprecated The request expects a post form. Posting arbitraty data seems to not work! Perhaps the problem is that the post is transaction.from and so on...
+     */
     public static function fromRequest($request)
     {
         return new NodeTransaction([
@@ -33,7 +38,6 @@ class NodeTransactionResource extends JsonResource
     /**
      * @param $transaction
      * @return NodeTransaction
-     * @deprecated Use fromRequest
      */
     public static function fromArray($transaction){
         $res = new NodeTransaction();

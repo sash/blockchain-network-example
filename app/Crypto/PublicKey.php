@@ -51,7 +51,7 @@ class PublicKey
                 "r" => substr($signature, 0, 64),
                 "s" => substr($signature, 64, 64)
         ];
-        $recid = ord(hex2bin(substr($signature, 128, 2)));
+        $recid = hexdec(substr($signature, 128, 2));
         if ($recid != ($recid & 1)) {
             throw new \Exception('Invalid recovery ID:' . $recid);
         }

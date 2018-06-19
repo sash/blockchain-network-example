@@ -1,31 +1,22 @@
+import Coordinator from "./components/Wallet/Coordinator";
+
 require('./bootstrap');
 
-import PublicPrivateKeyPair from './Crypto/PublicPrivateKeyPair'
+//
+// console.log(Wallet.getInstatance(), Wallet.hasStorage());
+// Wallet.new('000000', '000000');
+// console.log(Wallet.getInstatance().getMnemonic(), Wallet.hasStorage());
+// Wallet.lock()
+// console.log(Wallet.getInstatance(), Wallet.hasStorage())
+// Wallet.unlock('000000');
+// console.log(Wallet.getInstatance().getMnemonic(), Wallet.hasStorage());
+// Wallet.restore("pigeon lab pizza end verb urban express away crucial garment scout equal", '000000', '000000');
+// console.log(Wallet.getInstatance().getMnemonic(), Wallet.hasStorage());
+// Wallet.forget();
+// console.log(Wallet.getInstatance(), Wallet.hasStorage());
 
-import * as HDKey from 'hdkey'
-import * as bip39 from 'bip39'
-
-
-var mnemonic = bip39.generateMnemonic()
-console.log(mnemonic);
-
-const seed = bip39.mnemonicToSeed(mnemonic);
-const masterKey = HDKey.fromMasterSeed(seed);
-
-console.log(masterKey);
-
-console.log(masterKey.toJSON())
-console.log('p', masterKey.privateKey.toString('hex'))
-console.log('ex', masterKey.privateExtendedKey.toString('hex'))
-
-console.log("m/0/" + 0x100.toString(10) + "'/0'/0'/0/0");
-
-const childKey = masterKey.derive("m/0/" + 0x100.toString(10) + "'/0'/0'/0/0");
-
-console.log(childKey.privateKey.toString('hex'));
-
-const keys = PublicPrivateKeyPair.fromPrivate(masterKey.privateKey.toString('hex'));
-
-console.log('priv', keys.getPrivateKey());
-console.log(keys.getCompressedPublicKey());
-console.log(keys.getAddress());
+new Coordinator(document.getElementById('app'),$('#app').data('nodes').split(',').reduce(function(stack, el) {
+    const spl = el.split(':');
+    stack[spl[0]] = $('#app').data('host') + ":" + spl[1];
+    return stack;
+}, {}));

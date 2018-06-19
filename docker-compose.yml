@@ -71,7 +71,7 @@ services:
     build: .
     environment:
       - APPLICATION=wallet
-      - NODE_HOSTS=node1,node2
+      - NODE_HOSTS=node1:5001,node2:5002
     ports:
       - 5003:80
     volumes:
