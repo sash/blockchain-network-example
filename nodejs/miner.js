@@ -36,7 +36,7 @@ let requestNewJobAndStartMining = function() {
         console.log('New block to mine! Difficulty: '+difficulty+', data_hash: '+data_hash+', previous_block_hash: '+previous_block_hash);
 
         for (let i = 0; i < 8; i++) {
-            miningProcesses[i] = fork('nodejs/onlymines.js');
+            miningProcesses[i] = fork('nodejs/miner_worker.js');
             miningProcesses[i].send({data_hash, difficulty, startFrom: i, increment: 8});
         }
 
