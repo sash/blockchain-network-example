@@ -40,7 +40,7 @@ class TransactionController extends Controller
     public function postTransaction(Request $request, Broadcast $broadcast)
     {
         try {
-            $transaction = NodeTransactionResource::fromArray(json_decode($request->getContent(), true)['transaction']);
+            $transaction = NodeTransactionResource::fromArray(@json_decode($request->getContent(), true)['transaction']);
 
             $this->transactionValidator->assertValid($transaction);
 
