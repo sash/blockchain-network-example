@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Wallet</title>
+        <title>Node</title>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
               integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
@@ -80,11 +80,9 @@
 
             <div class="content" style="min-width: 1200px">
                 <div class="title m-b-md">
-                    BitFraud HD Wallet
+                    BitFraud Node
                 </div>
-                <div id="app" data-host="{{current(explode(':',$_SERVER['HTTP_HOST']))}}" data-nodes="{{$_ENV['NODE_HOSTS']}}">
-                    Loading ...
-                </div>
+
 
             </div>
         </div>
@@ -98,6 +96,5 @@
                 integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
                 crossorigin="anonymous"></script>
 
-        <script src="/js/wallet.js"></script>
     </body>
 </html>
