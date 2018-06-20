@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\NodeBalance;
 use App\NodeTransaction;
 use Illuminate\Database\Eloquent\Collection;
 use PhpParser\Node;

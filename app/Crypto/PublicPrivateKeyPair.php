@@ -64,7 +64,8 @@ class PublicPrivateKeyPair
   
   public function sign($hash){
       $signature = $this->private->sign($hash, 'hex', ['canonical' => true]);
-      return $signature->r->toString('hex') . $signature->s->toString('hex') . str_pad(dechex($signature->recoveryParam),
+      return str_pad($signature->r->toString('hex'),64,'0',STR_PAD_LEFT) . str_pad($signature->s->toString('hex'), 64,
+                      '0', STR_PAD_LEFT) . str_pad(dechex($signature->recoveryParam),
                       2, '0', STR_PAD_LEFT);
   }
 }
