@@ -80,8 +80,7 @@ class TransactionValidator
         
         $senderPublicKey = PublicKey::fromSignature($transaction);
         if ($senderPublicKey->getAddress() != $transaction->senderAddress) {
-            $transactionSer = $this->hashTransaction->serializedTransaction($transaction);
-            throw new InvalidTransaction('Invalid signature! Expected sender address: ' . $transaction->senderAddress . ', got ' . $senderPublicKey->getAddress().' hash is '.$transaction->hash.', ser: '. $transactionSer);
+            throw new InvalidTransaction('Invalid signature! Expected sender address: ' . $transaction->senderAddress . ', got ' . $senderPublicKey->getAddress().' hash is '.$transaction->hash);
         }
         
     }

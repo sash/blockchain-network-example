@@ -4,9 +4,13 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Laravel</title>
+        <title>Faucet</title>
 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+              crossorigin="anonymous">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -47,7 +51,7 @@
             }
 
             .title {
-                font-size: 84px;
+                font-size: 48px;
             }
 
             .links > a {
@@ -68,35 +72,48 @@
     <body>
         <div class="flex-center position-ref full-height">
 
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                          asdasd
-                    @endauth
-                </div>
+
 
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    BitFraud Faucet
                 </div>
 
-                <div id="example">
-        TEST
+                <div id="faucet">
+                    <form method="post">
+                        @csrf
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Send me money to address</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1"
+                                   aria-describedby="emailHelp" placeholder="Enter Address" name="address">
+                            <small id="emailHelp" class="form-text text-muted">We send 1 BitFraud every second
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect2">Via Node</label>
+                            <select  class="form-control" id="exampleFormControlSelect2" name="host">
+                                @foreach (explode(',', $_ENV['NODE_HOSTS']) as $host)
+                                <option>{{$host}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Send me the money</button>
+                    </form>
                 </div>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
             </div>
         </div>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+                integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
 
-        <script src="/js/app.js"></script>
-        <script src="/js/wallet.js"></script>
     </body>
 </html>

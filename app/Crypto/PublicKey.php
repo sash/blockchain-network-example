@@ -46,7 +46,7 @@ class PublicKey
         $signature = $transaction->signature ?: $signature;
     
         $ec = new EC('secp256k1');
-        $hash = (new TransactionHasher())->getHash($transaction);
+        $hash = (new TransactionHasher(new TransactionSerializer()))->getHash($transaction);
         $sign = [
                 "r" => substr($signature, 0, 64),
                 "s" => substr($signature, 64, 64)
