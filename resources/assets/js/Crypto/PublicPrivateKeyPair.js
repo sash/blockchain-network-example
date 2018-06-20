@@ -39,8 +39,7 @@ class PublicPrivateKeyPair {
         //       return $signature->r->toString('hex') . $signature->s->toString('hex') . str_pad(dechex($signature->recoveryParam),
         //                       2, '0', STR_PAD_LEFT);
         const signature = this.privateKey.sign(hash, 'hex', {canonical: true});
-        console.log(signature, signature.recoveryParam, signature.recoveryParam.toString(16), signature.recoveryParam.toString(16).padStart(2, "0"))
-        return signature.r.toString('hex') + signature.s.toString('hex') + signature.recoveryParam.toString(16).padStart(2, "0");
+        return signature.r.toString('hex').padStart(64, '0') + signature.s.toString('hex').padStart(64, '0') + signature.recoveryParam.toString(16).padStart(2, "0");
     }
 }
 
