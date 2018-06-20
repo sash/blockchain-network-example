@@ -29,5 +29,14 @@ RUN yes | pecl install xdebug \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/xdebug.ini
-CMD php artisan serve --host=0.0.0.0 --port=80
+
+RUN apt-get update && apt-get install -y supervisor cron
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+ADD crontab /etc/cron.d/app-cron
+RUN chmod 0644 /etc/cron.d/app-cron
+RUN touch /var/log/cron.log
+
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+
 EXPOSE 80
