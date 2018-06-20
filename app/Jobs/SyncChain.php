@@ -2,9 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\InvalidTransaction;
+use App\Node\BalanceFactory;
 use App\Node\Difficulty;
 use App\NodeBlock;
 use App\NodePeer;
+use App\Repository\BalanceRepository;
 use App\Repository\BlockRepository;
 use App\Repository\TransactionRepository;
 use App\Validators\BlockValidator;
@@ -45,6 +48,11 @@ class SyncChain implements ShouldQueue
     private $transactionRepository;
     
     /**
+     * @var UpdatePendingBalance
+     */
+    private $updatePendingBalance;
+    
+    /**
      * Create a new job instance.
      *
      * @param NodePeer $peer
@@ -53,8 +61,10 @@ class SyncChain implements ShouldQueue
      * @param Difficulty $difficulty
      * @param TransactionValidator $transactionValidator
      * @param TransactionRepository $transactionRepository
+     * @param BalanceFactory $balanceFactory
+     * @param UpdatePendingBalance $updatePendingBalance
      */
-    public function __construct(NodePeer $peer, BlockValidator $blockValidator, BlockRepository $blockRepository, Difficulty $difficulty, TransactionValidator $transactionValidator, TransactionRepository $transactionRepository)
+    public function __construct(NodePeer $peer, BlockValidator $blockValidator, BlockRepository $blockRepository, Difficulty $difficulty, TransactionValidator $transactionValidator, TransactionRepository $transactionRepository, UpdatePendingBalance $updatePendingBalance)
     {
         //
         $this->peer = $peer;
@@ -63,6 +73,7 @@ class SyncChain implements ShouldQueue
         $this->difficulty = $difficulty;
         $this->transactionValidator = $transactionValidator;
         $this->transactionRepository = $transactionRepository;
+        $this->updatePendingBalance = $updatePendingBalance;
     }
     
     /**
@@ -83,6 +94,7 @@ class SyncChain implements ShouldQueue
     
         $this->destroyPendingCoinbaseTransactions();
         $this->clearSequenceOfPendingTransactions();
+        $this->updatePendingBalances();
     }
     
     private function chainIsMoreDifficult($candidateChain)
@@ -111,5 +123,10 @@ class SyncChain implements ShouldQueue
     private function destroyPendingCoinbaseTransactions()
     {
         $this->transactionRepository->pendingTransactions()->coinbase()->delete();
+    }
+    
+    private function updatePendingBalances()
+    {
+        $this->updatePendingBalance->update();
     }
 }

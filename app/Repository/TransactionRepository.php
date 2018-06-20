@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Exceptions\InvalidTransaction;
+use App\Node\BalanceFactory;
 use App\NodeBalance;
 use App\NodeTransaction;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,6 +19,7 @@ class TransactionRepository
     /**
      * TransactionRepository constructor.
      * @param BlockRepository $blockRepository
+     * @param BalanceFactory $balanceFactory
      */
     public function __construct(BlockRepository $blockRepository)
     {
@@ -28,26 +31,32 @@ class TransactionRepository
      * @param null $confirmations
      *
      * @return int
-     * @deprecated Alternative implementation is in place - see the NodeBalance object and the BalanceRepository
      */
-    public function balanceForAddress($address, $confirmations = null, NodeTransaction $beforeTransaction=null){
-        $query = NodeTransaction::where(function($query) use ($address){
-            $query
-                    ->where('senderAddress', '=', $address)
-                    ->orWhere('receiverAddress', '=', $address);
-        })
-        ->selectRaw('CASE WHEN senderAddress = "'.$address.'" THEN -1*(value+fee) ELSE value END as value');
-
-        if ($beforeTransaction && $beforeTransaction->id){
-            $query->where('id', '<', $beforeTransaction->id);
+    public function balanceForAddress($address, $confirmations = null){
+        if ($confirmations === null){
+            return $this->unconfirmedBalanceForAddress($address);
         }
-
-        if ($confirmations !== null){
-            $topBlockIndex = $this->blockRepository->getTopBlock()->index;
-            $query->withConfirmations($confirmations, $topBlockIndex);
+        else {
+            return $this->confirmedBalanceForAddress($address, $confirmations);
         }
-
-        return intval($query->get()->sum('value'));
+//
+//        $query = NodeTransaction::where(function($query) use ($address){
+//            $query
+//                    ->where('senderAddress', '=', $address)
+//                    ->orWhere('receiverAddress', '=', $address);
+//        })
+//        ->selectRaw('CASE WHEN senderAddress = "'.$address.'" THEN -1*(value+fee) ELSE value END as value');
+//
+//        if ($beforeTransaction && $beforeTransaction->id){
+//            $query->where('id', '<', $beforeTransaction->id);
+//        }
+//
+//        if ($confirmations !== null){
+//            $topBlockIndex = $this->blockRepository->getTopBlock()->index;
+//            $query->withConfirmations($confirmations, $topBlockIndex);
+//        }
+//
+//        return intval($query->get()->sum('value'));
     }
     
     /**
@@ -71,5 +80,33 @@ class TransactionRepository
     
     public function transactionsBySender($senderAddress){
         return  NodeTransaction::where('senderAddress', '=', $senderAddress);
+    }
+    
+    private function confirmedBalanceForAddress($address, $confirmations)
+    {
+        $topBlockIndex = $this->blockRepository->getTopBlock()->index;
+    
+        
+        $targetBlock = $this->blockRepository->getBlockWithIndex($topBlockIndex - $confirmations + 1);
+        if (!$targetBlock){
+            throw new \InvalidArgumentException('The chain is less then '.$confirmations.' long');
+        }
+    
+    
+        
+        $balance = NodeBalance::where('address', '=', $address)->where('block_id', '=', $targetBlock->id)->first();
+        if (!$balance){
+            return 0;
+        }
+        return $balance->balance;
+    }
+    
+    private function unconfirmedBalanceForAddress($address)
+    {
+        $balance = NodeBalance::where('address', '=', $address)->whereNull('block_id')->first();
+        if (!$balance) {
+            return 0;
+        }
+        return $balance->balance;
     }
 }

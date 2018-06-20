@@ -11,7 +11,6 @@ abstract class ApiClient
     {
         
         $url = 'http://' . $this->getHost() . '' . $endpoint;
-        var_dump($url);
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Crypto\BlockHasher;
 use App\Crypto\TransactionHasher;
+use App\Crypto\TransactionSerializer;
 use App\Node\Balance;
 use App\Node\BalanceFactory;
 use App\Node\Difficulty;
@@ -63,7 +64,7 @@ class BlockRepository
                 'timestamp'            => $timestamp,
         ]);
     
-        $transactionHasher = new TransactionHasher();
+        $transactionHasher = new TransactionHasher(new TransactionSerializer());
         foreach ($initial_funds as $address => $value) {
             $transaction = new NodeTransaction();
             $transaction->timestamp = $timestamp;
@@ -183,5 +184,14 @@ class BlockRepository
             }
         }
         return []; // The fully exists
+    }
+    
+    /**
+     * @param $index
+     * @return NodeBalance|null
+     */
+    public function getBlockWithIndex($index)
+    {
+        return NodeBlock::where('index', '=', $index)->first();
     }
 }

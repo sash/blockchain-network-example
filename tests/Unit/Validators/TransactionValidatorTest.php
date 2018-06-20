@@ -26,6 +26,8 @@ class TransactionValidatorTest extends TestCase
         $keyPair = PublicPrivateKeyPair::generate();
         $keyPair->getAddress();
     
+        $this->log[] = "{$keyPair->getAddress()} / {$keyPair->getCompressedPublicKey()} / {$keyPair->getPrivateKey()}";
+        
         $datetime = Carbon::create(2012, 1, 1, 0, 0, 0, 'Europe/Sofia');
     
         
@@ -56,9 +58,10 @@ class TransactionValidatorTest extends TestCase
     
         $signatureFor = json_encode($signatureFor);
         $hash = hash('sha256', $signatureFor);
-    
+       
         $signature = $keyPair->sign($hash);
-        
+        $this->log[]= "Signing: $hash with $signature";
+    
         $subject->hash = $hash; // Valid
         $subject->signature = $signature; // Valid
         return $subject;
@@ -135,4 +138,5 @@ class TransactionValidatorTest extends TestCase
         $subject->signature = str_repeat('01', 130);
         $this->validator->assertValid($subject);
     }
+    
 }
