@@ -80,7 +80,7 @@ let notifyNode = function (message){
         if (!errors && response.statusCode == 200) {
             console.log('Node response code: ', response.statusCode);
         } else {
-            console.log('Error', errors, response.statusCode);
+            console.log('Error', errors, response.statusCode, body);
         }
     });
 };
