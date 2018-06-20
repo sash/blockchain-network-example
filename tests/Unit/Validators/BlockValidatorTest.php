@@ -47,7 +47,7 @@ class BlockValidatorTest extends TestCase
     protected function getValidator($difficulty){
         $diff = $this->getMockBuilder(Difficulty::class)->setProxyTarget(app(Difficulty::class))->getMock();
         $diff->method('minZeroesInHash')->willReturn($difficulty); // Lower the difficulty to make all valid;
-    
+
 //        $this->difficulty = $difficulty;
     
         $validator = new BlockValidator(

@@ -74,6 +74,11 @@ class BlockValidator
         $this->assertTransactionsAreValid($block);
         $this->assertCoinbaseIsValid($block);
     }
+
+    public function getTransactionsLimit()
+    {
+        return self::TRANSACTIONS_LIMIT;
+    }
     
     /**
      * @param NodeBlock $block

@@ -8,7 +8,7 @@ $factory->define(App\NodeTransaction::class, function (Faker $faker) {
         'receiverAddress' => 'receiver-address',
         'senderSequence' => 1,
         'sequence' => 1,
-        'value' => 3,
+        'value' => 200,
         'fee' => 10,
         'data' => 'example data',
         'hash' => 'transaction-hash-'.$faker->unique()->randomNumber(),
