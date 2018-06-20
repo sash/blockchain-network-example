@@ -79,6 +79,8 @@ let notifyNode = function (message){
     request(options, function (errors, response, body){
         if (!errors && response.statusCode == 200) {
             console.log('Node response code: ', response.statusCode);
+        } else {
+            console.log('Error', errors, response.statusCode);
         }
     });
 };

@@ -21,7 +21,7 @@ class MinerController extends Controller
     public function getJob($miner_address, BlockFactory $blockFactory){
         return [
             'index' => 0,
-            'difficulty' => 4,
+            'difficulty' => 2,
             'cumulativeDifficulty' => 0,
             'mined_by_address' => $miner_address,
             'previous_block_hash' => 'previous-block-hash',
