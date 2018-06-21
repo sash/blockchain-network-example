@@ -53,7 +53,6 @@ class MinerController extends Controller
     
     public function getLastBlockHash(BlockRepository $blockRepository){
         try {
-            return ['hash' => 'previous-block-hash'];
             return ['hash' => $blockRepository->getTopBlock()->block_hash];
         } catch (\Exception $exception){
             return JsonError::fromException($exception)->response(403);

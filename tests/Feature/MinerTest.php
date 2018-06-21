@@ -155,4 +155,16 @@ class MinerTest extends TestCase
         $this->assertEquals(2, $txB->fresh()->block_id);
         $this->assertEquals(2, $txC->fresh()->block_id);
     }
+
+    /** @test */
+    public function it_returns_last_block_hash()
+    {
+        $this->seed(\GenesisBlock::class);
+
+        $response = $this->getJson('/api/miner/last-block-hash')->assertStatus(200);
+
+        $genesisBlock = $genesisBlock = app(BlockRepository::class)->getGenesisBlock();
+
+        $this->assertEquals($genesisBlock->block_hash, $response->json()['hash']);
+    }
 }
