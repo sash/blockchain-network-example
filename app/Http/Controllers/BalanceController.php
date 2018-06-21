@@ -28,10 +28,11 @@ class BalanceController extends Controller
         $unconfirmed = $this->transactionRepository->balanceForAddress($address);
         $confirmed = $this->transactionRepository->balanceForAddress($address, 1);
 
+        
         return [
             'confirmed'=> $confirmed,
             'unconfirmed'=> $unconfirmed,
-            'txs' => $this->transactionRepository->transactionsBySender($address)->count(),
+            'txs' => $this->transactionRepository->transactionsBySender($address)->count(), // Totoal number of spent transactions for the address
         ];
     }
 }

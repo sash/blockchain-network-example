@@ -28,7 +28,7 @@ class TransactionSigner
     
     public function sign($privateKeyAsHex, NodeTransaction $transaction){
         $hash = $transaction->hash ?: $this->transactionHasher->getHash($transaction);
-        
+        $transaction->hash = $hash;
         $keyPair = PublicPrivateKeyPair::fromPrivateKey($privateKeyAsHex);
         return $keyPair->sign($hash);
     }

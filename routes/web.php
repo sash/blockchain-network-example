@@ -10,10 +10,19 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+use Illuminate\Http\Request;
+
 if ($_ENV['APPLICATION'] == 'node'){
     Route::get('/', function () {
-        return view('welcome');
+        return view('node');
     });
+}
+
+if ($_ENV['APPLICATION'] == 'faucet') {
+    Route::get('/', 'FaucetController@getFaucet');
+    Route::post('/', 'FaucetController@postFaucet');
+    
 }
 
 

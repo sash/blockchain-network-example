@@ -83,7 +83,7 @@
                     BitFraud HD Wallet
                 </div>
                 <div id="app" data-host="{{current(explode(':',$_SERVER['HTTP_HOST']))}}" data-nodes="{{$_ENV['NODE_HOSTS']}}">
-
+                    Loading ...
                 </div>
 
             </div>

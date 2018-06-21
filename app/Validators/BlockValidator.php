@@ -4,6 +4,7 @@ namespace App\Validators;
 
 use App\Crypto\BlockHasher;
 use App\Node\Difficulty;
+use App\NodeBalance;
 use App\NodeBlock;
 use App\NodeTransaction;
 use App\Repository\BlockRepository;
@@ -73,6 +74,7 @@ class BlockValidator
         $this->assertProofOfWorkMatchesTheRequirement($block);
         $this->assertTransactionsAreValid($block);
         $this->assertCoinbaseIsValid($block);
+        $this->assertTransactionsLimitIsKept($block);
     }
 
     public function getTransactionsLimit()
@@ -142,6 +144,13 @@ class BlockValidator
             throw new \InvalidArgumentException('Block is not valid. The coinbase transaction(s) do not match the expected value: ' . json_encode(['actual'   => $coinbaseActual,
                                                                                                                                             'expected' => $coinbaseExpected
                     ]));
+        }
+    }
+    
+    private function assertTransactionsLimitIsKept(NodeBlock $block)
+    {
+        if (count($block->transactions) > self::TRANSACTIONS_LIMIT){
+            throw new \InvalidArgumentException('Block is not valid. The block contains more transactions then allowed');
         }
     }
 }

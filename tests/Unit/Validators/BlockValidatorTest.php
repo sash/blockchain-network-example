@@ -198,4 +198,5 @@ class BlockValidatorTest extends TestCase
         $this->validator->assertValidChain($test);
     }
     
+    
 }

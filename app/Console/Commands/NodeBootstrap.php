@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SyncChain;
+use App\Jobs\UpdatePendingBalance;
 use App\Node\Broadcast;
 use App\Node\Difficulty;
 use App\NodePeer;
+use App\Repository\BalanceRepository;
 use App\Repository\BlockRepository;
 use App\Repository\PeerRepository;
 use App\Repository\TransactionRepository;
@@ -52,7 +54,7 @@ class NodeBootstrap extends Command
      * @return mixed
      * @throws \Exception
      */
-    public function handle(PeerRepository $peerRepository, Broadcast $broadcast, BlockRepository $blockRepository, BlockValidator $blockValidator, Difficulty $difficulty, TransactionValidator $transactionValidator, TransactionRepository $transactionRepository)
+    public function handle(PeerRepository $peerRepository, Broadcast $broadcast, BlockRepository $blockRepository, BlockValidator $blockValidator, Difficulty $difficulty, TransactionValidator $transactionValidator, TransactionRepository $transactionRepository, UpdatePendingBalance $updatePendingBalance)
     {
         $this->info("Resetting known peers");
         $peerRepository->clearPeers();
@@ -87,7 +89,7 @@ class NodeBootstrap extends Command
                 continue; // Already have a more difficult chain
             }
             
-            $sync = new SyncChain($peer, $blockValidator, $blockRepository, $difficulty, $transactionValidator, $transactionRepository);
+            $sync = new SyncChain($peer, $blockValidator, $blockRepository, $difficulty, $transactionValidator, $transactionRepository, $updatePendingBalance);
             dispatch_now($sync);
     
         }

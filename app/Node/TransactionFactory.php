@@ -2,14 +2,31 @@
 
 namespace App\Node;
 
+use App\Crypto\PublicPrivateKeyPair;
+use App\Crypto\TransactionHasher;
 use App\NodeBlock;
 use App\NodeTransaction;
+use App\Repository\TransactionRepository;
 use App\Validators\BlockValidator;
 use Carbon\Carbon;
 
 class TransactionFactory
 {
- 
+    /**
+     * @var TransactionHasher
+     */
+    private $hasher;
+    
+    /**
+     * TransactionFactory constructor.
+     * @param TransactionRepository $transactionRepository
+     * @param TransactionHasher $hasher
+     */
+    function __construct(TransactionHasher $hasher)
+    {
+        $this->hasher = $hasher;
+    }
+    
     function buildCoinbaseForBlock(NodeBlock $block): NodeTransaction
     {
         $due = BlockValidator::COINBASE_MINING_FEE;
@@ -38,5 +55,22 @@ class TransactionFactory
             'block_id' => $block->id,
         ]);
             
+    }
+    
+    function buildSpendTransaction(PublicPrivateKeyPair $key, $seq, $value, $fee, $toAddress, $data){
+        $fromAddress = $key->getAddress();
+        
+        $res = new NodeTransaction([
+                'senderAddress'   => $fromAddress,
+                'senderSequence'   => $seq,
+                'receiverAddress' => $toAddress,
+                'value'           => $value,
+                'fee'             => $fee,
+                'data'            => $data,
+                'timestamp'       => Carbon::now()->timestamp,
+        ]);
+        $res->hash = $this->hasher->getHash($res);
+        $res->signature = $key->sign($res->hash);
+        return $res;
     }
 }

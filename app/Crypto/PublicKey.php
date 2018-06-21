@@ -41,12 +41,12 @@ class PublicKey
      * @return PublicKey
      * @throws \Exception
      */
-    static function fromSignature(NodeTransaction $transaction, $signature = null)
+    static function fromSignature(NodeTransaction $transaction, $signature = null, $hash = null)
     {
         $signature = $transaction->signature ?: $signature;
     
         $ec = new EC('secp256k1');
-        $hash = (new TransactionHasher())->getHash($transaction);
+        $hash = $hash ?: (new TransactionHasher(new TransactionSerializer()))->getHash($transaction);
         $sign = [
                 "r" => substr($signature, 0, 64),
                 "s" => substr($signature, 64, 64)

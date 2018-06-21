@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\UpdatePendingBalance;
 use App\Node\Balance;
 use App\Repository\BalanceRepository;
 use App\Repository\BlockRepository;
@@ -7,6 +8,20 @@ use Illuminate\Database\Seeder;
 
 class GenesisBlock extends Seeder
 {
+    /**
+     * @var UpdatePendingBalance
+     */
+    private $updatePendingBalance;
+    
+    /**
+     * GenesisBlock constructor.
+     * @param UpdatePendingBalance $updatePendingBalance
+     */
+    function __construct(UpdatePendingBalance $updatePendingBalance)
+    {
+        $this->updatePendingBalance = $updatePendingBalance;
+    }
+    
     /**
      * Run the database seeds.
      *
@@ -37,6 +52,7 @@ class GenesisBlock extends Seeder
             $this->container->make(BlockRepository::class)->linkTransactions($genesis);
             $balance = new Balance($initialBalance, $this->container->make(BalanceRepository::class));
             $balance->saveForBlock($genesis);
+            $this->updatePendingBalance->update();
         }
     }
 }

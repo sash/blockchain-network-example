@@ -9,31 +9,6 @@ use App\NodeTransaction;
 
 class BalanceRepository
 {
-    /**
-     * @param array $balances
-     * @param NodeTransaction[] $transactions
-     * @param null $outFailedTransactions
-     * @return array
-     * @deprecated Moved to the Balance class
-     */
-    public function updateBalances($balances, $transactions, &$outFailedTransactions=null){
-        $failedTransactions = [];
-        foreach ($transactions as $transaction){
-            
-            
-            if ($balances[$transaction->senderAddress] < $transaction->value + $transaction->fee){
-                $failedTransactions[] = $transaction;
-                continue;
-            }
-            
-            $balances[$transaction->senderAddress] -= $transaction->value + $transaction->fee;
-            $balances[$transaction->receiverAddress] += $transaction->value;
-            // Fee is left for the miner's coinbase
-        }
-        
-        $outFailedTransactions = $failedTransactions;
-        return $balances;
-    }
     
     public function saveBalancesForBlock(NodeBlock $block, $balances){
         
@@ -68,7 +43,6 @@ class BalanceRepository
     
     public function getBalanceForPending(): array
     {
-        return NodeBalance::whereNull('block_id')->pluck('balance', 'address');
+        return NodeBalance::whereNull('block_id')->pluck('balance', 'address')->toArray();
     }
-    
 }

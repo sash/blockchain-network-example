@@ -2,6 +2,7 @@
 
 namespace App\Node;
 
+use App\ApiClient;
 use App\Exceptions\APIException;
 use App\Http\Resources\NodeBlockResource;
 use App\Http\Resources\NodeTransactionResource;
@@ -9,7 +10,7 @@ use App\NodeBlock;
 use App\NodePeer;
 use App\NodeTransaction;
 
-class PeerClient
+class PeerClient extends ApiClient
 {
     /**
      * @var NodePeer
@@ -122,37 +123,8 @@ class PeerClient
     }
     
     
-    private function call($endpoint, $data = null)
+    protected function getHost()
     {
-    
-        $url = 'http://' . $this->peer->host . '' . $endpoint;
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
-    
-        if ($data != null){
-            $data_string = json_encode($data);
-            
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Accept: application/json'));
-        }
-    
-        $result = curl_exec($ch);
-    
-        curl_close($ch);
-        if ($result === ''){
-            return '';
-        }
-        $json = json_decode($result, true);
-        if ($json === null){
-            throw new APIException("Invalid json response - ". $result, 0, $result);
-        }
-        if (isset($json['success']) && !$json['success']){
-            throw new APIException($json['message'].' - '. $json['data'], $json['code'], $json['data']);
-        }
-        return $json;
+        return $this->peer->host;
     }
-    
-    
 }

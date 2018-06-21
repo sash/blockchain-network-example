@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Resources\NodeBlockResource;
 use App\Http\Resources\NodeTransactionResource;
 use App\Jobs\SyncChain;
+use App\Jobs\UpdatePendingBalance;
 use App\JsonError;
 use App\Node\BalanceFactory;
 use App\Node\Broadcast;
 use App\Node\Difficulty;
 use App\NodeBlock;
 use App\NodePeer;
+use App\Repository\BalanceRepository;
 use App\Repository\BlockRepository;
 use App\Repository\PeerRepository;
 use App\Repository\TransactionRepository;
@@ -62,7 +64,8 @@ class BroadcastController extends Controller
             PeerRepository $peerRepository,
             BlockRepository $blockRepository,
             TransactionRepository $transactionRepository,
-            Broadcast $rebroadcast
+            Broadcast $rebroadcast,
+            UpdatePendingBalance $updatePendingBalance
     ) {
         try{
             $this->blockRepository = $blockRepository;
@@ -88,7 +91,8 @@ class BroadcastController extends Controller
                 return response('', 201);
             }
             
-            $sync = new SyncChain($peer, $validator, $blockRepository, $this->difficulty, $transactionValidator, $transactionRepository);
+            $sync = new SyncChain($peer, $validator, $blockRepository, $this->difficulty, $transactionValidator, $transactionRepository,
+                    $updatePendingBalance);
             dispatch_now($sync);
     
             $rebroadcast->newBlock($blockHash);

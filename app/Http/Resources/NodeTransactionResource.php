@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Crypto\TransactionHasher;
+use App\Exceptions\InvalidTransaction;
 use App\NodeTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -40,6 +41,9 @@ class NodeTransactionResource extends JsonResource
      * @return NodeTransaction
      */
     public static function fromArray($transaction){
+        if (!is_array($transaction)){
+            throw new InvalidTransaction('Transaction representation is not an array!');
+        }
         $res = new NodeTransaction();
         $res->senderAddress = $transaction['from'];
         $res->senderSequence = $transaction['from_id'];
