@@ -25,12 +25,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         if ($_ENV['APPLICATION'] == 'faucet'){
-            $schedule->call(function(){
-                error_log( "Sending funds to the top of the queue");
-            })->name('Send funds to one of the queue')->everyMinute();
+            $schedule->command('faucet:drip')->name('Drip from the faucet')->everyMinute();
         }
-        // $schedule->command('inspire')
-        //          ->hourly();
     }
 
     /**

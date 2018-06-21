@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Examples;
 
 use App\Crypto\PublicPrivateKeyPair;
 use Elliptic\EC;

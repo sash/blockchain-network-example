@@ -49,9 +49,12 @@ RUN yes | pecl install xdebug \
 RUN apt-get update && apt-get install -y cron
 #COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-ADD crontab /etc/cron.d/app-cron
-RUN chmod 0644 /etc/cron.d/app-cron
+ADD crontab /etc/cron.d/appcron
+RUN chmod 0644 /etc/cron.d/appcron
 RUN touch /var/log/cron.log
+
+ADD cron.sh /root/cron.sh
+RUN chmod +x /root/cron.sh
 
 # Put apache config for Laravel
 COPY apache2-laravel.conf /etc/apache2/sites-available/laravel.conf

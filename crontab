@@ -1,2 +1,3 @@
-* * * * *   root   php /app/artisan schedule:run
-* * * * *   root   echo "Running"
+SHELL=/bin/bash
+#* * * * *   root   . /tmp/env.sh; /usr/local/bin/php /app/artisan schedule:run >> /var/log/artisan-run.log
+* * * * *   root   . /tmp/env.sh; /usr/local/bin/php /app/artisan faucet:drip >> /var/log/artisan-run.log

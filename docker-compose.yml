@@ -114,6 +114,7 @@ services:
       - ./:/app
 
   faucet1_cron:
+    tty: true
     build: .
     restart: always
     environment:
@@ -123,7 +124,7 @@ services:
       - PRIVATE_KEY=0f9d3070204642bc8eb07b00a99ef38eebfec965733a3f70548ce99484fdfd99
     depends_on:
       - faucet1db
-    command: cron -f
+    command: /root/cron.sh
     volumes:
       - ./:/app
 
@@ -157,16 +158,17 @@ services:
 
 
   faucet2_cron:
+    tty: true
     build: .
     restart: always
     environment:
       - APPLICATION=faucet
       - NODE_HOSTS=node1,node2
       - DB_HOST=faucet2db
-      - PRIVATE_KEY=0f9d3070204642bc8eb07b00a99ef38eebfec965733a3f70548ce99484fdfd99
+      - PRIVATE_KEY=e5fcb644cb5ff2a34d8d479b2fc775c6e4f242ebd8f4eb146bf3985d968c67a5
     depends_on:
       - faucet2db
-    command: cron -f
+    command: /root/cron.sh
     volumes:
       - ./:/app
 
@@ -201,7 +203,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node2
-      - ADDRESS=9a0bc19436ff653a7c631edc82451a684bccbbb2
+      - ADDRESS=c06e8b1d745f50658be0a6e4bd6b01c94878a923
     command: node nodejs/miner.js
     depends_on:
       - node2
