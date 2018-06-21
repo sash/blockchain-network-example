@@ -91,7 +91,7 @@ class BlockValidator
     {
         $this->blockHasher->updateHashes($block);
         if ($block->block_hash != $this->blockRepository->getGenesisBlock()->block_hash){
-            throw new \InvalidArgumentException('The genesis block is different');
+            throw new \InvalidArgumentException('The genesis block is different - '.$block->index.' with hash '.$block->block_hash.' : '.json_encode($block));
         }
     }
     
@@ -113,8 +113,8 @@ class BlockValidator
     {
         $this->blockHasher->updateHashes($block);
         $diff = $this->difficulty->zeroesInHash($block->block_hash);
-        if ($diff <= $this->difficulty->minZeroesInHash()){
-            throw new \InvalidArgumentException('The block with index ' . $block->index . ' and hash '.$block->block_hash.' has proof of work with difficulty setting of '.$diff.' with minimum '. $this->difficulty->minZeroesInHash().' required');
+        if ($diff < $this->difficulty->minZeroesInHash()){
+            throw new \InvalidArgumentException('The block with index ' . $block->index . ' and hash '.$block->block_hash.' has proof of work with difficulty of '.$diff.' with minimum '. $this->difficulty->minZeroesInHash().' required');
         }
     }
     

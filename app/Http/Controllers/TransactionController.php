@@ -54,6 +54,7 @@ class TransactionController extends Controller
                 $balance->savePending();
 //                $log[] = "Balance updated";
             } catch (\Exception $e){
+                error_log("Not enought funds to update pending balance: " . $e->getMessage());
 //                $log[] = "Not enought funds: ".$e->getMessage();
                 // Ignore missing funds
             }

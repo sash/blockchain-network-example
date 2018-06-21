@@ -63,10 +63,10 @@ class BlockRepository
     public function newGenesisBlock($initial_funds = [], $timestamp = 1529067174): NodeBlock
     {
         $genesis = new NodeBlock([
-                'index'                => "0",
-                'difficulty'           => "0",
-                'cumulativeDifficulty' => "0",
-                'nonce'                => "0",
+                'index'                => 0,
+                'difficulty'           => 0,
+                'cumulativeDifficulty' => 0,
+                'nonce'                => 0,
                 'mined_by_address'     => str_repeat('0', 40),
                 'previous_block_hash'  => str_repeat('0', 64),
                 'timestamp'            => $timestamp,
@@ -76,14 +76,14 @@ class BlockRepository
         foreach ($initial_funds as $address => $value) {
             $transaction = new NodeTransaction();
             $transaction->timestamp = $timestamp;
-            $transaction->fee = "0";
+            $transaction->fee = 0;
             $transaction->value = $value;
             $transaction->senderAddress = str_repeat('0', 40);
-            $transaction->senderSequence = "0";
+            $transaction->senderSequence = 0;
             $transaction->data = '';
             $transaction->receiverAddress = $address;
             $transaction->hash = $transactionHasher->getHash($transaction);
-            $transaction->signature = str_repeat(0, 130);
+            $transaction->signature = str_repeat('0', 130);
             $genesis->transactions[] = $transaction;
         }
     

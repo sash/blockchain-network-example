@@ -11,7 +11,7 @@ function sleep(millis) {
 }
 
 async function mineBlock(data_hash, difficulty, startFrom, increment) {
-    nonce = startFrom;
+    var nonce = startFrom;
     var blockHash = '';
 
     while(true){

@@ -20,9 +20,10 @@ class CoinFormat
      */
     function __toString()
     {
-        if ($this->value > 1000000){
+        
+        if (abs($this->value) > 1000000){
             return $this->frauds();
-        } elseif ($this->value > 1000){
+        } elseif (abs($this->value) > 1000){
             return $this->microFrauds();
         } else {
             return $this->nanoFrauds();

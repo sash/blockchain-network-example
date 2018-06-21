@@ -27,21 +27,9 @@ use Psy\Util\Json;
 class BroadcastController extends Controller
 {
     /**
-     * @var TransactionValidator
-     */
-    private $transactionValidator;
-    /**
-     * @var TransactionRepository
-     */
-    private $transactionRepository;
-    /**
      * @var Difficulty
      */
     private $difficulty;
-    /**
-     * @var BlockRepository
-     */
-    private $blockRepository;
     
     /**
      * BroadcastController constructor.
@@ -69,9 +57,6 @@ class BroadcastController extends Controller
             UpdatePendingBalance $updatePendingBalance
     ) {
         try{
-            $this->blockRepository = $blockRepository;
-            $this->transactionRepository = $transactionRepository;
-            $this->transactionValidator = $transactionValidator;
             $bodyArray = $request->json()->all();
             if (!isset($bodyArray['block'])){
                 return (new JsonError('Missing block'))->response(403);
@@ -99,8 +84,9 @@ class BroadcastController extends Controller
             error_log("< New block - ".$blockHash);
     
             $rebroadcast->newBlock($blockHash);
-            return response();
-        } catch (\Exception $exception){
+            return response('', 200);
+        } catch (\Throwable $exception){
+            error_log("Error - ".$exception->getMessage());
             return JsonError::fromException($exception)->response(403);
         }
     }

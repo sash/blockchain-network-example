@@ -30,9 +30,11 @@ class BalanceController extends Controller
         foreach ($addresses as $address){
             $unconfirmed = $this->transactionRepository->balanceForAddress($address);
             $confirmed = $this->transactionRepository->balanceForAddress($address, 1);
+            $solid = $this->transactionRepository->balanceForAddress($address, 6);
     
     
             $res[] = [
+                    'solid'   => $solid,
                     'confirmed'   => $confirmed,
                     'unconfirmed' => $unconfirmed,
                     'txs'         => $this->transactionRepository->transactionsBySender($address)->count(),

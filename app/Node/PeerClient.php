@@ -40,10 +40,12 @@ class PeerClient extends ApiClient
         }
         
         $this->peer->wasActive();
-        
-        return collect($json)->map(function ($block) {
-            return NodeBlockResource::fromArray($block);
-        })->toArray();
+        $chain=[];
+        foreach ($json as $block){
+            $chain[] = NodeBlockResource::fromArray($block);
+        }
+       
+        return $chain;
     }
 //
 //    /**
