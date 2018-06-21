@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Wallet from "../../../Crypto/Wallet";
 import WalletClient from "../../../API/WalletClient";
+import CoinFormat from "../../../CoinFormat";
 
 export default class WalletView extends Component {
     constructor(props){
@@ -44,13 +45,18 @@ export default class WalletView extends Component {
     }
     reload(event){
         event.preventDefault()
+        this.setState({
+            balance: 'Loading ...',
+            balancePending: '-',
+            receiveAddress: "Loading ..."
+        });
         this.loadBalance()
     }
     async loadBalance(){
         const balance = await this.client.balance();
         this.setState({
-            balance: balance.getTotalConfirmed(),
-            balancePending: balance.getTotalUnconfirmed() - balance.getTotalConfirmed(),
+            balance: new CoinFormat(balance.getTotalConfirmed()).toString(),
+            balancePending: new CoinFormat(balance.getTotalUnconfirmed() - balance.getTotalConfirmed()).toString(),
             receiveAddress: Wallet.getInstatance().account(balance.unspentAccountNumber()).getAddress(),
         });
     }
@@ -115,12 +121,8 @@ export default class WalletView extends Component {
                             <li className="nav-item">
                                 <a className="nav-link" id="receive-tab" data-toggle="tab" href="#receive">Receive</a>
                             </li>
-                            <li className="nav-item">
-                                <a className="nav-link btn"onClick={this.lock} href="#"
-                                        aria-label="Close">
-                                    Lock
-                                </a>
-                            </li>
+
+
 
                         </ul>
                         <div className="tab-content" id="myTabContent">
@@ -143,17 +145,27 @@ export default class WalletView extends Component {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="value">Value</label>
+                                    <div className="input-group">
                                     <input required="required" value={this.state.send.value} onChange={this.handleInputChange} type="number"
                                            className="form-control" id="value"
                                            placeholder="Value"/>
+                                        <div className="input-group-append">
+                                            <div className="input-group-text">nFs</div>
+                                        </div>
+                                    </div>
 
                                 </div>
                                 <div className={"form-group"}>
                                     <label htmlFor="exampleInputPassword1">Fee</label>
+                                    <div className="input-group">
                                     <input required="required" value={this.state.send.fee} onChange={this.handleInputChange} type="number"
                                            className={"form-control"}
                                            id="fee"
                                            placeholder="Fee"/>
+                                        <div className="input-group-append">
+                                            <div className="input-group-text">nFs</div>
+                                        </div>
+                                    </div>
 
                                 </div>
                                 <div className={"form-group"}>
@@ -188,6 +200,10 @@ export default class WalletView extends Component {
                         <div className="alert alert-success" role="alert">
                             {this.state.balance} [{this.state.balancePending}] <a href="#" onClick={this.reload}>reload</a>
                         </div>
+                        <a className="btn btn-warning" onClick={this.lock} href="#"
+                           aria-label="Close">
+                            Lock
+                        </a>
 
                     </div>
                 </div>

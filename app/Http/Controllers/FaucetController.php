@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Crypto\PublicPrivateKeyPair;
+use App\Faucet\CoinFormat;
 use App\Node\PeerClient;
 use App\Node\TransactionFactory;
 use Illuminate\Http\Request;
@@ -10,7 +11,13 @@ use Illuminate\Http\Request;
 class FaucetController extends Controller
 {
     public function getFaucet(){
-        return view('faucet');
+        $hosts = explode(',', $_ENV['NODE_HOSTS']);
+        $client = new \App\Faucet\PeerClient($hosts[0]);
+        $key = PublicPrivateKeyPair::fromPrivateKey($_ENV['PRIVATE_KEY']);
+        $balance = $client->getBalance($key->getAddress());
+        $balance['unconfirmed'] = new CoinFormat($balance['unconfirmed']);
+        $balance['confirmed'] = new CoinFormat($balance['confirmed']);
+        return view('faucet', ['balance' => $balance]);
     }
     public function postFaucet(Request $request, TransactionFactory $factory){
         $address = $request->get('address');
