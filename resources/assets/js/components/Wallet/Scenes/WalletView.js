@@ -176,7 +176,7 @@ export default class WalletView extends Component {
                                 {typeof this.state.transactions === 'object' && <div>
                                     <BootstrapTable data={this.state.transactions} pagination={true} hover={true}
                                                     version='4' options={options}>
-                                        <TableHeaderColumn dataField="hash" isKey dataSort={true} dataFormat={linkTo("/tx/")}>Hash</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="hash" isKey dataSort={true} dataFormat={linkTo("/transaction/")}>Hash</TableHeaderColumn>
                                         <TableHeaderColumn dataField="from" dataFormat={linkTo("/address/")} dataSort={true}>From</TableHeaderColumn>
                                         <TableHeaderColumn dataField="to" dataSort={true}
                                                            dataFormat={linkTo("/address/")}>To</TableHeaderColumn>
