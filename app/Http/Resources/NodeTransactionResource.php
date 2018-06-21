@@ -45,6 +45,9 @@ class NodeTransactionResource extends JsonResource
             throw new InvalidTransaction('Transaction representation is not an array!');
         }
         $res = new NodeTransaction();
+        if (!isset($transaction['from'])){
+            throw new InvalidTransaction('Invalid transaction format: '.json_encode($transaction));
+        }
         $res->senderAddress = $transaction['from'];
         $res->senderSequence = $transaction['from_id'];
         $res->receiverAddress = $transaction['to'];

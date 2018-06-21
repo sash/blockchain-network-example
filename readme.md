@@ -15,34 +15,20 @@
 | 004ca2dd10fcf53ad30631e7d323aa80c9ecf317 | 600fea4a214cadb607e34ed0bb091297864cc12162f1e6d6f67a4c5efac06e05 |
 
 
-# Project structure
-Docker will be used to launch all the different components of the project - nodes, wallets, workers and so on.
 
-The Node will be implemented in PHP using Laravel. It will be REST API that the other components can use. It will communicate with the other nodes
+# Scenarios
 
-The Miner will be implemented in nodejs using express and it will communicate with a node's REST API to get work and register results
+## Install
+`docker-compose run node1 php artisan migrate:fresh ; docker-compose run node1 php artisan db:seed`
+`docker-compose run node2 php artisan migrate:fresh ; docker-compose run node2 php artisan db:seed`
 
-The Wallet will be impoemented in PHP using Laravel. For simplicity the same laravel project will be used (as the other PHP implementations). Different instancess will be launched and different endpoints will be used. The private key will be passed via format similar to mypasswallet.
+## Bootstrap
+`docker-compose exec node1 php artisan node:bootstrap`
+`docker-compose exec node2 php artisan node:bootstrap`
 
-The Faucet will be implemented in nodejs using express and will communicate with a node.
-
-The Blockchain explorer will be implemented in PHP using Laravel. For simplicity the same laravel project will be used (as the other PHP implementations). It will run on separate endpoints and will.
-
-
-# Node
-## Data Structure
-* Transaction
-* Block
-
-## Validators
-* ValidateTransaction
-* ValidateBlock
-* ValidateBlockChain
-
-
-
-## REST
-
+## Business as usual
+1. Make a new wallet http://localhost:5003
+2.
 
 
 ## Instructions

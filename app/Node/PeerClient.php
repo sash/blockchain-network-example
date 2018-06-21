@@ -9,6 +9,7 @@ use App\Http\Resources\NodeTransactionResource;
 use App\NodeBlock;
 use App\NodePeer;
 use App\NodeTransaction;
+use App\Repository\PeerRepository;
 
 class PeerClient extends ApiClient
 {
@@ -71,12 +72,12 @@ class PeerClient extends ApiClient
     
     public function broadcastBlock($block_hash)
     {
-        $this->call('/api/broadcast/block', ['block' => $block_hash, 'peer' => $this->peer->host]);
+        $this->call('/api/broadcast/block', ['block' => $block_hash, 'peer' => (new PeerRepository())->currentPeer()->host]);
     }
     
     public function broadcastTransaction($transaction_hash)
     {
-        $this->call('/api/broadcast/transaction', ['transaction' => $transaction_hash, 'peer' => $this->peer->host]);
+        $this->call('/api/broadcast/transaction', ['transaction' => $transaction_hash, 'peer' => (new PeerRepository())->currentPeer()->host]);
     }
     
     /**

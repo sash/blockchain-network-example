@@ -12,6 +12,7 @@ use App\Node\Broadcast;
 use App\Node\Difficulty;
 use App\NodeBlock;
 use App\NodePeer;
+use App\NodeTransaction;
 use App\Repository\BalanceRepository;
 use App\Repository\BlockRepository;
 use App\Repository\PeerRepository;
@@ -94,6 +95,8 @@ class BroadcastController extends Controller
             $sync = new SyncChain($peer, $validator, $blockRepository, $this->difficulty, $transactionValidator, $transactionRepository,
                     $updatePendingBalance);
             dispatch_now($sync);
+            
+            error_log("< New block - ".$blockHash);
     
             $rebroadcast->newBlock($blockHash);
             return response();
@@ -112,31 +115,33 @@ class BroadcastController extends Controller
         try{
             $bodyArray = $request->json()->all();
             if (!isset($bodyArray['transaction'])) {
+    
                 return (new JsonError('Missing transaction'))->response(403);
             }
         
             if (!isset($bodyArray['peer'])) {
                 return (new JsonError('Missing peer'))->response(403);
             }
-            
-            $existingTransaction = NodeTransactionResource::where('hash', '=', $bodyArray['transaction'])->first();
+            $existingTransaction = NodeTransaction::where('hash', '=', $bodyArray['transaction'])->first();
             if ($existingTransaction){
+    
                 return response('',201);
             }
-            
+    
             $peer = $peerRepository->getPeer($bodyArray['peer'])->wasActive();
-            
+    
             $transaction = $peer->client->getTransaction($bodyArray['transaction']);
             
             $transactionValidator->assertValid($transaction);
             
             $balance = $balanceFactory->forCurrentPending();
-            
+    
             $balance->addTransaction($transaction);
-            
-            
+    
             $transaction->save();
             $balance->savePending();
+    
+            error_log("< New Transaction - " . $transaction->hash);
             
             $rebroadcast->newTransaction($transaction);
             return response();
@@ -171,6 +176,7 @@ class BroadcastController extends Controller
             }
     
             $peer->wasActive();
+            error_log("< New peer accepted -".$peer->host);
     
             return response();
         } catch (\Throwable $e) {

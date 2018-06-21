@@ -24,7 +24,8 @@ class Broadcast
     
     public function newTransaction(NodeTransaction $transaction){
         $this->each(function (NodePeer $knownPeer) use ($transaction) {
-            echo "Announcing new block $transaction->hash to $knownPeer->host\n";
+    
+            error_log("> Announcing new transaction $transaction->hash to $knownPeer->host");
             $knownPeer->client->broadcastTransaction($transaction->hash);
         });
     }
@@ -32,7 +33,7 @@ class Broadcast
     public function newBlock($block_hash)
     {
         $this->each(function (NodePeer $knownPeer) use ($block_hash) {
-            echo "Announcing new block $block_hash to $knownPeer->host\n";
+            error_log("> Announcing new block $block_hash to $knownPeer->host");
             $knownPeer->client->broadcastBlock($block_hash);
         });
     }
@@ -40,7 +41,7 @@ class Broadcast
     public function newPeer(NodePeer $peer)
     {
         $this->each(function (NodePeer $knownPeer) use ($peer) {
-            echo "Announcing $peer->host to $knownPeer->host\n";
+            error_log ("> Announcing $peer->host to $knownPeer->host");
             $knownPeer->client->broadcastPeer($peer);
         });
     }

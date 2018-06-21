@@ -109,4 +109,9 @@ class TransactionRepository
         }
         return $balance->balance;
     }
+    
+    public function transactionsByHash($hash)
+    {
+        return NodeTransaction::where('hash', '=', $hash)->first();
+    }
 }

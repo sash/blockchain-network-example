@@ -9,6 +9,7 @@ use App\Node\BalanceFactory;
 use App\Node\Broadcast;
 use App\NodeTransaction;
 use App\Repository\BalanceRepository;
+use App\Repository\TransactionRepository;
 use App\Validators\TransactionValidator;
 use Illuminate\Http\Request;
 
@@ -65,6 +66,19 @@ class TransactionController extends Controller
             
         } catch (\Exception $ex){
             return JsonError::fromException($ex)->response(422);
+        }
+    }
+    
+    public function getTransaction($hash, TransactionRepository $transactionRepository){
+        try{
+            $transaction = $transactionRepository->transactionsByHash($hash);
+            if ($transaction){
+                return new NodeTransactionResource($transaction);
+            } else {
+                return response('', 404);
+            }
+        } catch (\Throwable $exception){
+            return JsonError::fromException($exception)->response(422);
         }
     }
 }
