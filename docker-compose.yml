@@ -113,6 +113,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node1
+      - ADDRESS=be9c053812ca0cf8ae40aab3047f1b17e586765d
     command: node nodejs/miner.js
     depends_on:
       - node1
@@ -125,6 +126,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node1
+      - ADDRESS=c06e8b1d745f50658be0a6e4bd6b01c94878a923
     command: node nodejs/miner.js
     depends_on:
       - node1
@@ -138,6 +140,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node2
+      - ADDRESS=9a0bc19436ff653a7c631edc82451a684bccbbb2
     command: node nodejs/miner.js
     depends_on:
       - node2
@@ -150,6 +153,7 @@ services:
     build: .
     environment:
       - NODE_HOST=node2
+      - ADDRESS=b379a0f6378b612a46a346e8136ba3b9fb324218
     command: node nodejs/miner.js
     depends_on:
       - node2

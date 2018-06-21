@@ -10,13 +10,31 @@ export default class WalletClient{
     }
 
     async balance(){
-        var balances = [];
-        for(var i=0; i<10; i++){
-            balances.push(this.balanceClient(i))
-        }
-        let listOfBalances = await Promise.all(balances)
+        // This is a cool way to get all balances using one request peer address, but the issue is that the server is bombarded with requests :)
+        // var balances = [];
+        // for(var i=0; i<10; i++){
+        //     balances.push(this.balanceClient(i))
+        // }
+        // let listOfBalances = await Promise.all(balances)
+
+        let listOfBalances = await this.balanceForAll()
+
         this.balances = new Balance(listOfBalances);
         return this.balances
+    }
+
+    async balanceForAll(){
+        const addresses = Array.from({length: 10}, (x, i) => i).reduce((soFar, el) => {return soFar+this.wallet.account(el).getAddress()}, "");
+        console.log(addresses);
+        const res = await this.axios.get('http://' + this.node_host + '/api/balance/' + addresses)
+        var response = res.data;
+        response = response.map((el, index) => {
+            el.accountNumber = index;
+            return el;
+        });
+        console.log(response);
+        // response.accountNumber = number
+        return response
     }
 
     async balanceClient(number){
