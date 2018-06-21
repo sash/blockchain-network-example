@@ -78,6 +78,7 @@ class NodeTransactionResource extends JsonResource
             'data' => $this->data,
             'timestamp' => $this->timestamp,
             'mined_in_block_index' => $this->block_id ? $this->block->index : null,
+            'mined_in_block_hash' => $this->block_id ? $this->block->block_hash : null,
             'hash' => $this->hash,
             'signature' => $this->signature,
         ];

@@ -55,6 +55,7 @@ class MinerController extends Controller
             $broadcast->newBlock($block->block_hash);
             return  response('', 201);
         } catch(\Exception $exception){
+            error_log("Error: ". $exception->getMessage());
             return JsonError::fromException($exception)->response(403);
         }
     }

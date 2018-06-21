@@ -12,7 +12,7 @@ use App\Crypto\TransactionHasher;
 use App\Crypto\TransactionSerializer;
 use App\Http\Resources\NodeTransactionResource;
 use App\NodeTransaction;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class TransactionHasherTest extends TestCase
 {
@@ -24,4 +24,5 @@ class TransactionHasherTest extends TestCase
         $hasher = new TransactionHasher(new TransactionSerializer());
         $this->assertEquals('ae4b979d0059bd5af75bae39bf56508a5d2da0a60bb8394b6a294425c820b673', $hasher->getHash($transaction));
     }
+    
 }

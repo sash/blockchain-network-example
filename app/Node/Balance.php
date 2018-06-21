@@ -32,9 +32,8 @@ class Balance
     public function addTransaction(NodeTransaction $transaction): bool
     {
         
-        
-        if (@$this->balance[$transaction->senderAddress] < $transaction->value + $transaction->fee && !$transaction->isCoinbase) {
-            throw new InvalidTransaction('Not enough funds to carry out the transaction');
+        if ((@$this->balance[$transaction->senderAddress] < ($transaction->value + $transaction->fee)) && !$transaction->isCoinbase) {
+            throw new InvalidTransaction('Not enough funds to carry out the transaction - '. $this->balance[$transaction->senderAddress]);
         }
     
         @$this->balance[$transaction->senderAddress] -= $transaction->value + $transaction->fee;

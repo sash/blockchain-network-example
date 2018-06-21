@@ -27,7 +27,6 @@ class FaucetController extends Controller
         
         $balance = $client->getBalance($key->getAddress());
         
-        
         $client->postTransaction($factory->buildSpendTransaction($key, $balance['txs'], 1000000, 10, $address, 'Free monet from faucet'));
         return redirect('/');
     }

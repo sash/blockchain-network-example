@@ -1,6 +1,7 @@
 import Balance from "./Balance";
 import CryptoJS from 'crypto-js';
 
+
 export default class WalletClient{
     constructor(node_host, wallet){
         this.node_host = node_host;
@@ -25,23 +26,33 @@ export default class WalletClient{
 
     async balanceForAll(){
         const addresses = Array.from({length: 10}, (x, i) => i).reduce((soFar, el) => {return soFar+this.wallet.account(el).getAddress()}, "");
-        console.log(addresses);
         const res = await this.axios.get('http://' + this.node_host + '/api/balance/' + addresses)
-        var response = res.data;
+        let response = res.data;
         response = response.map((el, index) => {
             el.accountNumber = index;
             return el;
         });
-        console.log(response);
+
         // response.accountNumber = number
         return response
     }
 
     async balanceClient(number){
         const res = await this.axios.get('http://'+this.node_host+'/api/balance/'+this.wallet.account(number).getAddress())
-        var response = res.data;
+        const response = res.data;
         response.accountNumber = number
         return response
+    }
+
+
+
+    async transactions(){
+        const addresses = Array.from({length: 10}, (x, i) => i).reduce((soFar, el) => {
+            return soFar + this.wallet.account(el).getAddress()
+        }, "");
+        const res = await this.axios.get('http://' + this.node_host + '/api/transactions/address/' + addresses);
+
+        return res.data;
     }
 
     async send(to, value, fee, notes){
@@ -55,7 +66,7 @@ export default class WalletClient{
         this.balances.accountNumbersWithFunds(function(accountNumber, numberOfSpends, funds){
             if(remainingValue > 0){
                 const account = wallet.account(accountNumber);
-                const value = Math.min(remainingValue, funds);
+                const value = Math.min(remainingValue, funds - fee);
                 const transaction = {
                     'from': account.getAddress(),
                     'from_id': numberOfSpends,
@@ -71,8 +82,8 @@ export default class WalletClient{
                 transaction.hash = toSignHash;
                 transaction.signature = account.sign(transaction.hash);
 
+                console.log(transaction);
 
-                console.log(transaction.signature);
                 transactions.push(
                     transaction
                 )

@@ -28,9 +28,21 @@ class BalanceController extends Controller
         $addresses = str_split($address, 40);
         $res = [];
         foreach ($addresses as $address){
-            $unconfirmed = $this->transactionRepository->balanceForAddress($address);
-            $confirmed = $this->transactionRepository->balanceForAddress($address, 1);
-            $solid = $this->transactionRepository->balanceForAddress($address, 6);
+            try {
+                $unconfirmed = $this->transactionRepository->balanceForAddress($address);
+            }catch (\Exception $e){
+                $unconfirmed = 0;
+            }
+            try {
+                $confirmed = $this->transactionRepository->balanceForAddress($address, 1);
+            } catch (\Exception $e) {
+                $confirmed = 0;
+            }
+            try {
+                $solid = $this->transactionRepository->balanceForAddress($address, 6);
+            } catch (\Exception $e) {
+                $solid = 0;
+            }
     
     
             $res[] = [

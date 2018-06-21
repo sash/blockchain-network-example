@@ -3,10 +3,10 @@ export default class CoinFormat{
         this.value = value
     }
     toString(){
-        if (this.value > 1000000) {
+        if (Math.abs(this.value) >= 100000) {
             return this.frauds();
         }
-        else if(this.value > 1000)
+        else if(Math.abs(this.value) > 100)
         {
             return this.microFrauds();
         }

@@ -15,6 +15,8 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:100,600" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://npmcdn.com/react-bootstrap-table/dist/react-bootstrap-table-all.min.css">
+        </link>
 
         <!-- Styles -->
         <style>
@@ -82,7 +84,7 @@
                 <div class="title m-b-md">
                     BitFraud HD Wallet
                 </div>
-                <div id="app" data-host="{{current(explode(':',$_SERVER['HTTP_HOST']))}}" data-nodes="{{$_ENV['NODE_HOSTS']}}">
+                <div id="app" data-host="{{current(explode(':',$_SERVER['HTTP_HOST']))}}" data-nodes="{{$_ENV['NODE_HOSTS']}}" data-explorer="http://{{current(explode(':',$_SERVER['HTTP_HOST']))}}:5004">
                     Loading ...
                 </div>
 

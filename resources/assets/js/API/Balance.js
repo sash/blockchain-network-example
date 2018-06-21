@@ -25,9 +25,8 @@ export default class Balance{
     accountNumbersWithFunds(callback){
         for (var balance in this.listOfBalances) {
 
-            // TODO: Remove once faucets are available
-            if ((this.listOfBalances[balance].confirmed+1000) > 0) {
-                callback(this.listOfBalances[balance].accountNumber, this.listOfBalances[balance].txs, this.listOfBalances[balance].confirmed + 1000)
+            if (this.listOfBalances[balance].confirmed > 0) {
+                callback(this.listOfBalances[balance].accountNumber, this.listOfBalances[balance].txs, this.listOfBalances[balance].confirmed)
             }
         }
     }
