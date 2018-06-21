@@ -40,10 +40,11 @@ class NodeBlock extends Model
             'nonce',
             'timestamp',
             'block_hash',
+            //'chain_id'
     ];
     
     public function transactions(){
-        return $this->hasMany(NodeTransaction::class, 'block_id')->orderBy('sequence');
+        return $this->hasMany(NodeTransaction::class, 'block_id','id')->orderBy('sequence');
     }
     
     /**

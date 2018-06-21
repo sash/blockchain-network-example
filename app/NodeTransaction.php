@@ -66,7 +66,7 @@ class NodeTransaction extends Model
     }
     
     public function block(){
-        return $this->belongsTo(NodeBlock::class, 'block_id');
+        return $this->belongsTo(NodeBlock::class, 'block_id','id');
     }
     
     public function getIsCoinbaseAttribute(){

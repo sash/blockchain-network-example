@@ -44,6 +44,6 @@ class Difficulty
     }
     
     public function minZeroesInHash(){
-        return self::CURRENT_MIN_DIFFICULTY;
+        return config('settings.current_min_difficulty');
     }
 }

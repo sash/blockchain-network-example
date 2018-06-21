@@ -46,7 +46,7 @@ class NodeTransactionResource extends JsonResource
         $res->receiverAddress = $transaction['to'];
         $res->value = $transaction['value'];
         $res->fee = $transaction['fee'];
-        $res->data = $transaction['data'];
+        $res->data = $transaction['data'] == null ? '' : $transaction['data'];
         $res->timestamp = $transaction['timestamp'];
         $res->hash = app(TransactionHasher::class)->getHash($res);
         $res->signature = $transaction['signature'];

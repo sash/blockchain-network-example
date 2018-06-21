@@ -33,41 +33,17 @@ class NodeBlockResource extends JsonResource
         ];
     }
     
-    static function fromArray(array $block_array): \App\NodeBlock
+    static function fromArray($blockArray): \App\NodeBlock
     {
-        if ($missing=array_diff([
-                'index',
-                'difficulty',
-                'cumulativeDifficulty',
-                'mined_by_address',
-                'previous_block_hash',
-                'nonce',
-                'timestamp',
-                'transactions',
-                'chain_id',
-                ], array_keys($block_array))){
-            throw new \InvalidArgumentException("Missing block fields: ".json_encode($missing));
+        $block = new \App\NodeBlock($blockArray);
+
+        foreach($blockArray['transactions'] as $tran){
+            $obj = NodeTransactionResource::fromArray($tran);
+            $block->transactions[] = $obj;
         }
-    
-        if (!is_array($block_array['transactions'])) {
-            throw new \InvalidArgumentException("Transactions in block are not array: " . json_encode($block_array));
-        }
-        
-        $attributes = $block_array;
-        unset($attributes['transactions'], $attributes['chain_id']);
-        $block = new \App\NodeBlock($attributes);
-        
-        $block->chain_id = $block_array['chain_id'];
-        
-        $block->transaction = array_map(
-                function($transactionArray){
-                    return NodeTransactionResource::fromArray($transactionArray);
-                },
-                $block_array['transactions']
-        );
+
         $hasher = new BlockHasher();
         $hasher->updateHashes($block);
         return $block;
-        
     }
 }

@@ -148,15 +148,12 @@ class BlockRepository
      * @param $sequence
      * @param $handleMissingTransactions
      */
-    public function linkTransactions(
-            $block
-    ): void {
+    public function linkTransactions($block): void {
         $sequence = 0;
-// Link up all transactions based on the hashes to the current block! $update->transactions
+        // Link up all transactions based on the hashes to the current block! $update->transactions
         foreach ($block->transactions as $transaction) {
             $existingTransaction = NodeTransaction::where('hash', '=', $transaction->hash)->whereNull('block_id')->first();
             if ($existingTransaction) {
-               
                 $existingTransaction->sequence = $sequence++;
                 $existingTransaction->block_id = $block->id;
                 $existingTransaction->save();
@@ -164,6 +161,11 @@ class BlockRepository
                 $newTransaction = $transaction;
                 $newTransaction->sequence = $sequence++;
                 $newTransaction->block_id = $block->id;
+
+                if($newTransaction->isCoinbase){
+                    $newTransaction->signature = str_repeat(0, 130);
+                }
+
                 $newTransaction->save();
             }
         }

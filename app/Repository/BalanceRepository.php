@@ -60,6 +60,11 @@ class BalanceRepository
     {
         return $block->balances->pluck('balance', 'address')->toArray();
     }
+
+    public function getBalanceForAddressOfBlock($address,NodeBlock $block): int
+    {
+        return $this->getBalanceForBlock($block)[$address];
+    }
     
     public function getBalanceForPending(): array
     {

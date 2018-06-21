@@ -116,14 +116,16 @@ class TransactionValidator
     private function assertSenderSequence(NodeTransaction $transaction)
     {
         $existing = $this->transactionRepository->transactionBySenderAndSequence($transaction->senderAddress, $transaction->senderSequence);
+
         if (!$existing) {
             return true;
         }
-        if ($existing->id == $transaction->id){
+
+        if ($existing->hash == $transaction->hash){
             return true;
         }
-        
-        throw new InvalidTransaction('A transaction with the same sender sequence is alredy registered');
+
+        throw new InvalidTransaction('A transaction with the same sender sequence is already registered');
         
     }
     

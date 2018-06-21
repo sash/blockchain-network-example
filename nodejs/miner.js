@@ -2,8 +2,8 @@ let request = require('request');
 
 const { fork } = require('child_process');
 
-let new_job_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/job/miner-address"
-let submit_job_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/job"
+let new_job_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/job/miner-address";
+let submit_job_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/job";
 let get_latest_block_hash = 'http://'+process.env.NODE_HOST+"/api/miner/last-block-hash";
 let previous_block_hash='';
 let miningProcesses = [];
