@@ -64,7 +64,7 @@ class MinerTest extends TestCase
     /** @test */
     public function it_can_post_a_valid_block()
     {
-
+        config()->set('settings.current_min_difficulty',0);
         $this->seed(\GenesisBlock::class);
 
         $txA = $this->buildTransactionForKnownAddress('be9c053812ca0cf8ae40aab3047f1b17e586765d',function($t){

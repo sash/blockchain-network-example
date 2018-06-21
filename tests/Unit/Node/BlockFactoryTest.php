@@ -73,7 +73,7 @@ class BlockFactoryTest extends TestCase
 
         $candidateBlock = $blockFactory->buildMostProfitableFromPending('miner-address');
 
-        $this->assertEquals(Difficulty::CURRENT_MIN_DIFFICULTY, $candidateBlock->difficulty);
+        $this->assertEquals((new Difficulty)->minZeroesInHash(), $candidateBlock->difficulty);
         $this->assertEquals($parent->block_hash, $candidateBlock->previous_block_hash);
         $this->assertEquals($parent->index+1, $candidateBlock->index);
         $this->assertEquals('miner-address', $candidateBlock->mined_by_address);

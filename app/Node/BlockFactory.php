@@ -61,7 +61,7 @@ class BlockFactory
         $parent = $this->blockRepository->getTopBlock();
 
         $res = new NodeBlock();
-        $res->difficulty = Difficulty::CURRENT_MIN_DIFFICULTY;
+        $res->difficulty = (new Difficulty)->minZeroesInHash();
         $res->previous_block_hash = $parent->block_hash;
         $res->index = $parent->index + 1;
         $res->mined_by_address = $miner_address;
