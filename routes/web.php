@@ -33,5 +33,7 @@ if ($_ENV['APPLICATION'] == 'wallet') {
 }
 
 if ($_ENV['APPLICATION'] == 'explorer') {
-    // Explorer endpoints
+    Route::get('/', function () {
+        return view('explorer');
+    });
 }

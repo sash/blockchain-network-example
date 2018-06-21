@@ -33,6 +33,7 @@ class MinerController extends Controller
      */
     public function postJob(SubmitMinedBlock $request, BlockValidator $blockValidator, BlockRepository $blockRepository, BalanceFactory $balanceFactory){
         try{
+            //dd($request->json());
             $block = NodeBlockResource::fromArray($request->get('block'));
             $parent = $blockRepository->getTopBlock();
             $blockValidator->assertValidBlock($block, $parent);

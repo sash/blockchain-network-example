@@ -35,6 +35,10 @@ class BlockFactory
      * @var \App\Validators\BlockValidator
      */
     private $blockValidator;
+    /**
+     * @var \App\Node\Difficulty
+     */
+    private $difficulty;
 
     /**
      * BlockFactory constructor.
@@ -45,8 +49,9 @@ class BlockFactory
      * @param BalanceFactory                 $balanceFactory
      * @param TransactionFactory             $transactionFactory
      * @param \App\Validators\BlockValidator $blockValidator
+     * @param \App\Node\Difficulty           $difficulty
      */
-    function __construct(TransactionRepository $transactionRepository, BlockRepository $blockRepository, BlockHasher $blockHasher, BalanceFactory $balanceFactory, TransactionFactory $transactionFactory, BlockValidator $blockValidator)
+    function __construct(TransactionRepository $transactionRepository, BlockRepository $blockRepository, BlockHasher $blockHasher, BalanceFactory $balanceFactory, TransactionFactory $transactionFactory, BlockValidator $blockValidator, Difficulty $difficulty)
     {
         $this->transactionRepository = $transactionRepository;
         $this->blockRepository = $blockRepository;
@@ -54,6 +59,7 @@ class BlockFactory
         $this->balanceFactory = $balanceFactory;
         $this->transactionFactory = $transactionFactory;
         $this->blockValidator = $blockValidator;
+        $this->difficulty = $difficulty;
     }
     
     function buildMostProfitableFromPending($miner_address): NodeBlock
@@ -87,6 +93,7 @@ class BlockFactory
         $res->transactions[] = $this->transactionFactory->buildCoinbaseForBlock($res);
         
         $res->data_hash = $this->blockHasher->getDataHash($res);
+        $res->cumulativeDifficulty = $parent->cumulativeDifficulty + $this->difficulty->difficultyOfBlock($res);
         return $res;
     }
 }

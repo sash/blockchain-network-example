@@ -104,6 +104,7 @@ class MinerTest extends TestCase
 
         // 004ca2dd10fcf53ad30631e7d323aa80c9ecf317 miner address
         // b379a0f6378b612a46a346e8136ba3b9fb324218 should have received 1000+900+800=2700 coins
+        //dd((new NodeBlockResource($block))->toArray($block));
         $response = $this->postJson('/api/miner/job',[
            'block' =>  (new NodeBlockResource($block))->toArray($block)
         ])->assertStatus(201);

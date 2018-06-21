@@ -13,7 +13,7 @@ setInterval(function(){
     request(get_latest_block_hash, function (error, response, body) {
         let data = JSON.parse(response.body);
 
-        if(previous_block_hash !== data['hash']){
+        if(previous_block_hash !== data['hash'] && previous_block_hash!==''){
             console.log('current_previous_block_hash: '+previous_block_hash+', hash: '+data['hash']);
             console.log('Just found out new block to mine. Starting in a second...');
             miningProcesses.forEach(function (p) {
@@ -70,7 +70,7 @@ let notifyNode = function (message){
     let options = {
         url: submit_job_endpoint,
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json','Accept': 'application/json'},
         body: JSON.stringify({
             'block': candidateBlock
         })

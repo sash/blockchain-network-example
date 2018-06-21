@@ -51,6 +51,14 @@ class BlockRepository
     {
         return NodeBlock::query()->orderBy('index', 'asc')->get();
     }
+
+    /**
+     * @return Collection|NodeBlock[]
+     */
+    public function getLastBlocks($limit)
+    {
+        return NodeBlock::query()->orderBy('index', 'asc')->take($limit)->get();
+    }
     
     public function newGenesisBlock($initial_funds = [], $timestamp = 1529067174): NodeBlock
     {

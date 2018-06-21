@@ -38,8 +38,7 @@ if ($_ENV['APPLICATION'] == 'node'){
     
     // Explorer
     
-    Route::middleware('api')->get('/blocks/last/{limit}', 'BlockController@getBlocks'); // Block[]
+    Route::middleware('api')->get('/blocks/last/{limit}', 'BlockController@getLastBlocks'); // Block[]
     Route::middleware('api')->get('/blocks/{hash}', 'BlockController@getBlocks'); // Block + Transactions
     Route::middleware('api')->get('/transactions/{hash}', 'TransactionController@getTransaction'); // Transaction ?
-
 }
