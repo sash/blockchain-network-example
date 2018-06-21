@@ -113,42 +113,41 @@ class BlockRepository
     
     public function updateWithChain($chain)
     {
-        DB::transaction(function() use ($chain){
-            $updatedChain = $this->difference($chain);
-            $base = $updatedChain[0];
-            // Delete all blocks after the base's parent hash, making all transactions after that pending (temporarily)
-            NodeBlock::where('index', '>=', $base->index)->delete();
-    
-            /**
-             * @var Balance $balance;
-             */
-            $balance = null;
-            foreach ($updatedChain as $i => $updatedBlock) {
-                if ($i == 0){
-                    $parent = $this->getBlockWithHash($updatedBlock->previous_block_hash);
-                    if (!$parent){
-                        throw new \Exception('Could not find parent of the update chain');
-                    }
-                    $balance = $this->balanceFactory->forBlock($parent);
-                } else {
-                    $parent = $updatedChain[$i-1];
+        
+        $updatedChain = $this->difference($chain);
+        $base = $updatedChain[0];
+        // Delete all blocks after the base's parent hash, making all transactions after that pending (temporarily)
+        NodeBlock::where('index', '>=', $base->index)->delete();
+
+        /**
+         * @var Balance $balance;
+         */
+        $balance = null;
+        foreach ($updatedChain as $i => $updatedBlock) {
+            if ($i == 0){
+                $parent = $this->getBlockWithHash($updatedBlock->previous_block_hash);
+                if (!$parent){
+                    throw new \Exception('Could not find parent of the update chain');
                 }
-                
-                // Update the difficulty
-                $updatedBlock->cumulativeDifficulty = $parent->cumulativeDifficulty + $this->difficulty->difficultyOfBlock($updatedBlock);
-                
-                
-        
-                $updatedBlock->save();
-                
-                $balance->updateForBlock($updatedBlock); // throws
-                
-                
-                $this->linkTransactions($updatedBlock);
-        
+                $balance = $this->balanceFactory->forBlock($parent);
+            } else {
+                $parent = $updatedChain[$i-1];
             }
-        });
-        
+            
+            // Update the difficulty
+            $updatedBlock->cumulativeDifficulty = $parent->cumulativeDifficulty + $this->difficulty->difficultyOfBlock($updatedBlock);
+            
+            
+    
+            $updatedBlock->save();
+            
+            $balance->updateForBlock($updatedBlock); // throws
+            
+            
+            $this->linkTransactions($updatedBlock);
+    
+        }
+    
         
     }
     

@@ -84,17 +84,29 @@ class SyncChain implements ShouldQueue
      */
     public function handle()
     {
+        error_log("SyncChain: Start from {$this->peer->host}");
         $candidateChain = $this->peer->client->getBlocks();
     
         $this->blockValidator->assertValidChain($candidateChain);
     
+        error_log("SyncChain: Chain is valid");
         if ($this->chainIsMoreDifficult($candidateChain)) {
-            $this->blockRepository->updateWithChain($candidateChain);
+            DB::transaction(function () use ($candidateChain) {
+                error_log("SyncChain: Chain is more difficult");
+                $this->blockRepository->updateWithChain($candidateChain);
+    
+                error_log("SyncChain: Updated with new chain");
+                $this->destroyPendingCoinbaseTransactions();
+                error_log("SyncChain: Cleared dangling coinbase transactoins");
+                $this->clearSequenceOfPendingTransactions();
+                $this->updatePendingBalances();
+                error_log("SyncChain: Updated pending balance");
+            });
+        } else {
+            error_log("SyncChain: Chain is less difficult");
         }
     
-        $this->destroyPendingCoinbaseTransactions();
-        $this->clearSequenceOfPendingTransactions();
-        $this->updatePendingBalances();
+        error_log("SyncChain: End from {$this->peer->host}");
     }
     
     private function chainIsMoreDifficult($candidateChain)
