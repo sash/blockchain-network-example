@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 if ($_ENV['APPLICATION'] == 'node'){
     Route::get('/', function () {
-        return view('node');
+        return view('node', ['routes' => Route::getRoutes()]);
     });
 }
 

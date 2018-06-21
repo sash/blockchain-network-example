@@ -34,6 +34,7 @@ let requestNewJobAndStartMining = function() {
         candidateBlock = data;
 
         console.log('New block to mine! Difficulty: '+difficulty+', data_hash: '+data_hash+', previous_block_hash: '+previous_block_hash);
+        console.log(candidateBlock);
 
         for (let i = 0; i < 8; i++) {
             miningProcesses[i] = fork('nodejs/miner_worker.js');
@@ -61,12 +62,14 @@ let requestNewJobAndStartMining = function() {
 };
 
 let notifyNode = function (message){
-    console.log('Notifying node for new block');
+
 
     //glue the additional data to the block in order to send to the node
     candidateBlock['nonce'] = message.nonce;
     candidateBlock['timestamp'] = message.timestamp;
-
+    console.log('Notifying node for new block', JSON.stringify({
+        'block': candidateBlock
+    }));
     let options = {
         url: submit_job_endpoint,
         method: 'POST',

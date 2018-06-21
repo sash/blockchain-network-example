@@ -26,6 +26,9 @@
 `docker-compose exec node1 php artisan node:bootstrap`
 `docker-compose exec node2 php artisan node:bootstrap`
 
+## Add more miners
+`docker-compose scale miner1=5 miner2=5`
+
 ## Business as usual
 1. Make a new wallet http://localhost:5003
 2.
