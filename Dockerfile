@@ -46,7 +46,7 @@ RUN yes | pecl install xdebug \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/xdebug.ini
 
-#RUN apt-get update && apt-get install -y supervisor cron
+RUN apt-get update && apt-get install -y cron
 #COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ADD crontab /etc/cron.d/app-cron

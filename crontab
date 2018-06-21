@@ -1,1 +1,2 @@
 * * * * *   root   php /app/artisan schedule:run
+* * * * *   root   echo "Running"

@@ -4,13 +4,15 @@ services:
   pma:
     image: "phpmyadmin/phpmyadmin"
     environment:
-      - PMA_HOSTS=node1db,node2db
+      - PMA_HOSTS=node1db,node2db,faucet1db,faucet2db
       - PMA_USER=dev
       - PMA_DATABASE=database
       - PMA_PASSWORD=password
     depends_on:
       - node1db
       - node2db
+      - faucet1db
+      - faucet2db
     ports:
       - 5000:80
 
@@ -95,18 +97,89 @@ services:
     volumes:
       - ./:/app
 
-  faucet:
+  faucet1:
     tty: true
     build: .
+    restart: always
     environment:
       - APPLICATION=faucet
       - NODE_HOSTS=node1,node2
+      - DB_HOST=faucet1db
       - PRIVATE_KEY=0f9d3070204642bc8eb07b00a99ef38eebfec965733a3f70548ce99484fdfd99
+    depends_on:
+      - faucet1db
     ports:
       - 5005:80
     volumes:
       - ./:/app
 
+  faucet1_cron:
+    build: .
+    restart: always
+    environment:
+      - APPLICATION=faucet
+      - NODE_HOSTS=node1,node2
+      - DB_HOST=faucet1db
+      - PRIVATE_KEY=0f9d3070204642bc8eb07b00a99ef38eebfec965733a3f70548ce99484fdfd99
+    depends_on:
+      - faucet1db
+    command: cron -f
+    volumes:
+      - ./:/app
+
+
+  faucet1db:
+    image: 'mariadb:latest'
+    restart: always
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=dev
+      - MYSQL_DATABASE=database
+      - MYSQL_PASSWORD=password
+    ports:
+      - 6002:3306
+
+  faucet2:
+    tty: true
+    build: .
+    restart: always
+    environment:
+      - APPLICATION=faucet
+      - NODE_HOSTS=node1,node2
+      - DB_HOST=faucet2db
+      - PRIVATE_KEY=e5fcb644cb5ff2a34d8d479b2fc775c6e4f242ebd8f4eb146bf3985d968c67a5
+    depends_on:
+      - faucet2db
+    ports:
+      - 5006:80
+    volumes:
+      - ./:/app
+
+
+  faucet2_cron:
+    build: .
+    restart: always
+    environment:
+      - APPLICATION=faucet
+      - NODE_HOSTS=node1,node2
+      - DB_HOST=faucet2db
+      - PRIVATE_KEY=0f9d3070204642bc8eb07b00a99ef38eebfec965733a3f70548ce99484fdfd99
+    depends_on:
+      - faucet2db
+    command: cron -f
+    volumes:
+      - ./:/app
+
+  faucet2db:
+    image: 'mariadb:latest'
+    restart: always
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=dev
+      - MYSQL_DATABASE=database
+      - MYSQL_PASSWORD=password
+    ports:
+      - 6003:3306
 
   miner1:
     restart: always
