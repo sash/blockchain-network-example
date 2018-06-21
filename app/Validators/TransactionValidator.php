@@ -11,6 +11,7 @@ use App\Repository\TransactionRepository;
 
 class TransactionValidator
 {
+    //TODO extract it to config
     const MINIMUM_FEE = 10;
     /**
      * @var TransactionHasher

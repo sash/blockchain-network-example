@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
 class NodeTransaction extends Model
 {
     public $timestamps = false;
+    //TODO extract it to config
     const COINBASE_ADDRESS = '0000000000000000000000000000000000000000';
 
     protected $fillable = [

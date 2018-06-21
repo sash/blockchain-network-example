@@ -11,6 +11,7 @@ use App\Repository\BlockRepository;
 
 class BlockValidator
 {
+    //TODO extract constants to config
     const COINBASE_MINING_FEE = 10000000;
     
     const TRANSACTIONS_LIMIT = 10;
