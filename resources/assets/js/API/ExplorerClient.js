@@ -22,6 +22,13 @@ export default class ExplorerClient{
         return response
     }
 
+    async getTransaction(transactionHash){
+        console.log('fetching transaction from '+this.node_host)
+        const res = await this.axios.get('http://'+this.node_host+'/api/transactions/'+transactionHash)
+        var response = res.data;
+        return response
+    }
+
     async balanceForAddress(address){
         console.log('fetching balance for '+address+' from '+this.node_host)
         const res = await this.axios.get('http://' + this.node_host + '/api/balance/' + address)

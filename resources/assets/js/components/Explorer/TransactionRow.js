@@ -14,7 +14,7 @@ class TransactionRow extends Component {
                     <tbody>
                     <tr >
                         <th colSpan="4" align="left">
-                            <Link to={{pathname: `/${this.props.node}/transaction/${this.props.tx.hash}`, state: {tx:this.props.tx}}}>{this.props.tx.hash}</Link>
+                            <Link to={{pathname: `/${this.props.node}/transaction/${this.props.tx.hash}`}}>{this.props.tx.hash}</Link>
                             <span style={{float:"right"}} className="pull-right">{moment.unix(this.props.tx.timestamp).format("MMMM Do YYYY, h:mm:ss a")}</span>
                         </th>
                     </tr>

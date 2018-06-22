@@ -1,18 +1,31 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router , Route, Link } from 'react-router-dom'
 import moment from 'moment';
+import ExplorerClient from "../../API/ExplorerClient";
 
 class Transaction extends Component {
     constructor(props){
         super(props)
         this.state = {
-            tx: props.location.state.tx
+            tx: props.match.params.transactionHash
         };
+        console.log('in the transactionnnn')
+        this.client = new ExplorerClient(props.peers[props.match.params.node]);
+        this.loadTransaction(props.match.params.transactionHash)
+    }
+
+    async loadTransaction(transactionHash){
+        const transaction = await this.client.getTransaction(transactionHash)
+        console.log(transaction)
+        this.setState({
+            tx: transaction
+        })
+
     }
 
     render() {
         return (
-            <div className="Block">
+            <div className="Transaction">
                 <div class="row">
                     <div class="col-md-6 col-sm-6">
                         <table class="table table-striped">
