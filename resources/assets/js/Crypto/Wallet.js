@@ -46,9 +46,9 @@ export default class Wallet{
         if (password !== repeatPassword) {
             throw new Error('Password did not match');
         }
-
+        let salt = CryptoJS.lib.WordArray.random(128 / 8);
         walletInstance = this.generate();
-        walletInstance.toStorage(password);
+        walletInstance.toStorage(password, salt);
         return true;
     }
 
@@ -66,20 +66,23 @@ export default class Wallet{
         return new this(masterKey, entropy)
     }
     static hasStorage(){
+        const salt = window.localStorage.getItem("encryptedEntropySalt");
         const encr = window.localStorage.getItem("encryptedEntropy");
         const checksum = window.localStorage.getItem("encryptedEntropyChecksum");
-        if (!encr || !checksum) {
+        if (!encr || !checksum || !salt) {
             return false;
         }
         return true;
     }
     static fromStorage(password){
+
+        const salt = CryptoJS.enc.Base64.parse(window.localStorage.getItem("encryptedEntropySalt"));
         const encr = window.localStorage.getItem("encryptedEntropy");
         const checksum = window.localStorage.getItem("encryptedEntropyChecksum");
         if (!encr || !checksum){
             throw new Error("No wallet stored");
         }
-        const entropy = this._decrypt(encr, password);
+        const entropy = this._decrypt(encr, password, salt);
         if (checksum !== CryptoJS.SHA256(entropy).toString()){
             throw new Error("Invalid password");
         }
@@ -87,15 +90,26 @@ export default class Wallet{
         return this.fromMnemonic(mnemonic);
     }
     static clearStorage(){
+        window.localStorage.removeItem("encryptedEntropySalt")
         window.localStorage.removeItem("encryptedEntropy")
         window.localStorage.removeItem("encryptedEntropyChecksum")
     }
-    static _decrypt(message, password){
-        var bytes = CryptoJS.AES.decrypt(message, password);
+    static _decrypt(message, password, salt){
+        const iterations = 8000;
+
+        const derived = CryptoJS.PBKDF2(password, salt, {keySize: 512 / 32, iterations: iterations});
+
+        var bytes = CryptoJS.AES.decrypt(message, derived.toString());
         return bytes.toString(CryptoJS.enc.Utf8);
     }
-    static _encrypt(message, password){
-        return CryptoJS.AES.encrypt(message, password).toString();
+    static _encrypt(message, password, salt){
+        // const salt = CryptoJS.lib.WordArray.random(128/8);
+
+        const iterations = 8000;
+
+        const derived = CryptoJS.PBKDF2(password, salt, {keySize: 512 / 32, iterations: iterations});
+        
+        return CryptoJS.AES.encrypt(message, derived.toString()).toString();
     }
 
     // Members
@@ -103,9 +117,10 @@ export default class Wallet{
         const childKey = this.masterKey.derive("m/0/" + 0x100.toString(10) + "'/0'/0'/0/" + number);
         return PublicPrivateKeyPair.fromPrivate(childKey.privateKey.toString('hex'));
     }
-    toStorage(password){
-        const encr = Wallet._encrypt(this.entropy, password);
+    toStorage(password, salt){
+        const encr = Wallet._encrypt(this.entropy, password, salt);
         const hash = CryptoJS.SHA256(this.entropy).toString();
+        window.localStorage.setItem("encryptedEntropySalt", CryptoJS.enc.Base64.stringify(salt));
         window.localStorage.setItem("encryptedEntropy", encr);
         window.localStorage.setItem("encryptedEntropyChecksum", hash);
     }
