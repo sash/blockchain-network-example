@@ -15,9 +15,7 @@
 | 004ca2dd10fcf53ad30631e7d323aa80c9ecf317 | 600fea4a214cadb607e34ed0bb091297864cc12162f1e6d6f67a4c5efac06e05 |
 
 
-
-# Scenarios
-
+# Setup
 ## Install
 `docker-compose run node1 php artisan migrate:fresh ; docker-compose run node1 php artisan db:seed`
 `docker-compose run node2 php artisan migrate:fresh ; docker-compose run node2 php artisan db:seed`
@@ -29,12 +27,48 @@
 ## Add more miners
 `docker-compose scale miner1=5 miner2=5`
 
-## Business as usual
+
+
+# Presentation
+Showcase the software. Present each app and what technologies were used.
+
+Present the core mechanics of the framework
+ * No transactions are lost during conflict resolution
+ * Balance is kept in an optimized database for quick balance checks
+ * Wallet is HD and transactions are made (if necesary) from several addresses in order to match the requested send.
+ * Wallet shows as recepient address the first address that was never spent from (the signature was never revealed).
+ * Wallet and explorer are implemented in react and consume the APIs of the node
+ * The faucet is implemented in pure php (no time for react on that!)
+ * Miners are implemented in nodejs
+ * Miners are mulithreaded.
+ * Miners are now limited to 1hash per second per thread.
+ * The setup: 1 chain explorer, 2 faucets, 1 hd wallet, 2 nodes with one miner each
+ * Docker is used to manage the services. We can easily ramp-up the computing power of the miner by launching more miners `docker-compose scale miner1=10 miner2=10`
+
+Reset before each scenario
+## Scenario: Business as usual
+0. Initialize and link the nodes
 1. Make a new wallet http://localhost:5003
-2.
+2. Fund the wallet via the faucet
+3. Create another wallet (separate browser)
+4. Send money to the other address. Wait for confirmation
+
+## Scenario: Double spend attempt + Conflict resolution
+0. Continue the example from above
+1. Faucet 1 coin to your wallet, wait for confirmation
+2. Unlink the nodes `docker-compose exec node1 php artisan node:unlink; docker-compose exec node1 php artisan node:unlink`
+3. Using node1 spend the token back to the faucet. Using node2 do the same. (use less then one coin so there is enough funds for the fee)
+4. Wait for the transaction to validate ON BOTH NODES. Take a look at the block explorer on both nodes
+5. Link the nodes back together `docker-compose exec node1 php artisan node:bootstrap`
+6. Watch the conflict resolve itself via the block explorer
+
+## Scenario: Delayed spend example - no transaction was lost
+0. Continue the example from above
+1. Fund the wallet with another token, so the transaction that was declared invalid is now possible
+2. Watch the lingering transaction get confirmed
 
 
-## Instructions
+# Instructions
 
 
 Docker + Docker compose are required in order to build the dev enviroment. To install docker go to https://www.docker.com/get-docker

@@ -253,7 +253,10 @@ export default class WalletView extends Component {
 
                             </div>
                             <div className="tab-pane fade" id="receive" role="tabpanel"
-                                 aria-labelledby="profile-tab">Send me money at:
+                                 aria-labelledby="profile-tab">
+                                <br/>
+                                <br/>
+                                Send me money at:
                                 <div className="alert alert-primary" role="alert">
                                 {this.state.receiveAddress}
                                 </div>
