@@ -10,6 +10,7 @@ export default class WalletView extends Component {
         super(props)
         this.state = {
             node: props.peers[Object.keys(props.peers)[0]],
+            host:Object.keys(props.peers)[0],
             balance: 'Loading ...',
             balancePending: '-',
             receiveAddress: "Loading ...",
@@ -44,11 +45,15 @@ export default class WalletView extends Component {
 
     changeNode(event){
         const selected = event.target.value
+        const id = event.nativeEvent.target.selectedIndex
+        debugger
         this.setState({
-            node: selected
+            node: selected,
+            host: event.nativeEvent.target[id].text
         })
         this.client = new WalletClient(selected, this.wallet);
         this.loadBalance()
+        this.loadTransactions()
     }
     reload(event){
         event.preventDefault()
@@ -75,7 +80,6 @@ export default class WalletView extends Component {
         this.setState({
             transactions: transactions
         });
-        console.log(transactions);
     }
 
     handleInputChange(event){
@@ -113,7 +117,6 @@ export default class WalletView extends Component {
             }
             this.loadBalance()
         } catch (err){
-            console.log(err)
             var newSend = this.state.send;
             newSend.error = err.toString();
             this.setState({
@@ -137,6 +140,7 @@ export default class WalletView extends Component {
             sizePerPage: 5
         };
         const peers = this.props.peers;
+        const host =  this.state.host;
         const linkTo = (link, dataElement) => {
             return (data, row) => {
                 let linkData = null;
@@ -145,7 +149,7 @@ export default class WalletView extends Component {
                 } else {
                     linkData = data
                 }
-                return <a href={this.props.explorer + link + linkData}>{data}</a>
+                return <a href={this.props.explorer + "/" + host + link + linkData}>{data}</a>
             }
         }
         return (

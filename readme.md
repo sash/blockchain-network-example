@@ -38,10 +38,12 @@ Present the core mechanics of the framework
  * Wallet is HD and transactions are made (if necesary) from several addresses in order to match the requested send.
  * Wallet shows as recepient address the first address that was never spent from (the signature was never revealed).
  * Wallet and explorer are implemented in react and consume the APIs of the node
- * The faucet is implemented in pure php (no time for react on that!)
+ * The faucet is implemented in pure php (no time for react on that!).
+ * Faucet requests are queued and done one at a time once a minute.
+ * The faucet has no spam prevention but there should be at least CAPTCHA (in real life)!
  * Miners are implemented in nodejs
- * Miners are mulithreaded.
- * Miners are now limited to 1hash per second per thread.
+ * Miners are mulithreaded
+ * Miners are now limited to 1hash per second per thread
  * The setup: 1 chain explorer, 2 faucets, 1 hd wallet, 2 nodes with one miner each
  * Docker is used to manage the services. We can easily ramp-up the computing power of the miner by launching more miners `docker-compose scale miner1=10 miner2=10`
 
@@ -52,6 +54,7 @@ Reset before each scenario
 2. Fund the wallet via the faucet
 3. Create another wallet (separate browser)
 4. Send money to the other address. Wait for confirmation
+5. Check both notes are the same (blockwise and transactionwise)
 
 ## Scenario: Double spend attempt + Conflict resolution
 0. Continue the example from above
