@@ -23,7 +23,7 @@ class TransactionRow extends Component {
                             <Link to={`/${this.props.node}/address/${this.props.tx.from}`}>{this.props.tx.from}</Link>
                         </td>
                         <td>
-                            <span>sends</span>
+                            <img src="https://blockchain.info/Resources/arrow_right_green.png" alt="sends"/>
                         </td>
                         <td>
                             <Link to={`/${this.props.node}/address/${this.props.tx.to}`}>{this.props.tx.to}</Link>
