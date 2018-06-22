@@ -30,29 +30,32 @@
 
 
 # Presentation
-Showcase the software. Present each app and what technologies were used.
 
-Present the core mechanics of the framework
+http://github.com/sash/blockchain-network-example
+
+Bobby_Borisov & alexiev
+
+Core mechanics of the project
  * No transactions are lost during conflict resolution
  * Balance is kept in an optimized database for quick balance checks
- * Wallet is HD and transactions are made (if necesary) from several addresses in order to match the requested send
- * Wallet shows as recepient address the first address that was never spent from (the signature was never revealed)
- * Wallet and explorer are implemented in react and consume the APIs of the node
+ * Wallet is HD and transactions are made (if necessary) from several addresses in order to match the requested send
+ * Wallet shows as recipient address the first address that was never spent from (the signature was never revealed)
+ * Wallet and explorer are implemented in react (client-side apps) and consume the APIs of the node
  * The explorer is a clone of blockhain.info
  * The faucet is implemented in pure php (no time for react on that!)
  * Faucet requests are queued and done one at a time once a minute
  * The faucet has no spam prevention but there should be at least CAPTCHA (in real life)!
  * Miners are implemented in nodejs
  * Miners are mulithreaded
- * Miners are now limited to 1hash per second per thread
- * The setup: 1 chain explorer, 2 faucets, 1 hd wallet, 2 nodes with one miner each
+ * Miners are now limited to 1hash per second per thread (we run on battery)
+ * Unit tests
+ * The setup: 1 chain explorer, 2 faucets, 1 hd wallet, 2 nodes with one miner each. the miners mine for the faucets
  * Docker is used to manage the services. We can easily ramp-up the computing power of the miner by launching more miners `docker-compose scale miner1=10 miner2=10`
 
-Reset before each scenario
 ## Scenario: Business as usual
 0. Initialize and link the nodes
 1. Make a new wallet http://localhost:5003
-2. Fund the wallet via the faucet
+2. Fund the wallet via the faucet (`docker-compose faucet1_cron exec php artisan faucet:drip`)
 3. Create another wallet (separate browser)
 4. Send money to the other address. Wait for confirmation
 5. Check both notes are the same (blockwise and transactionwise)
@@ -73,9 +76,7 @@ Reset before each scenario
 
 
 # Instructions
-
-
-Docker + Docker compose are required in order to build the dev enviroment. To install docker go to https://www.docker.com/get-docker
+Docker + Docker compose are required in order to build the dev environment. To install docker go to https://www.docker.com/get-docker
 
 * run `docker-compose run node1 composer install` to setup PHP dependencies
 * run `docker-compose up -d` to bring the conteiners online

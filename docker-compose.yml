@@ -90,8 +90,7 @@ services:
     build: .
     environment:
       - APPLICATION=explorer
-      - NODE_HOSTS=node1:5001,node2:5002 #if the browser needs to communicate
-      #- NODE_HOSTS=node1,node2 #if the BE needs to comminicate
+      - NODE_HOSTS=node1:5001,node2:5002 #the brawser needs to contact on the external port
     ports:
       - 5004:80
     volumes:
