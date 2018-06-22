@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\NodeBlockResource;
+use App\Http\Resources\SimpleNodeBlockResource;
 use App\NodeTransaction;
 use App\Repository\BlockRepository;
 use Illuminate\Http\Request;
@@ -39,6 +40,12 @@ class BlockController extends Controller
 
     public function getLastBlocks($limit) {
         $blocks = $this->repository->getLastBlocks($limit);
-        return NodeBlockResource::collection($blocks);
+        return SimpleNodeBlockResource::collection($blocks);
+    }
+
+    public function getBlockInfo($blockHash)
+    {
+        $block = $this->repository->getBlockWithHash($blockHash);
+        return new NodeBlockResource($block);
     }
 }

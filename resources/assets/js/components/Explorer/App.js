@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 //import './style.css';
 import ReactDOM from 'react-dom';
 import Block from './Block';
+import Transaction from './Transaction';
 import Home from './Home';
 import { BrowserRouter as Router , Route, Link } from 'react-router-dom'
 
@@ -15,23 +16,18 @@ class App extends Component {
     }
 
     render() {
-        let {something} = this.props
         return (
             <div className="App">
                     <div className="App-header">
                     {/*<img src={logo} className="App-logo" alt="logo" />*/}
-                    <h2>Block Explorer</h2>
                 </div>
                 <div className="App-nav">
                     <Router>
                         <div>
-                            <Link to="/">Home</Link>
-                            <Link to="/block">Block</Link>
+                            <Link to="/">Last 10</Link>
                             <Route exact path="/" render={(props) => ( <Home peers={this.props.peers}/> )}/>
-                            <Route exact path="/block" render={() => (
-                                <h3>Please select a blockHash.</h3>
-                            )}/>
-                            <Route path="/block/:blockHash" component={Block}/>
+                            <Route path="/block/:blockHash" render={(props) => ( <Block {...props} peers={this.props.peers}/> )}/>
+                            <Route path="/transaction/:transactionHash" render={(props) => ( <Transaction {...props} /> )}/>
                         </div>
                     </Router>
                 </div>

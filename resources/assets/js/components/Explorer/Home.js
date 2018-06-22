@@ -14,28 +14,27 @@ class Home extends Component {
         this.state = {
             node: props.peers[Object.keys(props.peers)[0]],
             blocks: ['1', '2','3'],
-            curr_block: null
         };
 
         console.log(this.state);
         this.client = new ExplorerClient(this.state.node);
-        this.loadBlocks(10)
+        this.loadBlocks()
     }
 
     componentWillMount() {
         console.log('will mounth Home comp');
-        this.setState({
-            curr_block: curr_block_no
-        });
     }
 
-    async loadBlocks(curr_block_no) {
+    async loadBlocks() {
         console.log('load blocks in home comp')
         const lastBlocks = await this.client.lastBlocks();
+
 
         this.setState({
             blocks: lastBlocks,
         });
+        console.log('blocks are')
+        console.log(this.state.blocks)
     }
 
     render() {
@@ -46,18 +45,18 @@ class Home extends Component {
                 <tr key={this.state.blocks[index].block_hash}>
                     <td className="tdCenter">{this.state.blocks[index].id}</td>
                     <td><Link to={`/block/${this.state.blocks[index].block_hash}`}>{this.state.blocks[index].block_hash}</Link></td>
+                    <td className="tdCenter">{this.state.blocks[index].txs}</td>
                 </tr>
             )
         });
 
         return (
             <div className="Home">
-                <h2>Home page</h2>
-                Current Block: {this.state.curr_block}
                 <table>
                     <thead><tr>
                         <th>Block No</th>
                         <th>Hash</th>
+                        <th>TXs</th>
                     </tr></thead>
                     <tbody>
                     {tableRows}
