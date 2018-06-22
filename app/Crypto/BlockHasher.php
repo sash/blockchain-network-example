@@ -39,9 +39,9 @@ class BlockHasher
     {
         $blockRepresentation = [];
         $blockRepresentation['previous_block_hash'] = $block->previous_block_hash;
-        $blockRepresentation['index'] = $block->index;
+        $blockRepresentation['index'] = (int)$block->index;
         $blockRepresentation['mined_by_address'] = $block->mined_by_address;
-        $blockRepresentation['difficulty'] = $block->difficulty;
+        $blockRepresentation['difficulty'] = (int)$block->difficulty;
         $blockRepresentation['transactions'] = $block->transactions->map(function($tr){return $tr->hash;});
         return json_encode($blockRepresentation);
     }

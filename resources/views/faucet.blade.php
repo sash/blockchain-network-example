@@ -110,6 +110,15 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary">Send me the money</button>
+
+                        <p>
+                        <small>This faucet will send 1Fs every minute. Enter the queue now!</small>
+                        <ol>
+                        @foreach($queue as $item)
+                            <li>{{$item->address}}</li>
+                        @endforeach
+                        </ol>
+                        </p>
                     </form>
                 </div>
 

@@ -24,13 +24,13 @@ class CreateTransaction extends FormRequest
     public function rules()
     {
         return [
-            'from' => 'required|alpha_num|size:40',
-            'from_id' => 'required',
-            'to' => 'required|alpha_num|size:40',
-            'value' => 'required|integer|min:0|max:100000',
-            'fee' => 'required|integer',
-            'hash' => 'required|alpha_num|size:64|unique:node_transactions',
-            'signature' => 'required|alpha_num|size:130'
+            'transaction.from' => 'required|alpha_num|size:40',
+            'transaction.from_id' => 'required',
+            'transaction.to' => 'required|alpha_num|size:40',
+            'transaction.value' => 'required|integer|min:0',
+            'transaction.fee' => 'required|integer',
+            'transaction.hash' => 'required|alpha_num|size:64|unique:node_transactions,hash',
+            'transaction.signature' => 'required|alpha_num|size:130'
         ];
     }
 }

@@ -32,7 +32,7 @@ class TransactionsTest extends TestCase
             'signature' => str_repeat('s0mes1gnature',10)
         ],$overrides);
 
-        return $transaction;
+        return ['transaction' => $transaction];
     }
 
     /** @test */
@@ -40,9 +40,10 @@ class TransactionsTest extends TestCase
     {
         $transaction = $this->buildTransaction();
 
-        $response = $this->post('/api/transaction',$transaction);
+        $response = $this->postJson('/api/transaction', ['transaction' => $transaction]);
 
         $response->assertStatus(201);
+        
         $this->assertCount(1, NodeTransaction::all());
 
         tap(NodeTransaction::first(), function($tx) use ($transaction){

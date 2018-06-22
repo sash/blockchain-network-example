@@ -2,6 +2,7 @@
 
 use App\Jobs\UpdatePendingBalance;
 use App\Node\Balance;
+use App\NodeTransaction;
 use App\Repository\BalanceRepository;
 use App\Repository\BlockRepository;
 use Illuminate\Database\Seeder;
@@ -50,6 +51,7 @@ class GenesisBlock extends Seeder
             $genesis->save();
     
             $this->container->make(BlockRepository::class)->linkTransactions($genesis);
+            $initialBalance[NodeTransaction::COINBASE_ADDRESS] = -1 * array_sum($initialBalance);
             $balance = new Balance($initialBalance, $this->container->make(BalanceRepository::class));
             $balance->saveForBlock($genesis);
             $this->updatePendingBalance->update();
