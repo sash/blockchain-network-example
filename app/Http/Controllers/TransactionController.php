@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Crypto\TransactionHasher;
 use App\Http\Requests\CreateTransaction;
 use App\Http\Resources\NodeTransactionResource;
 use App\JsonError;
@@ -38,10 +39,13 @@ class TransactionController extends Controller
      * @return \App\Http\Resources\NodeTransactionResource|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      *
      */
-    public function postTransaction(Request $request, Broadcast $broadcast, BalanceFactory $balanceFactory, BalanceRepository $balanceRepository)
+    public function postTransaction(Request $request, Broadcast $broadcast, BalanceFactory $balanceFactory, BalanceRepository $balanceRepository, TransactionHasher $hasher)
     {
         try {
             $transaction = NodeTransactionResource::fromArray(@json_decode($request->getContent(), true)['transaction']);
+            
+            $transaction->hash = $hasher->getHash($transaction);
+            
 //            $log = [];
             $this->transactionValidator->assertValid($transaction);
 //            $log[] = "Transaction is valid";
@@ -54,6 +58,7 @@ class TransactionController extends Controller
                 $balance->savePending();
 //                $log[] = "Balance updated";
             } catch (\Exception $e){
+                error_log("Not enought funds to update pending balance: " . $e->getMessage());
 //                $log[] = "Not enought funds: ".$e->getMessage();
                 // Ignore missing funds
             }
@@ -80,5 +85,10 @@ class TransactionController extends Controller
         } catch (\Throwable $exception){
             return JsonError::fromException($exception)->response(422);
         }
+    }
+    
+    public function getTransactionsForAddress($address, TransactionRepository $transactionRepository){
+        $addresses = str_split($address, 40);
+        return NodeTransactionResource::collection($transactionRepository->transactionsForAddress($addresses));
     }
 }

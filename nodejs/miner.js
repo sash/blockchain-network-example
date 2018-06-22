@@ -34,7 +34,7 @@ let requestNewJobAndStartMining = function() {
         candidateBlock = data;
 
         console.log('New block to mine! Difficulty: '+difficulty+', data_hash: '+data_hash+', previous_block_hash: '+previous_block_hash);
-        console.log(candidateBlock);
+        console.log(JSON.stringify(candidateBlock));
 
         for (let i = 0; i < 8; i++) {
             miningProcesses[i] = fork('nodejs/miner_worker.js');

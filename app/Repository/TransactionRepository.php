@@ -7,6 +7,7 @@ use App\Node\BalanceFactory;
 use App\NodeBalance;
 use App\NodeTransaction;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use PhpParser\Node;
 
 class TransactionRepository
@@ -80,6 +81,16 @@ class TransactionRepository
     
     public function transactionsBySender($senderAddress){
         return  NodeTransaction::where('senderAddress', '=', $senderAddress);
+    }
+    
+    public function transactionsForAddress($addresses)
+    {
+        return NodeTransaction::where(function($query) use ($addresses){
+            $query->whereIn('senderAddress', $addresses)
+            ->orWhereIn('receiverAddress', $addresses);
+            
+        })->select(['*', DB::raw('IF(`node_blocks`.`index` IS NOT NULL, `node_blocks`.`index`, 2147483647) `block_index_sort`')])
+                ->leftJoin('node_blocks', 'node_blocks.id', '=', 'node_transactions.block_id')->orderBy('block_index_sort', 'desc')->orderBy('node_transactions.sequence', 'desc')->get();
     }
     
     private function confirmedBalanceForAddress($address, $confirmations)

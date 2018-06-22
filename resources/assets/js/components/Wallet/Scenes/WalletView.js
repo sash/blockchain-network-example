@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import Wallet from "../../../Crypto/Wallet";
 import WalletClient from "../../../API/WalletClient";
 import CoinFormat from "../../../CoinFormat";
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+
 
 export default class WalletView extends Component {
     constructor(props){
@@ -17,18 +19,23 @@ export default class WalletView extends Component {
                 to: '',
                 data: '',
                 error: ''
-            }
-        }
-        this.lock = this.lock.bind(this)
-        this.changeNode = this.changeNode.bind(this)
-        this.reload = this.reload.bind(this)
-        this.sendFunds = this.sendFunds.bind(this)
-        this.handleInputChange = this.handleInputChange.bind(this)
+            },
+            transactions: 'Loading ...'
+        };
+        this.lock = this.lock.bind(this);
+        this.changeNode = this.changeNode.bind(this);
+        this.reload = this.reload.bind(this);
+        this.sendFunds = this.sendFunds.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.sentOrReceived = this.sentOrReceived.bind(this);
 
         this.wallet = Wallet.getInstatance();
         this.client = new WalletClient(this.state.node, this.wallet);
-
+        this.addresses = Array.from({length: 10}, (x, i) => i).map((el) => {
+            return this.wallet.account(el).getAddress()
+        });
         this.loadBalance()
+        this.loadTransactions()
     }
     lock(){
         Wallet.lock()
@@ -48,9 +55,11 @@ export default class WalletView extends Component {
         this.setState({
             balance: 'Loading ...',
             balancePending: '-',
-            receiveAddress: "Loading ..."
+            receiveAddress: "Loading ...",
+            transactions: "Loading ..."
         });
         this.loadBalance()
+        this.loadTransactions()
     }
     async loadBalance(){
         const balance = await this.client.balance();
@@ -59,6 +68,14 @@ export default class WalletView extends Component {
             balancePending: new CoinFormat(balance.getTotalUnconfirmed() - balance.getTotalConfirmed()).toString(),
             receiveAddress: Wallet.getInstatance().account(balance.unspentAccountNumber()).getAddress(),
         });
+    }
+
+    async loadTransactions() {
+        const transactions = await this.client.transactions();
+        this.setState({
+            transactions: transactions
+        });
+        console.log(transactions);
     }
 
     handleInputChange(event){
@@ -88,17 +105,43 @@ export default class WalletView extends Component {
                 }
             }
             this.loadBalance()
-        } catch (e){
+        } catch (err){
+            console.log(err)
             var newSend = this.state.send;
-            newSend.error = е.toString();
+            newSend.error = err.toString();
             this.setState({
                 send: newSend
             })
         }
 
     }
+    priceFormat(value){
+        return new CoinFormat(value).toString()
+    }
+
+    sentOrReceived(el, row){
+        console.log(this.addresses)
+        if (this.addresses.includes(row.from) && this.addresses.includes(row.to)){
+            return "Self";
+        }
+        return this.addresses.includes(row.from) ? "Sent" : (this.addresses.includes(row.to)? "Received": "");
+    }
     render() {
+        const options = {
+            sizePerPage: 5
+        };
         const peers = this.props.peers;
+        const linkTo = (link, dataElement) => {
+            return (data, row) => {
+                let linkData = null;
+                if (typeof dataElement !== 'undefined'){
+                    linkData = row[dataElement];
+                } else {
+                    linkData = data
+                }
+                return <a href={this.props.explorer + link + linkData}>{data}</a>
+            }
+        }
         return (
             <div className="container">
                 <div className="row">
@@ -127,7 +170,25 @@ export default class WalletView extends Component {
                         </ul>
                         <div className="tab-content" id="myTabContent">
                             <div className="tab-pane fade show active" id="transactions" role="tabpanel"
-                                 aria-labelledby="transactions-tab">Transactions
+                                 aria-labelledby="transactions-tab">
+
+                                {typeof this.state.transactions === 'string' && this.state.transactions}
+                                {typeof this.state.transactions === 'object' && <div>
+                                    <BootstrapTable data={this.state.transactions} pagination={true} hover={true}
+                                                    version='4' options={options}>
+                                        <TableHeaderColumn dataField="hash" isKey dataSort={true} dataFormat={linkTo("/tx/")}>Hash</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="from" dataFormat={linkTo("/address/")} dataSort={true}>From</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="to" dataSort={true}
+                                                           dataFormat={linkTo("/address/")}>To</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="type" dataFormat={this.sentOrReceived}>Type</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="value" dataSort={true} dataFormat={this.priceFormat}>Value</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="fee" dataSort={true} dataFormat={this.priceFormat}>Fee</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="data">Data</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="mined_in_block_index"
+                                                           dataFormat={linkTo("/block/", "mined_in_block_hash")} dataSort={true}>Block</TableHeaderColumn>
+                                    </BootstrapTable>
+                                </div>}
+
                             </div><div className="tab-pane fade" id="send" role="tabpanel"
                                  aria-labelledby="home-tab">
 

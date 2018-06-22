@@ -88,6 +88,7 @@
                             <input type="text" class="form-control" id="exampleInputEmail1"
                                    aria-describedby="emailHelp" placeholder="Enter Address" name="address">
                             <small id="emailHelp" class="form-text text-muted">We have {{$balance['confirmed']}}[{{$balance['unconfirmed']}}] bitfraud coins left</small>
+                            <small>If you dont need the money, you can send it back at <code>{{$address}}</code></small>
                         </div>
                         <div class="form-group">
                             <label for="exampleFormControlSelect2">Via Node</label>

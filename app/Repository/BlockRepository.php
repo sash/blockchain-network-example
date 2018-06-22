@@ -63,10 +63,10 @@ class BlockRepository
     public function newGenesisBlock($initial_funds = [], $timestamp = 1529067174): NodeBlock
     {
         $genesis = new NodeBlock([
-                'index'                => "0",
-                'difficulty'           => "0",
-                'cumulativeDifficulty' => "0",
-                'nonce'                => "0",
+                'index'                => 0,
+                'difficulty'           => 0,
+                'cumulativeDifficulty' => 0,
+                'nonce'                => 0,
                 'mined_by_address'     => str_repeat('0', 40),
                 'previous_block_hash'  => str_repeat('0', 64),
                 'timestamp'            => $timestamp,
@@ -76,14 +76,14 @@ class BlockRepository
         foreach ($initial_funds as $address => $value) {
             $transaction = new NodeTransaction();
             $transaction->timestamp = $timestamp;
-            $transaction->fee = "0";
+            $transaction->fee = 0;
             $transaction->value = $value;
             $transaction->senderAddress = str_repeat('0', 40);
-            $transaction->senderSequence = "0";
+            $transaction->senderSequence = 0;
             $transaction->data = '';
             $transaction->receiverAddress = $address;
             $transaction->hash = $transactionHasher->getHash($transaction);
-            $transaction->signature = str_repeat(0, 130);
+            $transaction->signature = str_repeat('0', 130);
             $genesis->transactions[] = $transaction;
         }
     
@@ -113,42 +113,41 @@ class BlockRepository
     
     public function updateWithChain($chain)
     {
-        DB::transaction(function() use ($chain){
-            $updatedChain = $this->difference($chain);
-            $base = $updatedChain[0];
-            // Delete all blocks after the base's parent hash, making all transactions after that pending (temporarily)
-            NodeBlock::where('index', '>=', $base->index)->delete();
-    
-            /**
-             * @var Balance $balance;
-             */
-            $balance = null;
-            foreach ($updatedChain as $i => $updatedBlock) {
-                if ($i == 0){
-                    $parent = $this->getBlockWithHash($updatedBlock->previous_block_hash);
-                    if (!$parent){
-                        throw new \Exception('Could not find parent of the update chain');
-                    }
-                    $balance = $this->balanceFactory->forBlock($parent);
-                } else {
-                    $parent = $updatedChain[$i-1];
+        
+        $updatedChain = $this->difference($chain);
+        $base = $updatedChain[0];
+        // Delete all blocks after the base's parent hash, making all transactions after that pending (temporarily)
+        NodeBlock::where('index', '>=', $base->index)->delete();
+
+        /**
+         * @var Balance $balance;
+         */
+        $balance = null;
+        foreach ($updatedChain as $i => $updatedBlock) {
+            if ($i == 0){
+                $parent = $this->getBlockWithHash($updatedBlock->previous_block_hash);
+                if (!$parent){
+                    throw new \Exception('Could not find parent of the update chain');
                 }
-                
-                // Update the difficulty
-                $updatedBlock->cumulativeDifficulty = $parent->cumulativeDifficulty + $this->difficulty->difficultyOfBlock($updatedBlock);
-                
-                
-        
-                $updatedBlock->save();
-                
-                $balance->updateForBlock($updatedBlock); // throws
-                
-                
-                $this->linkTransactions($updatedBlock);
-        
+                $balance = $this->balanceFactory->forBlock($parent);
+            } else {
+                $parent = $updatedChain[$i-1];
             }
-        });
-        
+            
+            // Update the difficulty
+            $updatedBlock->cumulativeDifficulty = $parent->cumulativeDifficulty + $this->difficulty->difficultyOfBlock($updatedBlock);
+            
+            
+    
+            $updatedBlock->save();
+            
+            $balance->updateForBlock($updatedBlock); // throws
+            
+            
+            $this->linkTransactions($updatedBlock);
+    
+        }
+    
         
     }
     

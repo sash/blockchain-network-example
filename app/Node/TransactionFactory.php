@@ -44,7 +44,7 @@ class TransactionFactory
             throw new \InvalidArgumentException('The block has paid out all the coinbase it offers!');
         }
             // Build the coninbase transaction
-        return new NodeTransaction([
+        $res = new NodeTransaction([
             'senderAddress' => NodeTransaction::COINBASE_ADDRESS,
             'receiverAddress' => $block->mined_by_address,
             'value' => $due - $alreadyPaidOut,
@@ -54,7 +54,9 @@ class TransactionFactory
             'senderSequence' => 0, // Not applicable
             'block_id' => $block->id,
         ]);
-            
+        $res->hash = $this->hasher->getHash($res);
+        $res->signature = str_repeat('0', 130);
+        return $res;
     }
     
     function buildSpendTransaction(PublicPrivateKeyPair $key, $seq, $value, $fee, $toAddress, $data){

@@ -6,6 +6,7 @@ services:
     environment:
       - PMA_HOSTS=node1db,node2db
       - PMA_USER=dev
+      - PMA_DATABASE=database
       - PMA_PASSWORD=password
     depends_on:
       - node1db
@@ -31,7 +32,7 @@ services:
       - DB_HOST=node1db
       - APPLICATION=node
       - NODE_HOST=node1
-
+      - NODE_PEERS=node2
       - XDEBUG_CONFIG="idekey=PHPSTORM"
     depends_on:
       - node1db

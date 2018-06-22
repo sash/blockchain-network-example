@@ -19,4 +19,4 @@ new Coordinator(document.getElementById('app'),$('#app').data('nodes').split(','
     const spl = el.split(':');
     stack[spl[0]] = $('#app').data('host') + ":" + spl[1];
     return stack;
-}, {}));
+}, {}), $('#app').data('explorer'));

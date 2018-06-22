@@ -1,5 +1,5 @@
 <?php
 
 return [
-  'current_min_difficulty' => 4
+  'current_min_difficulty' => 2
 ];

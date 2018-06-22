@@ -15,9 +15,9 @@ class FaucetController extends Controller
         $client = new \App\Faucet\PeerClient($hosts[0]);
         $key = PublicPrivateKeyPair::fromPrivateKey($_ENV['PRIVATE_KEY']);
         $balance = $client->getBalance($key->getAddress());
-        $balance['unconfirmed'] = new CoinFormat($balance['unconfirmed']);
+        $balance['unconfirmed'] = new CoinFormat($balance['unconfirmed'] - $balance['confirmed']);
         $balance['confirmed'] = new CoinFormat($balance['confirmed']);
-        return view('faucet', ['balance' => $balance]);
+        return view('faucet', ['balance' => $balance, 'address' => $key->getAddress()]);
     }
     public function postFaucet(Request $request, TransactionFactory $factory){
         $address = $request->get('address');
@@ -26,7 +26,6 @@ class FaucetController extends Controller
         $client = new \App\Faucet\PeerClient($host);
         
         $balance = $client->getBalance($key->getAddress());
-        
         
         $client->postTransaction($factory->buildSpendTransaction($key, $balance['txs'], 1000000, 10, $address, 'Free monet from faucet'));
         return redirect('/');

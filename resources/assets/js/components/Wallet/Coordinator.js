@@ -7,7 +7,7 @@ import Unlock from "./Scenes/Unlock";
 import Restore from "./Scenes/Restore";
 
 export default class Coordinator{
-    constructor(appElement, peers){
+    constructor(appElement, peers, explorer){
         this.create = this.create.bind(this)
         this.restore = this.restore.bind(this)
         this.wallet = this.wallet.bind(this)
@@ -15,6 +15,7 @@ export default class Coordinator{
         this.welcome = this.welcome.bind(this)
         this.peers = peers
         this.appElement = appElement
+        this.explorer = explorer
         this.welcome();
     }
 
@@ -32,6 +33,6 @@ export default class Coordinator{
         ReactDOM.render(<Restore coordinator={this}/>, this.appElement);
     }
     wallet(){
-        ReactDOM.render(<WalletView peers={this.peers} coordinator={this}/>, this.appElement);
+        ReactDOM.render(<WalletView explorer={this.explorer} peers={this.peers} coordinator={this}/>, this.appElement);
     }
 }
