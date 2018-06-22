@@ -43,6 +43,8 @@ class TransactionValidator
         
         $this->assertHash($transaction);
         
+        $this->assertPositive($transaction);
+        
         if (!$transaction->isCoinbase) {
     
             $this->assertSignature($transaction);
@@ -96,6 +98,13 @@ class TransactionValidator
     {
         if ($transaction->fee < self::MINIMUM_FEE) {
             throw new InvalidTransaction('Transaction fee below minimum: ' . self::MINIMUM_FEE);
+        }
+    }
+    
+    private function assertPositive(NodeTransaction $transaction)
+    {
+        if ($transaction->value < 0){
+            throw new InvalidTransaction('Transaction value cannot be negative');
         }
     }
 //
