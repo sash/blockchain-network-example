@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js';
+import Balance from "./Balance";
 
 export default class ExplorerClient{
     constructor(node_host) {
@@ -18,5 +19,23 @@ export default class ExplorerClient{
         var response = res.data;
         console.log(response);
         return response
+    }
+
+    async balanceForAddress(address){
+
+        const res = await this.axios.get('http://' + this.node_host + '/api/balance/' + address)
+        let response = res.data;
+
+        console.log('balance fetched')
+        console.log(response)
+
+        return response
+        //return new Balance(response)
+    }
+
+    async transactionsFor(address){
+        const res = await this.axios.get('http://' + this.node_host + '/api/transactions/address/' + address);
+
+        return res.data;
     }
 }

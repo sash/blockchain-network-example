@@ -28,7 +28,9 @@ class TransactionRow extends Component {
                             <span>sends</span>
                         </td>
                         <td>
-                            <a href="#">{this.props.tx.to}</a>
+                            <Link to={`/address/${this.props.tx.to}`}>{this.props.tx.to}</Link>
+
+                            {/*<a href="#">{this.props.tx.to}</a>*/}
                         </td>
                     </tr>
                     </tbody>

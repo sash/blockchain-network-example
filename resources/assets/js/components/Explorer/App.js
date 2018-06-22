@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import Block from './Block';
 import Transaction from './Transaction';
 import Home from './Home';
+import Address from './Address';
 import { BrowserRouter as Router , Route, Link } from 'react-router-dom'
 
 
@@ -28,6 +29,7 @@ class App extends Component {
                             <Route exact path="/" render={(props) => ( <Home peers={this.props.peers}/> )}/>
                             <Route path="/block/:blockHash" render={(props) => ( <Block {...props} peers={this.props.peers}/> )}/>
                             <Route path="/transaction/:transactionHash" render={(props) => ( <Transaction {...props} /> )}/>
+                            <Route path="/address/:addressHash" render={(props) => ( <Address {...props} peers={this.props.peers} /> )}/>
                         </div>
                     </Router>
                 </div>
