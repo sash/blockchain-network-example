@@ -109,7 +109,7 @@ class TransactionRepository
         if (!$balance){
             return 0;
         }
-        return $balance->balance;
+        return (int)$balance->balance;
     }
     
     private function unconfirmedBalanceForAddress($address)
@@ -118,7 +118,7 @@ class TransactionRepository
         if (!$balance) {
             return 0;
         }
-        return $balance->balance;
+        return (int)$balance->balance;
     }
     
     public function transactionsByHash($hash)

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Crypto\PublicPrivateKeyPair;
+use App\Jobs\UpdateBlockBalance;
 use App\NodeBlock;
 use App\NodeTransaction;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -27,14 +28,21 @@ abstract class TestCase extends BaseTestCase
         $this->seed(\GenesisBlock::class);
     
         $blocks = [];
+        
 
         for($i=1;$i<=$amount;$i++)
         {
             $attributes = ['index' => $i];
+            if ($i > 1){
+                $parent = $blocks[$i-2];
+                $attributes['previous_block_hash'] = $parent->block_hash;
+            }
+            
             if ($attributesDecorator){
                 $attributes = call_user_func($attributesDecorator, $attributes);
             }
-            $blocks[] = factory(NodeBlock::class)->create($attributes);
+            $blocks[] =$block= factory(NodeBlock::class)->create($attributes);
+            
         }
 
         return collect($blocks);

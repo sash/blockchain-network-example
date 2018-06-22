@@ -33,7 +33,7 @@ class Balance
     {
         
         if ((@$this->balance[$transaction->senderAddress] < ($transaction->value + $transaction->fee)) && !$transaction->isCoinbase) {
-            throw new InvalidTransaction('Not enough funds to carry out the transaction - '. $this->balance[$transaction->senderAddress]);
+            throw new InvalidTransaction('Not enough funds to carry out the transaction - '. @$this->balance[$transaction->senderAddress]);
         }
     
         @$this->balance[$transaction->senderAddress] -= $transaction->value + $transaction->fee;
