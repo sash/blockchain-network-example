@@ -17,14 +17,14 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            <div class="content">
+            <div class="container">
                 <div class="title m-b-md">
                     BitFraud Explorer
                 </div>
-                <div class="container">
-                    <div id="app" data-host="{{current(explode(':',$_SERVER['HTTP_HOST']))}}" data-nodes="{{$_ENV['NODE_HOSTS']}}">
-                    </div>
+                {{--<div class="container">--}}
+                <div id="app" data-host="{{current(explode(':',$_SERVER['HTTP_HOST']))}}" data-nodes="{{$_ENV['NODE_HOSTS']}}">
                 </div>
+                {{--</div>--}}
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

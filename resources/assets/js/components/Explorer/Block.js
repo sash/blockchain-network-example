@@ -12,13 +12,19 @@ class Block extends Component {
             node: props.peers[Object.keys(props.peers)[0]],
             block:{},
         };
-        this.client = new ExplorerClient(this.state.node);
+        this.client = new ExplorerClient(props.peers[props.match.params.node]);
         this.loadBlock(props.match.params.blockHash)
     }
 
-    componentWillReceiveProps(nextProps){
-        if(nextProps.match.params.blockHash !== this.state.block.block_hash){
-            this.loadBlock(nextProps.match.params.blockHash)
+    componentDidUpdate(prevProps)
+    {
+        if(prevProps.match.params.node !== this.props.match.params.node){
+            this.client = new ExplorerClient(this.props.peers[this.props.match.params.node]);
+            this.loadBlock(this.props.match.params.blockHash)
+        }
+
+        if(prevProps.match.params.blockHash !== this.props.match.params.blockHash){
+            this.loadBlock(this.props.match.params.blockHash)
         }
     }
 
@@ -33,7 +39,7 @@ class Block extends Component {
         var tableRows = [];
         _.each(this.state.block.transactions, (value, index) => {
             tableRows.push(
-                <TransactionRow key={index} tx={value} />
+                <TransactionRow key={index} tx={value} node={this.props.match.params.node} />
             )
         });
 
@@ -60,7 +66,7 @@ class Block extends Component {
                                 </tr>
                                 <tr>
                                     <td>Mined by Address</td>
-                                    <td><Link to={`/address/${this.state.block.mined_by_address}`}>{this.state.block.mined_by_address}</Link></td>
+                                    <td><Link to={`/${this.props.match.params.node}/address/${this.state.block.mined_by_address}`}>{this.state.block.mined_by_address}</Link></td>
                                 </tr>
                                 <tr>
                                     <td>Nonce</td>
@@ -81,11 +87,11 @@ class Block extends Component {
                                 </tr>
                                 <tr>
                                     <td>Hash</td>
-                                    <td><Link to={`/block/${this.state.block.block_hash}`}>{this.state.block.block_hash}</Link></td>
+                                    <td><Link to={`/${this.props.match.params.node}/block/${this.state.block.block_hash}`}>{this.state.block.block_hash}</Link></td>
                                 </tr>
                                 <tr>
                                     <td>Previous Block</td>
-                                    <td><Link to={`/block/${this.state.block.previous_block_hash}`}>{this.state.block.previous_block_hash}</Link></td>
+                                    <td><Link to={`/${this.props.match.params.node}/block/${this.state.block.previous_block_hash}`}>{this.state.block.previous_block_hash}</Link></td>
                                 </tr>
                             </tbody>
                         </table>

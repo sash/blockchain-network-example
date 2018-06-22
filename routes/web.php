@@ -33,7 +33,7 @@ if ($_ENV['APPLICATION'] == 'wallet') {
 }
 
 if ($_ENV['APPLICATION'] == 'explorer') {
-    Route::get('/{any}', function ($any) {
+    Route::get('/{any}', function () {
         return view('explorer');
     })->where('any', '.*');
 }

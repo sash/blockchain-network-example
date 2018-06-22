@@ -10,22 +10,28 @@ class Address extends Component {
         super(props)
         this.state = {
             address: props.match.params.addressHash,
-            node: props.peers[Object.keys(props.peers)[0]],
             balance: 'Loading ...',
             balancePending: '-',
             transactions: "Loading ...",
         };
-        this.client = new ExplorerClient(this.state.node);
+        this.client = new ExplorerClient(props.peers[props.match.params.node]);
         this.loadBalanceFor(this.state.address)
         this.loadTransactionsFor(this.state.address)
     }
 
-    componentWillReceiveProps(nextProps){
-        if(nextProps.match.params.addressHash !== this.state.address){
-            this.setState({address: nextProps.match.params.addressHash},function(){
-                this.loadBalanceFor(this.state.address)
-                this.loadTransactionsFor(this.state.address)
-            }.bind(this));
+    componentDidUpdate(prevProps)
+    {
+        if(prevProps.match.params.node !== this.props.match.params.node){
+            this.client = new ExplorerClient(this.props.peers[this.props.match.params.node]);
+            this.loadBalanceFor(this.state.address)
+            this.loadTransactionsFor(this.state.address)
+        }
+
+        if(prevProps.match.params.addressHash !== this.props.match.params.addressHash){
+            this.setState({address: this.props.match.params.addressHash},function(){
+                this.loadBalanceFor(this.props.match.params.addressHash)
+                this.loadTransactionsFor(this.props.match.params.addressHash)
+            }.bind(this))
         }
     }
 
@@ -48,7 +54,7 @@ class Address extends Component {
         var tableRows = [];
         _.each(this.state.transactions, (value, index) => {
             tableRows.push(
-                <TransactionRow key={index} tx={value} />
+                <TransactionRow key={index} tx={value} node={this.props.match.params.node} />
             )
         });
 

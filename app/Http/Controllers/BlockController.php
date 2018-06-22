@@ -45,7 +45,13 @@ class BlockController extends Controller
 
     public function getBlockInfo($blockHash)
     {
+
         $block = $this->repository->getBlockWithHash($blockHash);
+
+        if(!$block){
+            return response('', 404);
+        }
+
         return new NodeBlockResource($block);
     }
 }

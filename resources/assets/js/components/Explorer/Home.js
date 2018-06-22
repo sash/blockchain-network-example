@@ -9,42 +9,37 @@ import ExplorerClient from "../../API/ExplorerClient";
 class Home extends Component {
     constructor(props) {
         super(props);
-        console.log('in the home comp constructor');
-        console.log(props);
         this.state = {
-            node: props.peers[Object.keys(props.peers)[0]],
-            blocks: ['1', '2','3'],
+            blocks: [],
         };
 
-        console.log(this.state);
-        this.client = new ExplorerClient(this.state.node);
+        this.client = new ExplorerClient(props.peers[props.match.params.node]);
         this.loadBlocks()
     }
 
-    componentWillMount() {
-        console.log('will mounth Home comp');
+    componentDidUpdate(prevProps)
+    {
+        if(prevProps.match.params.node !== this.props.match.params.node){
+        this.client = new ExplorerClient(this.props.peers[this.props.match.params.node]);
+            this.loadBlocks()
+        }
     }
 
     async loadBlocks() {
-        console.log('load blocks in home comp')
         const lastBlocks = await this.client.lastBlocks();
-
 
         this.setState({
             blocks: lastBlocks,
         });
-        console.log('blocks are')
-        console.log(this.state.blocks)
     }
 
     render() {
-        console.log('render function');
-        var tableRows = [];
+        let tableRows = [];
         _.each(this.state.blocks, (value, index) => {
             tableRows.push(
                 <tr key={this.state.blocks[index].block_hash}>
                     <td className="tdCenter">{this.state.blocks[index].id}</td>
-                    <td><Link to={`/block/${this.state.blocks[index].block_hash}`}>{this.state.blocks[index].block_hash}</Link></td>
+                    <td><Link to={`/${this.props.match.params.node}/block/${this.state.blocks[index].block_hash}`}>{this.state.blocks[index].block_hash}</Link></td>
                     <td className="tdCenter">{this.state.blocks[index].txs}</td>
                 </tr>
             )
