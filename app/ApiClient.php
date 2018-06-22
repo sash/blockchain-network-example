@@ -38,7 +38,7 @@ abstract class ApiClient
             throw new APIException("Invalid json response - " . $result, 0, $result);
         }
         if (isset($json['success']) && !$json['success']) {
-            throw new APIException($json['message'] . ' - ' . $json['data'], $json['code'], $json['data']);
+            throw new APIException($json['message'], $json['code'], $json['data']);
         }
         return $json;
     }

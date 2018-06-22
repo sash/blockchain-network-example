@@ -35,7 +35,7 @@ class BlockHasher
         $block->block_hash = $this->getBlockHash($block);
     }
     
-    private function serializedBlock(NodeBlock $block)
+    public function serializedBlock(NodeBlock $block)
     {
         $blockRepresentation = [];
         $blockRepresentation['previous_block_hash'] = $block->previous_block_hash;

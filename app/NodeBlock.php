@@ -40,8 +40,6 @@ class NodeBlock extends Model
             'nonce',
             'timestamp',
             'block_hash',
-            //TODO why we dont have chain_id in migration? on purpose?
-            //'chain_id'
     ];
     
     public function transactions(){

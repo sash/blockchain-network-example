@@ -4,20 +4,20 @@ const { fork } = require('child_process');
 
 let new_job_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/job/"+ process.env.ADDRESS;
 let submit_job_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/job";
-let get_latest_block_hash = 'http://'+process.env.NODE_HOST+"/api/miner/last-block-hash";
+let get_latest_block_hash_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/last-block-hash";
 let previous_block_hash='';
 let miningProcesses = [];
-let candidateBlock = {};
+//let candidateBlock = {};
 
 setInterval(function(){
-    request(get_latest_block_hash, function (error, response, body) {
+    request(get_latest_block_hash_endpoint, function (error, response, body) {
         let data = JSON.parse(response.body);
 
         if(previous_block_hash !== data['hash'] && previous_block_hash!==''){
             console.log('current_previous_block_hash: '+previous_block_hash+', hash: '+data['hash']);
             console.log('Just found out new block to mine. Starting in a second...');
             miningProcesses.forEach(function (p) {
-                p.kill();
+                p.kill('SIGKILL');
             });
 
             requestNewJobAndStartMining()
@@ -31,7 +31,7 @@ let requestNewJobAndStartMining = function() {
         let difficulty = data['difficulty'];
         let data_hash = data['data_hash'];
         previous_block_hash = data['previous_block_hash'];
-        candidateBlock = data;
+        let candidateBlock = data;
 
         console.log('New block to mine! Difficulty: '+difficulty+', data_hash: '+data_hash+', previous_block_hash: '+previous_block_hash);
         console.log(JSON.stringify(candidateBlock));
@@ -43,33 +43,31 @@ let requestNewJobAndStartMining = function() {
 
         miningProcesses.forEach(function (proc) {
             proc.on('message', (message) => {
+                console.log('block is mined!');
+                console.log('index: ' + candidateBlock.index);
                 console.log('nonce: ' + message.nonce);
                 console.log('timestamp ' + message.timestamp);
                 console.log('blockHash ' + message.blockHash);
                 console.log('from ' + message.startFrom);
-                console.log('block is mined!');
 
-                notifyNode(message);
+                notifyNode(message, candidateBlock);
 
                 miningProcesses.forEach(function (p) {
-                    p.kill();
+                    p.kill('SIGKILL');
                 });
 
-                requestNewJobAndStartMining()
+
             })
         });
     });
 };
 
-let notifyNode = function (message){
+let notifyNode = function (message, candidateBlock){
 
 
     //glue the additional data to the block in order to send to the node
     candidateBlock['nonce'] = message.nonce;
     candidateBlock['timestamp'] = message.timestamp;
-    console.log('Notifying node for new block', JSON.stringify({
-        'block': candidateBlock
-    }));
     let options = {
         url: submit_job_endpoint,
         method: 'POST',
@@ -78,13 +76,15 @@ let notifyNode = function (message){
             'block': candidateBlock
         })
     };
+    console.log('Notifying node for new block', JSON.stringify(candidateBlock));
 
     request(options, function (errors, response, body){
-        if (!errors && response.statusCode == 200) {
+        if (!errors && (response.statusCode == 200 || response.statusCode == 201)) {
             console.log('Node response code: ', response.statusCode);
         } else {
-            console.log('Error', errors, response.statusCode, body);
+            console.log('Error in block', JSON.stringify(candidateBlock), errors, response.statusCode, body);
         }
+        requestNewJobAndStartMining()
     });
 };
 

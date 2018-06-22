@@ -114,7 +114,9 @@ class BlockValidator
         $this->blockHasher->updateHashes($block);
         $diff = $this->difficulty->zeroesInHash($block->block_hash);
         if ($diff < $this->difficulty->minZeroesInHash()){
-            throw new \InvalidArgumentException('The block with index ' . $block->index . ' and hash '.$block->block_hash.' has proof of work with difficulty of '.$diff.' with minimum '. $this->difficulty->minZeroesInHash().' required');
+            $ser = $this->blockHasher->serializedBlock($block);
+            
+            throw new \InvalidArgumentException('The block with index ' . $block->index . ' and hash '.$block->block_hash.' has proof of work with difficulty of '.$diff.' with minimum '. $this->difficulty->minZeroesInHash().' required. '.$ser);
         }
     }
     
