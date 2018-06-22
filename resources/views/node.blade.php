@@ -20,9 +20,9 @@
         <style>
             html, body {
                 background-color: #fff;
-                color: #636b6f;
+                /*color: #636b6f;*/
                 font-family: 'Roboto', sans-serif;
-                font-weight: 100;
+                /*font-weight: 100;*/
                 height: 100vh;
                 margin: 0;
             }

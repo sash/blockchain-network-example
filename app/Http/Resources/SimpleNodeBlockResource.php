@@ -16,6 +16,7 @@ class SimpleNodeBlockResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'index' => $this->index,
             'block_hash'=> $this->block_hash,
             'txs' => $this->transactions->count()
         ];

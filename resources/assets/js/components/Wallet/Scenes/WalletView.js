@@ -46,7 +46,6 @@ export default class WalletView extends Component {
     changeNode(event){
         const selected = event.target.value
         const id = event.nativeEvent.target.selectedIndex
-        debugger
         this.setState({
             node: selected,
             host: event.nativeEvent.target[id].text
