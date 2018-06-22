@@ -27,21 +27,21 @@ http://github.com/sash/blockchain-network-example
 Bobby_Borisov & alexiev
 
 Core mechanics of the project
- * No transactions are lost during conflict resolution
- * Balance is kept in an optimized database for quick balance checks
- * Wallet is HD and transactions are made (if necessary) from several addresses in order to match the requested send
- * Wallet shows as recipient address the first address that was never spent from (the signature was never revealed)
- * Wallet and explorer are implemented in react (client-side apps) and consume the APIs of the node
- * The explorer is a clone of blockhain.info
- * The faucet is implemented in pure php (no time for react on that!)
- * Faucet requests are queued and done one at a time once a minute
- * The faucet has no spam prevention but there should be at least CAPTCHA (in real life)!
- * Miners are implemented in nodejs
- * Miners are mulithreaded
- * Miners are now limited to 1hash per second per thread (we run on battery)
- * Unit tests
- * The setup: 1 chain explorer, 2 faucets, 1 hd wallet, 2 nodes with one miner each. the miners mine for the faucets
- * Docker is used to manage the services. We can easily ramp-up the computing power of the miner by launching more miners `docker-compose scale miner1=10 miner2=10`
+* No transactions are lost during conflict resolution
+* Balance is kept in an optimized database for quick balance checks
+* Wallet is HD and transactions are made (if necessary) from several addresses in order to match the requested send
+* Wallet shows as recipient address the first address that was never spent from (the signature was never revealed)
+* Wallet and explorer are implemented in react (client-side apps) and consume the APIs of the node
+* The explorer is a clone of blockhain.info
+* The faucet is implemented in pure php (no time for react on that!)
+* Faucet requests are queued and done one at a time once a minute
+* The faucet has no spam prevention but there should be at least CAPTCHA (in real life)!
+* Miners are implemented in nodejs
+* Miners are mulithreaded
+* Miners are now limited to 1hash per second per thread (we run on battery)
+* Unit tests
+* The setup: 1 chain explorer, 2 faucets, 1 hd wallet, 2 nodes with one miner each. the miners mine for the faucets
+* Docker is used to manage the services. We can easily ramp-up the computing power of the miner by launching more miners `docker-compose scale miner1=10 miner2=10`
 
 ## Scenario: Business as usual
 0. Initialize and link the nodes
@@ -66,7 +66,10 @@ Core mechanics of the project
 2. Watch the lingering transaction get confirmed
 
 
-# Initial funds owners
+# Initial funds owners (each has 10kFs in the genesis)
+
+The first two are used by the faucets
+
 | Address                                  | Private Key                                                      |
 | ---------------------------------------- | -----------------------------------------------------------------|
 | be9c053812ca0cf8ae40aab3047f1b17e586765d | 0f9d3070204642bc8eb07b00a99ef38eebfec965733a3f70548ce99484fdfd99 |
