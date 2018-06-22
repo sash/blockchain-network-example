@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router , Route, Link } from 'react-router-dom'
 import moment from 'moment';
 
 //import './style.css';
@@ -24,11 +25,11 @@ class Transaction extends Component {
                             </tr>
                             <tr>
                                 <td>From</td>
-                                <td>{this.state.tx.from}</td>
+                                <td><Link to={`/address/${this.state.tx.from}`}>{this.state.tx.from}</Link></td>
                             </tr>
                             <tr>
                                 <td>To</td>
-                                <td>{this.state.tx.to}</td>
+                                <td><Link to={`/address/${this.state.tx.to}`}>{this.state.tx.to}</Link></td>
                             </tr>
                             <tr>
                                 <td>Value</td>

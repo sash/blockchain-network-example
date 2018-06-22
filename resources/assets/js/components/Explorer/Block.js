@@ -16,12 +16,17 @@ class Block extends Component {
         this.loadBlock(props.match.params.blockHash)
     }
 
+    componentWillReceiveProps(nextProps){
+        if(nextProps.match.params.blockHash !== this.state.block.block_hash){
+            this.loadBlock(nextProps.match.params.blockHash)
+        }
+    }
+
     async loadBlock(blockHash){
         const block = await this.client.getBlock(blockHash)
         this.setState({
             block: block
         })
-        console.log(this.state.block)
     }
 
     render() {
@@ -43,7 +48,7 @@ class Block extends Component {
                                 </tr>
                                 <tr>
                                     <td>Number of transactions</td>
-                                    <td>txs count</td>
+                                    <td>{_.size(this.state.block.transactions)}</td>
                                 </tr>
                                 <tr>
                                     <td>Difficulty</td>
@@ -55,7 +60,7 @@ class Block extends Component {
                                 </tr>
                                 <tr>
                                     <td>Mined by Address</td>
-                                    <td>{this.state.block.mined_by_address}</td>
+                                    <td><Link to={`/address/${this.state.block.mined_by_address}`}>{this.state.block.mined_by_address}</Link></td>
                                 </tr>
                                 <tr>
                                     <td>Nonce</td>
@@ -77,11 +82,10 @@ class Block extends Component {
                                 <tr>
                                     <td>Hash</td>
                                     <td><Link to={`/block/${this.state.block.block_hash}`}>{this.state.block.block_hash}</Link></td>
-                                    {/*<td>{this.state.block.block_hash}</td>*/}
                                 </tr>
                                 <tr>
                                     <td>Previous Block</td>
-                                    <td>{this.state.block.previous_block_hash}</td>
+                                    <td><Link to={`/block/${this.state.block.previous_block_hash}`}>{this.state.block.previous_block_hash}</Link></td>
                                 </tr>
                             </tbody>
                         </table>

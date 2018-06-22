@@ -10,14 +10,12 @@ export default class ExplorerClient{
     async lastBlocks(){
         const res = await this.axios.get('http://'+this.node_host+'/api/blocks/last/10')
         var response = res.data;
-        console.log(response);
         return response
     }
 
     async getBlock(blockHash){
         const res = await this.axios.get('http://'+this.node_host+'/api/blocks/'+blockHash)
         var response = res.data;
-        console.log(response);
         return response
     }
 
@@ -26,11 +24,7 @@ export default class ExplorerClient{
         const res = await this.axios.get('http://' + this.node_host + '/api/balance/' + address)
         let response = res.data;
 
-        console.log('balance fetched')
-        console.log(response)
-
         return response
-        //return new Balance(response)
     }
 
     async transactionsFor(address){

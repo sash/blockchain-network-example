@@ -3,24 +3,30 @@ import ExplorerClient from "../../API/ExplorerClient";
 import CoinFormat from "../../CoinFormat";
 import TransactionRow from "./TransactionRow"
 
-import moment from 'moment';
-
 //import './style.css';
 
 class Address extends Component {
     constructor(props){
         super(props)
-        console.log(props)
         this.state = {
             address: props.match.params.addressHash,
             node: props.peers[Object.keys(props.peers)[0]],
             balance: 'Loading ...',
             balancePending: '-',
-            transactions: "Loading ..."
+            transactions: "Loading ...",
         };
         this.client = new ExplorerClient(this.state.node);
         this.loadBalanceFor(this.state.address)
         this.loadTransactionsFor(this.state.address)
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(nextProps.match.params.addressHash !== this.state.address){
+            this.setState({address: nextProps.match.params.addressHash},function(){
+                this.loadBalanceFor(this.state.address)
+                this.loadTransactionsFor(this.state.address)
+            }.bind(this));
+        }
     }
 
     async loadBalanceFor(address){
@@ -36,7 +42,6 @@ class Address extends Component {
         this.setState({
             transactions: transactions
         });
-        console.log(transactions);
     }
 
     render() {
