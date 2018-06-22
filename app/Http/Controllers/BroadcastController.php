@@ -130,7 +130,7 @@ class BroadcastController extends Controller
             error_log("< New Transaction - " . $transaction->hash);
             
             $rebroadcast->newTransaction($transaction);
-            return response();
+            return response('', 200);
         } catch (\Exception $exception) {
             return JsonError::fromException($exception)->response(403);
         }

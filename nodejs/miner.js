@@ -7,6 +7,7 @@ let submit_job_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/job";
 let get_latest_block_hash_endpoint = 'http://'+process.env.NODE_HOST+"/api/miner/last-block-hash";
 let previous_block_hash='';
 let miningProcesses = [];
+let concurrentWorkers = 4;
 //let candidateBlock = {};
 
 setInterval(function(){
@@ -14,7 +15,7 @@ setInterval(function(){
         let data = JSON.parse(response.body);
 
         if(previous_block_hash !== data['hash'] && previous_block_hash!==''){
-            console.log('current_previous_block_hash: '+previous_block_hash+', hash: '+data['hash']);
+            // console.log('current_previous_block_hash: '+previous_block_hash+', hash: '+data['hash']);
             console.log('Just found out new block to mine. Starting in a second...');
             miningProcesses.forEach(function (p) {
                 p.kill('SIGKILL');
@@ -36,9 +37,9 @@ let requestNewJobAndStartMining = function() {
         console.log('New block to mine! Difficulty: '+difficulty+', data_hash: '+data_hash+', previous_block_hash: '+previous_block_hash);
         console.log(JSON.stringify(candidateBlock));
 
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < concurrentWorkers; i++) {
             miningProcesses[i] = fork('nodejs/miner_worker.js');
-            miningProcesses[i].send({data_hash, difficulty, startFrom: i, increment: 8});
+            miningProcesses[i].send({data_hash, difficulty, startFrom: i, increment: concurrentWorkers});
         }
 
         miningProcesses.forEach(function (proc) {
@@ -82,7 +83,8 @@ let notifyNode = function (message, candidateBlock){
         if (!errors && (response.statusCode == 200 || response.statusCode == 201)) {
             console.log('Node response code: ', response.statusCode);
         } else {
-            console.log('Error in block', JSON.stringify(candidateBlock), errors, response.statusCode, body);
+            const bodyArray = JSON.parse(body)
+            console.log('Error in block', JSON.stringify(candidateBlock), errors, response.statusCode, bodyArray.message);
         }
         requestNewJobAndStartMining()
     });

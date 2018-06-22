@@ -10,7 +10,7 @@ export default class ExplorerClient{
 
     async lastBlocks(){
         console.log('fetching last 10 from '+this.node_host)
-        const res = await this.axios.get('http://'+this.node_host+'/api/blocks/last/30')
+        const res = await this.axios.get('http://'+this.node_host+'/api/blocks/last/20')
         var response = res.data;
         return response
     }
