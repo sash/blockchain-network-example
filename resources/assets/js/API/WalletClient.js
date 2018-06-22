@@ -69,7 +69,7 @@ export default class WalletClient{
                 const value = Math.min(remainingValue, funds - fee);
                 const transaction = {
                     'from': account.getAddress(),
-                    'from_id': numberOfSpends,
+                    'from_id': Math.floor(Math.random() * Math.floor(2000000000)),
                     'to': to,
                     'value': value,
                     'fee': fee,
@@ -82,7 +82,6 @@ export default class WalletClient{
                 transaction.hash = toSignHash;
                 transaction.signature = account.sign(transaction.hash);
 
-                console.log(transaction);
 
                 transactions.push(
                     transaction
