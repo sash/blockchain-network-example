@@ -160,17 +160,8 @@ class BlockRepository
         $sequence = 0;
         // Link up all transactions based on the hashes to the current block! $update->transactions
         foreach ($block->transactions as $transaction) {
-            $collidingTransaction = NodeTransaction::
-                where('senderAddress', '=', $transaction->senderSequence)
-                    ->where('senderSequence', '=', $transaction->senderSequence)
-                    ->where('hash', '<>', $transaction->hash)
-                    ->whereNull('block_id')
-                    ->first();
-            if ($collidingTransaction){
-                $collidingTransaction->delete();
-            }
             
-            $existingTransaction = NodeTransaction::where('hash', '=', $transaction->hash)->whereNull('block_id')->first();
+            $existingTransaction = NodeTransaction::where('hash', '=', $transaction->hash)->first();
             if ($existingTransaction) {
                 $existingTransaction->sequence = $sequence++;
                 $existingTransaction->block_id = $block->id;

@@ -39,7 +39,7 @@ class TransactionController extends Controller
      * @return \App\Http\Resources\NodeTransactionResource|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      *
      */
-    public function postTransaction(CreateTransaction $request, Broadcast $broadcast, BalanceFactory $balanceFactory, BalanceRepository $balanceRepository, TransactionHasher $hasher)
+    public function postTransaction(CreateTransaction $request, Broadcast $broadcast, BalanceFactory $balanceFactory, BalanceRepository $balanceRepository, TransactionHasher $hasher, TransactionRepository $transactionRepository)
     {
         try {
             $transaction = NodeTransactionResource::fromArray(@json_decode($request->getContent(), true)['transaction']);
@@ -48,18 +48,25 @@ class TransactionController extends Controller
             
 //            $log = [];
             $this->transactionValidator->assertValid($transaction);
+            
+            $existing = $transactionRepository->transactionByHash($transaction->hash);
+    
+            $balance = $balanceFactory->forCurrentPending();
+            
+            if ($existing){ // Stops replay attacks
+                return response(json_encode(['balance' => $balance->getForAddress($transaction->senderAddress)]), 201);
+            }
 //            $log[] = "Transaction is valid";
 
             // The balance can always be OK based on another parallel chain that we yet don't know about
             try{
-                $balance = $balanceFactory->forCurrentPending();
 //                $log[] = $balance->balance;
                 $balance->addTransaction($transaction); // assets funds and cound throw exception that must be ignored
                 $balance->savePending();
 //                $log[] = "Balance updated";
             } catch (\Exception $e){
-                error_log("Not enought funds to update pending balance (But the transaction is still accepted): " . $e->getMessage());
-//                $log[] = "Not enought funds: ".$e->getMessage();
+                error_log("Not enough funds to update pending balance (But the transaction is still accepted): " . $e->getMessage());
+//                $log[] = "Not enough funds: ".$e->getMessage();
                 // Ignore missing funds
             }
             
@@ -76,7 +83,7 @@ class TransactionController extends Controller
     
     public function getTransaction($hash, TransactionRepository $transactionRepository){
         try{
-            $transaction = $transactionRepository->transactionsByHash($hash);
+            $transaction = $transactionRepository->transactionByHash($hash);
             if ($transaction){
                 return new NodeTransactionResource($transaction);
             } else {

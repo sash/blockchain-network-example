@@ -125,7 +125,7 @@ class BlockValidator
     private function assertTransactionsAreValid($block)
     {
         foreach ($block->transactions as $transaction){
-            $this->transactionValidator->assertValid($transaction, true);
+            $this->transactionValidator->assertValid($transaction);
         }
     }
     

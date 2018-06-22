@@ -39,7 +39,7 @@ class TransactionValidator
      * @return void
      * @throws InvalidTransaction
      */
-    public function assertValid(NodeTransaction $transaction, $skipSenderSequence = false): void{
+    public function assertValid(NodeTransaction $transaction): void{ //, $skipSenderSequence = false
         
         $this->assertHash($transaction);
         
@@ -49,9 +49,9 @@ class TransactionValidator
     
             $this->assertMinimumFee($transaction);
             
-            if (!$skipSenderSequence){
-                $this->assertSenderSequence($transaction);
-            }
+//            if (!$skipSenderSequence){
+//                $this->assertSenderSequence($transaction);
+//            }
     
         }
         
@@ -110,26 +110,26 @@ class TransactionValidator
 //        }
 //    }
     
-    /**
-     * @param NodeTransaction $transaction
-     * @return bool
-     * @throws InvalidTransaction
-     */
-    private function assertSenderSequence(NodeTransaction $transaction)
-    {
-        $existing = $this->transactionRepository->transactionBySenderAndSequence($transaction->senderAddress, $transaction->senderSequence);
-
-        if (!$existing) {
-            return true;
-        }
-
-        if ($existing->hash == $transaction->hash){
-            return true;
-        }
-
-        throw new InvalidTransaction('A transaction with the same sender sequence is already registered');
-        
-    }
-    
+//    /**
+//     * @param NodeTransaction $transaction
+//     * @return bool
+//     * @throws InvalidTransaction
+//     */
+//    private function assertSenderSequence(NodeTransaction $transaction)
+//    {
+//        $existing = $this->transactionRepository->transactionBySenderAndSequence($transaction->senderAddress, $transaction->senderSequence);
+//
+//        if (!$existing) {
+//            return true;
+//        }
+//
+//        if ($existing->hash == $transaction->hash){
+//            return true;
+//        }
+//
+//        throw new InvalidTransaction('A transaction with the same sender sequence is already registered');
+//
+//    }
+//
     
 }

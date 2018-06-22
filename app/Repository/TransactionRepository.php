@@ -121,7 +121,7 @@ class TransactionRepository
         return (int)$balance->balance;
     }
     
-    public function transactionsByHash($hash)
+    public function transactionByHash($hash)
     {
         return NodeTransaction::where('hash', '=', $hash)->first();
     }
