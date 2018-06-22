@@ -39,7 +39,7 @@ class TransactionValidator
      * @return void
      * @throws InvalidTransaction
      */
-    public function assertValid(NodeTransaction $transaction): void{
+    public function assertValid(NodeTransaction $transaction, $skipSenderSequence = false): void{
         
         $this->assertHash($transaction);
         
@@ -49,7 +49,9 @@ class TransactionValidator
     
             $this->assertMinimumFee($transaction);
             
-            $this->assertSenderSequence($transaction);
+            if (!$skipSenderSequence){
+                $this->assertSenderSequence($transaction);
+            }
     
         }
         

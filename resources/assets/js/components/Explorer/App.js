@@ -41,10 +41,11 @@ class App extends Component {
                     {/*<select value={this.state.node} onChange={this.changeNode}>*/}
                     {
                         Object.keys(peers).map(function (key){
-                            return <Link to={`/${key}`} key={key}>{key}</Link>
+                            return <span key={key} style={{margin: '1em'}}><Link to={`/${key}`} key={key}>{key}</Link></span>
                         })
                     }
                     {/*</select>*/}
+                    <hr/>
                 </div>
                 <div className="App-nav">
 

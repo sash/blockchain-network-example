@@ -36,6 +36,6 @@ export default class PublicPrivateKeyPair {
     sign(hash) {
         const signature = this.privateKey.sign(hash, 'hex', {canonical: true});
         // return signature.r.toString('hex').padStart(64, '0') + signature.s.toString('hex').padStart(64, '0') + signature.recoveryParam.toString(16).padStart(2, "0");
-        return signature.r.toString('hex') + signature.s.toString('hex') + signature.recoveryParam.toString(16).padStart(2, "0");
+        return signature.r.toString('hex').padStart(64, '0') + signature.s.toString('hex').padStart(64, '0') + signature.recoveryParam.toString(16).padStart(2, "0");
     }
 }

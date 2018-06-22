@@ -35,11 +35,12 @@ Showcase the software. Present each app and what technologies were used.
 Present the core mechanics of the framework
  * No transactions are lost during conflict resolution
  * Balance is kept in an optimized database for quick balance checks
- * Wallet is HD and transactions are made (if necesary) from several addresses in order to match the requested send.
- * Wallet shows as recepient address the first address that was never spent from (the signature was never revealed).
+ * Wallet is HD and transactions are made (if necesary) from several addresses in order to match the requested send
+ * Wallet shows as recepient address the first address that was never spent from (the signature was never revealed)
  * Wallet and explorer are implemented in react and consume the APIs of the node
- * The faucet is implemented in pure php (no time for react on that!).
- * Faucet requests are queued and done one at a time once a minute.
+ * The explorer is a clone of blockhain.info
+ * The faucet is implemented in pure php (no time for react on that!)
+ * Faucet requests are queued and done one at a time once a minute
  * The faucet has no spam prevention but there should be at least CAPTCHA (in real life)!
  * Miners are implemented in nodejs
  * Miners are mulithreaded

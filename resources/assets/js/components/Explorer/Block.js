@@ -57,6 +57,10 @@ class Block extends Component {
                                     <td>{_.size(this.state.block.transactions)}</td>
                                 </tr>
                                 <tr>
+                                    <td>Index</td>
+                                    <td>{this.state.block.index}</td>
+                                </tr>
+                                <tr>
                                     <td>Difficulty</td>
                                     <td>{this.state.block.difficulty}</td>
                                 </tr>

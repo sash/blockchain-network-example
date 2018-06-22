@@ -38,7 +38,7 @@ class Home extends Component {
         _.each(this.state.blocks, (value, index) => {
             tableRows.push(
                 <tr key={this.state.blocks[index].block_hash}>
-                    <td className="tdCenter">{this.state.blocks[index].id}</td>
+                    <td className="tdCenter">{this.state.blocks[index].index}</td>
                     <td><Link to={`/${this.props.match.params.node}/block/${this.state.blocks[index].block_hash}`}>{this.state.blocks[index].block_hash}</Link></td>
                     <td className="tdCenter">{this.state.blocks[index].txs}</td>
                 </tr>
@@ -49,7 +49,7 @@ class Home extends Component {
             <div className="Home">
                 <table>
                     <thead><tr>
-                        <th>Block No</th>
+                        <th>Block Index</th>
                         <th>Hash</th>
                         <th>TXs</th>
                     </tr></thead>

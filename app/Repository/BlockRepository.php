@@ -57,7 +57,7 @@ class BlockRepository
      */
     public function getLastBlocks($limit)
     {
-        return NodeBlock::query()->orderBy('index', 'asc')->take($limit)->get();
+        return NodeBlock::query()->orderBy('index', 'desc')->take($limit)->get();
     }
     
     public function newGenesisBlock($initial_funds = [], $timestamp = 1529067174): NodeBlock
@@ -160,6 +160,16 @@ class BlockRepository
         $sequence = 0;
         // Link up all transactions based on the hashes to the current block! $update->transactions
         foreach ($block->transactions as $transaction) {
+            $collidingTransaction = NodeTransaction::
+                where('senderAddress', '=', $transaction->senderSequence)
+                    ->where('senderSequence', '=', $transaction->senderSequence)
+                    ->where('hash', '<>', $transaction->hash)
+                    ->whereNull('block_id')
+                    ->first();
+            if ($collidingTransaction){
+                $collidingTransaction->delete();
+            }
+            
             $existingTransaction = NodeTransaction::where('hash', '=', $transaction->hash)->whereNull('block_id')->first();
             if ($existingTransaction) {
                 $existingTransaction->sequence = $sequence++;
