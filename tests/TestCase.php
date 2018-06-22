@@ -19,7 +19,7 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         TestResponse::macro('assertJsonHasErrors', function ($value) {
-            return collect($this->json()['errors'])->has('name');
+            return collect(@$this->json()['errors'])->has('name');
         });
     }
 

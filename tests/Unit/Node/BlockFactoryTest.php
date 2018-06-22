@@ -58,7 +58,8 @@ class BlockFactoryTest extends TestCase
             app(BlockHasher::class),
             app(BalanceFactory::class),
             app(TransactionFactory::class),
-            $diff
+            $diff,
+            app(Difficulty::class)
         );
 
         $txs = $this->seedWith3Transactions();

@@ -39,7 +39,7 @@ class TransactionController extends Controller
      * @return \App\Http\Resources\NodeTransactionResource|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      *
      */
-    public function postTransaction(Request $request, Broadcast $broadcast, BalanceFactory $balanceFactory, BalanceRepository $balanceRepository, TransactionHasher $hasher)
+    public function postTransaction(CreateTransaction $request, Broadcast $broadcast, BalanceFactory $balanceFactory, BalanceRepository $balanceRepository, TransactionHasher $hasher)
     {
         try {
             $transaction = NodeTransactionResource::fromArray(@json_decode($request->getContent(), true)['transaction']);
@@ -58,7 +58,7 @@ class TransactionController extends Controller
                 $balance->savePending();
 //                $log[] = "Balance updated";
             } catch (\Exception $e){
-                error_log("Not enought funds to update pending balance: " . $e->getMessage());
+                error_log("Not enought funds to update pending balance (But the transaction is still accepted): " . $e->getMessage());
 //                $log[] = "Not enought funds: ".$e->getMessage();
                 // Ignore missing funds
             }
@@ -66,7 +66,7 @@ class TransactionController extends Controller
             $transaction->save();
             $broadcast->newTransaction($transaction);
 
-            return ['balance' => $balance->getForAddress($transaction->senderAddress)];
+            return response(json_encode(['balance' => $balance->getForAddress($transaction->senderAddress)]), 201);
 //            return $log;
             
         } catch (\Exception $ex){

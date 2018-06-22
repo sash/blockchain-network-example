@@ -42,7 +42,7 @@ class NodeTransactionResource extends JsonResource
      */
     public static function fromArray($transaction){
         if (!is_array($transaction)){
-            throw new InvalidTransaction('Transaction representation is not an array!');
+            throw new InvalidTransaction('Transaction representation is not an array! - '.$transaction);
         }
         $res = new NodeTransaction();
         if (!isset($transaction['from'])){

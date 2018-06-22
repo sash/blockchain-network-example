@@ -14,6 +14,7 @@ class NodeBlockTest extends TestCase
     /** @test */
     public function it_consists_of_transactions_ordered_by_sequence()
     {
+        $this->seed(\GenesisBlock::class);
         $block = factory(NodeBlock::class)->create();
         factory(NodeTransaction::class)->create(['sequence'=>3, 'block_id' => $block->id]);
         factory(NodeTransaction::class)->create(['sequence'=>1, 'block_id' => $block->id]);
