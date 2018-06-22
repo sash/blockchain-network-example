@@ -7,6 +7,7 @@ use App\Faucet\CoinFormat;
 use App\Node\PeerClient;
 use App\Node\TransactionFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class FaucetController extends Controller
 {
@@ -21,6 +22,9 @@ class FaucetController extends Controller
     }
     public function postFaucet(Request $request, TransactionFactory $factory){
         $address = $request->get('address');
+        if(!preg_match('/^[a-z0-9]{40}$/i', $address)){
+            return Redirect::to('/')->with('error', 'Invalid address');
+        }
         $host = $request->get('host');
         $key = PublicPrivateKeyPair::fromPrivateKey($_ENV['PRIVATE_KEY']);
         $client = new \App\Faucet\PeerClient($host);
@@ -28,6 +32,6 @@ class FaucetController extends Controller
         $balance = $client->getBalance($key->getAddress());
         
         $client->postTransaction($factory->buildSpendTransaction($key, $balance['txs'], 1000000, 10, $address, 'Free monet from faucet'));
-        return redirect('/');
+        return redirect('/')->with('message', 'Coin was sent');
     }
 }

@@ -80,8 +80,15 @@ export default class WalletView extends Component {
 
     handleInputChange(event){
         const target = event.target;
-        var newSend = this.state.send;
+        let newSend = this.state.send;
         newSend[target.id] = target.value
+        if (target.id === 'to'){
+            if (!(/^[0-9a-f]{40}$/i.test(target.value))){
+                newSend.error = "Invalid recepient address";
+            } else {
+                newSend.error = ""
+            }
+        }
         this.setState({
             send: newSend
         })
@@ -120,7 +127,6 @@ export default class WalletView extends Component {
     }
 
     sentOrReceived(el, row){
-        console.log(this.addresses)
         if (this.addresses.includes(row.from) && this.addresses.includes(row.to)){
             return "Self";
         }
