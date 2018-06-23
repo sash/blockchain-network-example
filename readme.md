@@ -2,23 +2,23 @@
 
 # Setup
 ## Install
-`docker-compose run node1 composer install` install PHP dependencies
-`docker-compose run node1 yarn install` install Node + JS dependencies
-`docker-compose run node1 yarn dev` compile browser-fliendly JS and CSS via webpack
-`docker-compose up -d` to bring the conteiners online
-`docker-compose run node1 php artisan migrate:fresh ; docker-compose run node1 php artisan db:seed`
-`docker-compose run node2 php artisan migrate:fresh ; docker-compose run node2 php artisan db:seed`
+* `docker-compose run node1 composer install` install PHP dependencies
+* `docker-compose run node1 yarn install` install Node + JS dependencies
+* `docker-compose run node1 yarn dev` compile browser-fliendly JS and CSS via webpack
+* `docker-compose up -d` to bring the conteiners online
+* `docker-compose run node1 php artisan migrate:fresh ; docker-compose run node1 php artisan db:seed`
+* `docker-compose run node2 php artisan migrate:fresh ; docker-compose run node2 php artisan db:seed`
 
 ## Link nodes together
-`docker-compose exec node1 php artisan node:bootstrap`
-`docker-compose exec node2 php artisan node:bootstrap`
+* `docker-compose exec node1 php artisan node:bootstrap`
+* `docker-compose exec node2 php artisan node:bootstrap`
 
 ## Unlink nodes
-`docker-compose exec node1 php artisan node:unlink`
-`docker-compose exec node2 php artisan node:unlink`
+* `docker-compose exec node1 php artisan node:unlink`
+* `docker-compose exec node2 php artisan node:unlink`
 
 ## Add more miners
-`docker-compose scale miner1=5 miner2=5`
+* `docker-compose scale miner1=5 miner2=5`
 
 # Presentation
 
